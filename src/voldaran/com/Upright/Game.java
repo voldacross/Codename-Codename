@@ -23,7 +23,9 @@ import android.view.animation.AnimationSet;
 
 //For more information on design, please see below
 /*
+This is me typing....
 
+This is a test
 Feel free to update with new ideas.
 
 Platform / Puzzle game.
