@@ -177,30 +177,36 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					fingerDragEndX = event.getX();
 					fingerDragEndY = event.getY();
 
-					int xDifference = (int) Math.abs((fingerDragStartX - fingerDragEndX));
-					int yDifference = (int) Math.abs((fingerDragStartY - fingerDragEndY));
-					if (xDifference>=yDifference) {
-						if (fingerDragEndX<=fingerDragStartX) {
-							//LEFT
-								USER_TOUCH = USER_SWIPE_LEFT;
-						} else {
-						//They swiped Right						
-						//Jump is not fully implemented
-							USER_TOUCH = USER_SWIPE_RIGHT;
-							}
-						} else if (xDifference<=yDifference) {
-							if (fingerDragEndY<=fingerDragStartY) {
-								//Log.d("GSTA", "You released Up!");
-						//They swiped Up
-								USER_TOUCH = USER_SWIPE_UP;
-							} else {
-								//Log.d("GSTA", "You released Down!");
-						//They swiped down
-								//adjust Gravity Down
-								USER_TOUCH = USER_SWIPE_DOWN;
-							} 
-						}
 					
+					double dd = distance(fingerDragStartX, fingerDragStartY, event.getX(), event.getY());
+					
+					if (dd>35) {
+						int xDifference = (int) Math.abs((fingerDragStartX - fingerDragEndX));
+						int yDifference = (int) Math.abs((fingerDragStartY - fingerDragEndY));
+						if (xDifference>=yDifference) {
+							if (fingerDragEndX<=fingerDragStartX) {
+								//LEFT
+									USER_TOUCH = USER_SWIPE_LEFT;
+							} else {
+							//They swiped Right						
+							//Jump is not fully implemented
+								USER_TOUCH = USER_SWIPE_RIGHT;
+								}
+							} else if (xDifference<=yDifference) {
+								if (fingerDragEndY<=fingerDragStartY) {
+									//Log.d("GSTA", "You released Up!");
+							//They swiped Up
+									USER_TOUCH = USER_SWIPE_UP;
+								} else {
+									//Log.d("GSTA", "You released Down!");
+							//They swiped down
+									//adjust Gravity Down
+									USER_TOUCH = USER_SWIPE_DOWN;
+								} 
+							}
+					} else {
+						USER_TOUCH = USER_TOUCH_NONE;
+					}
 //					//user is no longer dragging their finger
 //					bolDragActive = false;
 //					//They have activated a Swipe / Drag
@@ -209,7 +215,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				}
 				
 				break;
-				
+			
 			case MotionEvent.ACTION_CANCEL:
 				
 				break;
@@ -224,7 +230,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				//built in tolerance.
 				//finger press on actual device always yields an ACTION_MOVE. 
 				//built a tolerence of a distance of 35 pixels to allow a little leeway
-				
 				
 				if (dd>35) {
 					bolDragActive = true;
@@ -466,7 +471,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			//Handle USER_TOUCH
 			
-			
+			Log.d("GSTA", "" + USER_TOUCH);
 			switch (USER_TOUCH) {
 			case (USER_PRESS_RIGHT):
 				fingerRight = true;
@@ -495,9 +500,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					_hero.currentWall = null;
 				}
 				break;
-			
-			
 			}
+			
+			
+			
 			
 //			if ((bolFingerDown) && (!bolDragActive)) {
 //
@@ -587,8 +593,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				adjustX += HERO_WALKING_SPEED;
 			} else if (fingerLeft) {
 				adjustX -= HERO_WALKING_SPEED;
-				
 			}
+			fingerRight = false;
+			fingerLeft = false;
 			
 			//My terrible attempt at jumping, just goes up and down in a right angle.
 //			if (_hero.jumpRight) {
