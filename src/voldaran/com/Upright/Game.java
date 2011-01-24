@@ -1,5 +1,3 @@
-//test1111
-//test3333
 package voldaran.com.Upright;
 
 import java.math.BigInteger;
@@ -106,6 +104,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	private int mActivePointerId = INVALID_POINTER_ID;
 	public int gameTIME = 0;
 	
+	
+	public static final int USER_TOUCH_NONE = 1000;
+	public static final int USER_SWIPE_LEFT = 1001;
+	public static final int USER_SWIPE_RIGHT = 1002;
+	public static final int USER_SWIPE_UP = 1003;
+	public static final int USER_SWIPE_DOWN = 1004;
+	public static final int USER_PRESS_RIGHT = 1005;
+	public static final int USER_PRESS_MIDDLE = 1006;
+	public static final int USER_PRESS_LEFT = 1007;
+	
+	public int USER_TOUCH = 1000;
+	
+	
 	HeroAnimated hero;
 	
 	public Game(Context context) {
@@ -116,8 +127,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		setFocusable(true);
 
 	}
-	
-	
 	
 	
 	@Override
@@ -140,11 +149,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				//Log.d("GSTA", "You pressed down!");
 				
 			//record X,Y locations to determine fingerDrag
+				
 					fingerDragStartX = event.getX();
 					fingerDragStartY = event.getY();
+					
+					if (mCurrentTouchX>getWidth()-(getWidth()/3)) {
+						//Log.d("GSTA", "To the right");
+						USER_TOUCH = USER_PRESS_RIGHT;
+					} else if (mCurrentTouchX<getWidth()/3) {
+						//Log.d("GSTA", "To the left");
+						USER_TOUCH = USER_PRESS_LEFT;
+					} else {
+						//Log.d("GSTA", "the Middle!");
+						USER_TOUCH = USER_PRESS_MIDDLE;
+					}
 				break;
-		//Finger press up			
 				
+				
+		//Finger press up
 			case MotionEvent.ACTION_UP:
 				//Log.d("GSTA", "You released!");
 				bolFingerDown = false;
@@ -154,10 +176,36 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					//record ending X, Y
 					fingerDragEndX = event.getX();
 					fingerDragEndY = event.getY();
-					//user is no longer dragging their finger
-					bolDragActive = false;
-					//They have activated a Swipe / Drag
-					bolDragRelease = true;
+
+					int xDifference = (int) Math.abs((fingerDragStartX - fingerDragEndX));
+					int yDifference = (int) Math.abs((fingerDragStartY - fingerDragEndY));
+					if (xDifference>=yDifference) {
+						if (fingerDragEndX<=fingerDragStartX) {
+							//LEFT
+								USER_TOUCH = USER_SWIPE_LEFT;
+						} else {
+						//They swiped Right						
+						//Jump is not fully implemented
+							USER_TOUCH = USER_SWIPE_RIGHT;
+							}
+						} else if (xDifference<=yDifference) {
+							if (fingerDragEndY<=fingerDragStartY) {
+								//Log.d("GSTA", "You released Up!");
+						//They swiped Up
+								USER_TOUCH = USER_SWIPE_UP;
+							} else {
+								//Log.d("GSTA", "You released Down!");
+						//They swiped down
+								//adjust Gravity Down
+								USER_TOUCH = USER_SWIPE_DOWN;
+							} 
+						}
+					
+//					//user is no longer dragging their finger
+//					bolDragActive = false;
+//					//They have activated a Swipe / Drag
+//					bolDragRelease = true;
+
 				}
 				
 				break;
@@ -176,54 +224,28 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				//built in tolerance.
 				//finger press on actual device always yields an ACTION_MOVE. 
 				//built a tolerence of a distance of 35 pixels to allow a little leeway
+				
+				
 				if (dd>35) {
-					bolDragActive = true;	
+					bolDragActive = true;
+//					int OLD_TOUCH = USER_TOUCH;
+					Log.d("GSTA", "CLEARING OUT TOUCH");
+					USER_TOUCH = USER_TOUCH_NONE;
 				} else {
-					bolDragActive = false;
+					if (mCurrentTouchX>getWidth()-(getWidth()/3)) {
+						//Log.d("GSTA", "To the right");
+						USER_TOUCH = USER_PRESS_RIGHT;
+					} else if (mCurrentTouchX<getWidth()/3) {
+						//Log.d("GSTA", "To the left");
+						USER_TOUCH = USER_PRESS_LEFT;
+					} else {
+						//Log.d("GSTA", "the Middle!");
+						USER_TOUCH = USER_PRESS_MIDDLE;
+					}
 				}
 				
 				break;
 			}
-		
-//		if (event.getAction()==0) {
-//			Log.d("GSTA", "You pressed down");
-//		}
-		
-		
-		//ignore all commented sections, as they are old work.
-		
-//		int pointerCount = event.getPointerCount();
-/*		synchronized (mSurfaceHolder) {
-			//Log.d("GSTA","action" + event.getAction());
-			if (event.getAction()==0) {
-				keyDown = true;
-			}
-			if (event.getAction()==2) {
-				if (!keyDrag) {
-					keyDrag = true;
-					keyDragStartX = event.getX();
-					keyDragStartY = event.getY();
-				}
-			}
-			if (event.getAction()==1) {
-				
-				keyDown = false;
-				if (keyDrag) {
-					keyDrag = false;
-					keyDragEndX = event.getX();
-					keyDragEndY = event.getY();
-				}
-				if (keyActualDrag) {
-				launch = true;
-				keyActualDrag = false;
-				}
-			}
-			fingerX = event.getX();
-			fingerY = event.getY();
-		}
-		
-	*/
-		
 		
 		return true;
 	}
@@ -275,11 +297,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		public Bitmap bitHero;
 		
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
-		private ArrayList<Obstacles> _obstacles = new ArrayList<Obstacles>();
+		
 		private ArrayList<GameObjects> _gameO = new ArrayList<GameObjects>();
 		private ArrayList<GameObjects> _gameMoving = new ArrayList<GameObjects>();
 		
-		public Overlay gameOverlay = new Overlay();
 		
 		
 		
@@ -291,14 +312,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				_tempWall.width = width;
 				_tempWall.height = height;
 				
-				
 				if (height>width) {
 					_tempWall.vertical = true;
 				} else if (height<width) {
 					_tempWall.vertical = false;
 				}
 				_gameO.add(_tempWall);
-			gameOverlay.addGameObject(_tempWall);
 		}
 		
 		
@@ -307,18 +326,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			mSurfaceHolder = surfaceHolder;
 			_surfaceHolder = surfaceHolder;
 			_game = game;
-			
-//			gameBoard.Initialize();
-//			aTile = gameBoard.getBoard();
-//			Log.d("GSTA", aTile[0][0].stringName);
-			
-			
-			//Creating board overlay
-			
-//			ArrayList[][] overlay = new ArrayList[100][100];
-//			
-//			overlay[0][0] = new ArrayList<Walls>();
-			
 			
 			
 		//Arcahic way of creating a level, added hero and walls.
@@ -329,8 +336,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				_hero.direction = 1;
 				_hero.bitHero = bitHero;
 				
-		//HeroAnimated hero = new HeroAnimated(BitmapFactory.decodeResource(getResources(), R.drawable.spritesheet),0,0,64,64,5,8);
-
 		addWall(0,475,800,10);
 		addWall(0,0,800,10);
 		addWall(0,100,290,10);
@@ -357,140 +362,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		_firstPlatform.addPathPoint(600, 150);
 		_gameMoving.add(_firstPlatform);
 		_gameO.add(_firstPlatform);
-		gameOverlay.addGameObject(_firstPlatform);
-//		
-//		GameObjects _firstPlatform2 = new GameObjects();
-//		_firstPlatform2.x = 600;
-//		_firstPlatform2.y = 300;
-//		_firstPlatform2.type = _firstPlatform2.GAME_OBJECT_PLATFORM;
-//		_firstPlatform2.width = 100;
-//		_firstPlatform2.height = 10;
-//		_firstPlatform2.speed = 2;
-//		_firstPlatform2.addPathPoint(600, 300);
-//		_firstPlatform2.addPathPoint(450, 300);
-//		_firstPlatform2.addPathPoint(450, 150);
-//		_firstPlatform2.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform2);
-//		_gameO.add(_firstPlatform2);
-//		gameOverlay.addGameObject(_firstPlatform2);
-//		
-//		GameObjects _firstPlatform3 = new GameObjects();
-//		_firstPlatform3.x = 600;
-//		_firstPlatform3.y = 300;
-//		_firstPlatform3.type = _firstPlatform3.GAME_OBJECT_PLATFORM;
-//		_firstPlatform3.width = 100;
-//		_firstPlatform3.height = 10;
-//		_firstPlatform3.speed = 3;
-//		_firstPlatform3.addPathPoint(600, 300);
-//		_firstPlatform3.addPathPoint(450, 300);
-//		_firstPlatform3.addPathPoint(450, 150);
-//		_firstPlatform3.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform3);
-//		_gameO.add(_firstPlatform3);
-//		gameOverlay.addGameObject(_firstPlatform3);
-//		
-//		GameObjects _firstPlatform4 = new GameObjects();
-//		_firstPlatform4.x = 600;
-//		_firstPlatform4.y = 300;
-//		_firstPlatform4.type = _firstPlatform4.GAME_OBJECT_PLATFORM;
-//		_firstPlatform4.width = 100;
-//		_firstPlatform4.height = 10;
-//		_firstPlatform4.speed = 4;
-//		_firstPlatform4.addPathPoint(600, 300);
-//		_firstPlatform4.addPathPoint(450, 300);
-//		_firstPlatform4.addPathPoint(450, 150);
-//		_firstPlatform4.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform4);
-//		_gameO.add(_firstPlatform4);
-//		gameOverlay.addGameObject(_firstPlatform4);
-//		
-//		GameObjects _firstPlatform5 = new GameObjects();
-//		_firstPlatform5.x = 600;
-//		_firstPlatform5.y = 300;
-//		_firstPlatform5.type = _firstPlatform5.GAME_OBJECT_PLATFORM;
-//		_firstPlatform5.width = 100;
-//		_firstPlatform5.height = 10;
-//		_firstPlatform5.speed = 5;
-//		_firstPlatform5.addPathPoint(600, 300);
-//		_firstPlatform5.addPathPoint(450, 300);
-//		_firstPlatform5.addPathPoint(450, 150);
-//		_firstPlatform5.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform5);
-//		_gameO.add(_firstPlatform5);
-//		gameOverlay.addGameObject(_firstPlatform5);
-//		
-//		GameObjects _firstPlatform6 = new GameObjects();
-//		_firstPlatform6.x = 600;
-//		_firstPlatform6.y = 300;
-//		_firstPlatform6.type = _firstPlatform6.GAME_OBJECT_PLATFORM;
-//		_firstPlatform6.width = 100;
-//		_firstPlatform6.height = 10;
-//		_firstPlatform6.speed = 6;
-//		_firstPlatform6.addPathPoint(600, 300);
-//		_firstPlatform6.addPathPoint(450, 300);
-//		_firstPlatform6.addPathPoint(450, 150);
-//		_firstPlatform6.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform6);
-//		_gameO.add(_firstPlatform6);
-//		gameOverlay.addGameObject(_firstPlatform6);
-//		
-//		GameObjects _firstPlatform7 = new GameObjects();
-//		_firstPlatform7.x = 600;
-//		_firstPlatform7.y = 300;
-//		_firstPlatform7.type = _firstPlatform7.GAME_OBJECT_PLATFORM;
-//		_firstPlatform7.width = 100;
-//		_firstPlatform7.height = 10;
-//		_firstPlatform7.speed = 7;
-//		_firstPlatform7.addPathPoint(600, 300);
-//		_firstPlatform7.addPathPoint(450, 300);
-//		_firstPlatform7.addPathPoint(450, 150);
-//		_firstPlatform7.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform7);
-//		_gameO.add(_firstPlatform7);
-//		gameOverlay.addGameObject(_firstPlatform7);
-//		
-//		GameObjects _firstPlatform8 = new GameObjects();
-//		_firstPlatform8.x = 600;
-//		_firstPlatform8.y = 300;
-//		_firstPlatform8.type = _firstPlatform8.GAME_OBJECT_PLATFORM;
-//		_firstPlatform8.width = 100;
-//		_firstPlatform8.height = 10;
-//		_firstPlatform8.speed = 8;
-//		_firstPlatform8.addPathPoint(600, 300);
-//		_firstPlatform8.addPathPoint(450, 300);
-//		_firstPlatform8.addPathPoint(450, 150);
-//		_firstPlatform8.addPathPoint(600, 150);
-//		_gameMoving.add(_firstPlatform8);
-//		_gameO.add(_firstPlatform8);
-//		gameOverlay.addGameObject(_firstPlatform8);
 			
-		
-//			Walls _wall8 = new Walls();
-//				_wall8.X = 180;
-//				_wall8.Y = 310;
-//				_wall8.width = 10;
-//				_wall8.height = 180;
-//				_walls.add(_wall8);
-//				gameOverlay.addWall(_wall8);
-//				
-//			Walls _wall9 = new Walls();
-//				_wall9.X = 460;
-//				_wall9.Y = 100;
-//				_wall9.width = 10;
-//				_wall9.height = 400;
-//				_walls.add(_wall9);	
-//				gameOverlay.addWall(_wall9);
-				
-				
-				//Add some dummy obstacles
-			Obstacles _obstacles1 = new Obstacles();
-				_obstacles1.X = 200;
-				_obstacles1.Y = 200;
-				_obstacles1.width = 10;
-				_obstacles1.height = 10;
-				_obstacles.add(_obstacles1);
-				
-				
 
 			//gameOverlay.addWall(_wall2);
 			
@@ -592,84 +464,102 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			int Gravity = 0;
 
 			
-//			int rows = gameBoard.ROWS;
-//			int cols = gameBoard.COLS;
-//			
-//			if ((currentTileRow<= rows && currentTileRow > 0) && (currentTileColumn<= cols && currentTileColumn > 0)) {
-//				Log.d("GSTA", "You are on the current game board");
-//				Log.d("GSTA", aTile[currentTileRow][currentTileColumn].stringName);
-//			} else {
-//				Log.d("GSTA", "You are NOT on the current game board");
-//			}
+			//Handle USER_TOUCH
 			
 			
-			//Log.d("GSTA", "You are in tile " + currentTileX + "," + currentTileY + " at position: " + _hero.x + "," + _hero.y + " " + aTile[currentTileX][currentTileY].stringName);
-			
-			
-			
-			//fingerPress
-			
-			if ((bolFingerDown) && (!bolDragActive)) {
-
-		// separates screen into 3 equal parts, Right , Middle, and Left
-				if ((mCurrentTouchX>getWidth()-(getWidth()/3))&& (!(_hero.movementState==HERO_FREEFALL))) {
-					//Log.d("GSTA", "To the right");
-					fingerRight = true;
-				} else if ((mCurrentTouchX<getWidth()/3) && (!(_hero.movementState==HERO_FREEFALL))){
-					//Log.d("GSTA", "To the left");
-					fingerLeft = true;
-				} else {
-					//Log.d("GSTA", "the Middle!");
+			switch (USER_TOUCH) {
+			case (USER_PRESS_RIGHT):
+				fingerRight = true;
+				break;
+			case (USER_PRESS_LEFT):
+				fingerLeft = true;
+				break;
+			case (USER_PRESS_MIDDLE):
 				
+				break;
+			case (USER_SWIPE_LEFT):
+				_hero.jumpLeft = true;
+				break;
+			case (USER_SWIPE_RIGHT):
+				_hero.jumpRight = true;
+				break;
+			case (USER_SWIPE_UP):
+				if (_hero.gravity==HERO_DOWN) {
+					_hero.gravity=HERO_UP;
+					_hero.currentWall = null;
 				}
+				break;
+			case (USER_SWIPE_DOWN):
+				if (_hero.gravity==HERO_UP) {
+					_hero.gravity=HERO_DOWN;
+					_hero.currentWall = null;
+				}
+				break;
+			
+			
 			}
 			
+//			if ((bolFingerDown) && (!bolDragActive)) {
+//
+//		// separates screen into 3 equal parts, Right , Middle, and Left
+//				if ((mCurrentTouchX>getWidth()-(getWidth()/3))&& (!(_hero.movementState==HERO_FREEFALL))) {
+//					//Log.d("GSTA", "To the right");
+//					fingerRight = true;
+//				} else if ((mCurrentTouchX<getWidth()/3) && (!(_hero.movementState==HERO_FREEFALL))){
+//					//Log.d("GSTA", "To the left");
+//					fingerLeft = true;
+//				} else {
+//					//Log.d("GSTA", "the Middle!");
+//				
+//				}
+//			}
+//			
 			
 //physical checks
-
-			boolean bolTest = true;
-			
-			
-			//fingerDrag settings... Launch... or Jump... or do nothing
-
-				//If user has been dragging their finger and releases
-			if (bolDragRelease) {
-				//Log.d("GSTA", "You released from a drag");
-				bolDragRelease = false;
-				//Determine direction of release - Right, Left, Up, Down
-				int xDifference = (int) Math.abs((fingerDragStartX - fingerDragEndX));
-				int yDifference = (int) Math.abs((fingerDragStartY - fingerDragEndY));
-				if (xDifference>=yDifference) {
-					if (fingerDragEndX<=fingerDragStartX) {
-				//They swiped Left
-						//Jump is not fully implemented
-						_hero.jumpLeft = true;
-					} else {
-				//They swiped Right						
-						//Jump is not fully implemented
-						_hero.jumpRight = true;
-						
-					}
-				} else if (xDifference<=yDifference) {
-					if (fingerDragEndY<=fingerDragStartY) {
-						//Log.d("GSTA", "You released Up!");
-				//They swiped Up
-						//Adjust Gravity up
-						if (_hero.gravity==HERO_DOWN) {
-							_hero.gravity=HERO_UP;
-							_hero.currentWall = null;
-						}
-					} else {
-						//Log.d("GSTA", "You released Down!");
-				//They swiped down
-						//adjust Gravity Down
-						if (_hero.gravity==HERO_UP) {
-							_hero.gravity=HERO_DOWN;
-							_hero.currentWall = null;
-						}
-					} 
-				}
-			}
+//
+//			boolean bolTest = true;
+//			
+//			
+//			//fingerDrag settings... Launch... or Jump... or do nothing
+//
+//				//If user has been dragging their finger and releases
+//			if (bolDragRelease) {
+//				//Log.d("GSTA", "You released from a drag");
+//				bolDragRelease = false;
+//				//Determine direction of release - Right, Left, Up, Down
+//				int xDifference = (int) Math.abs((fingerDragStartX - fingerDragEndX));
+//				int yDifference = (int) Math.abs((fingerDragStartY - fingerDragEndY));
+//				if (xDifference>=yDifference) {
+//					if (fingerDragEndX<=fingerDragStartX) {
+//				//They swiped Left
+//						//Jump is not fully implemented
+//						_hero.jumpLeft = true;
+//					} else {
+//				//They swiped Right						
+//						//Jump is not fully implemented
+//						_hero.jumpRight = true;
+//						
+//					}
+//				} else if (xDifference<=yDifference) {
+//					if (fingerDragEndY<=fingerDragStartY) {
+//						//Log.d("GSTA", "You released Up!");
+//				//They swiped Up
+//						//Adjust Gravity up
+//						if (_hero.gravity==HERO_DOWN) {
+//							_hero.gravity=HERO_UP;
+//							_hero.currentWall = null;
+//						}
+//					} else {
+//						//Log.d("GSTA", "You released Down!");
+//				//They swiped down
+//						//adjust Gravity Down
+//						if (_hero.gravity==HERO_UP) {
+//							_hero.gravity=HERO_DOWN;
+//							_hero.currentWall = null;
+//						}
+//					} 
+//				}
+//			}
 			
 
 			//Adjust position
@@ -701,34 +591,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			
 			//My terrible attempt at jumping, just goes up and down in a right angle.
-			if (_hero.jumpRight) {
-				_hero.jumpCount += 1;
-				
-				if (_hero.jumpCount > 0 && _hero.jumpCount <=10) {
-					//on the way up
-					adjustX += HERO_WALKING_SPEED;
-					
-					//Counteract gravity
-					adjustY -= HERO_FALLING_SPEED + HERO_WALKING_SPEED;
-					
-					
-				} else if (_hero.jumpCount > 10 && _hero.jumpCount<=20) {
-					//on the way down
-					adjustX += HERO_WALKING_SPEED;
-					
-					//Let gravity take over
-					//adjustY += HERO_WALKING_SPEED;
-					
-				} else if (_hero.jumpCount>=21) {
-					//Turn jump off
-					_hero.jumpRight = false;
-					_hero.jumpCount = 0;
-					
-				}
-				Log.d("GSTA","hero jumpcount - " + _hero.jumpCount);
-			} else if (_hero.jumpLeft) {
-				
-			}
+//			if (_hero.jumpRight) {
+//				_hero.jumpCount += 1;
+//				
+//				if (_hero.jumpCount > 0 && _hero.jumpCount <=10) {
+//					//on the way up
+//					adjustX += HERO_WALKING_SPEED;
+//					
+//					//Counteract gravity
+//					adjustY -= HERO_FALLING_SPEED + HERO_WALKING_SPEED;
+//					
+//					
+//				} else if (_hero.jumpCount > 10 && _hero.jumpCount<=20) {
+//					//on the way down
+//					adjustX += HERO_WALKING_SPEED;
+//					
+//					//Let gravity take over
+//					//adjustY += HERO_WALKING_SPEED;
+//					
+//				} else if (_hero.jumpCount>=21) {
+//					//Turn jump off
+//					_hero.jumpRight = false;
+//					_hero.jumpCount = 0;
+//					
+//				}
+//				Log.d("GSTA","hero jumpcount - " + _hero.jumpCount);
+//			} else if (_hero.jumpLeft) {
+//				
+//			}
 			
 			
 			
@@ -773,7 +663,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 			
 			
-			ArrayList<GameObjects> _potentialCollides;
 			//_potentialCollides = CollidingWalls(_hero); //Find all walls in Hero's Current Tiles
 			
 			
@@ -798,9 +687,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						_hero.x = previousX - testX;
 					}
 
-					_potentialCollides = CollidingGameObjects(_hero); //Update Walls based on testExample
-
-					for (GameObjects GameObj : _potentialCollides) {
+					for (GameObjects GameObj : _gameO) {
 
 						if (CollisionDetection(_hero, GameObj)) {
 							//go until hero is not crashing into a wall 
@@ -811,9 +698,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 							GameObj.color = Color.RED;
 							bolBreak = false;
 							
-							if (GameObj.vertical) {
-								_hero.gravity = HERO_RIGHT;
-							}
+//							if (GameObj.vertical) {
+//								_hero.gravity = HERO_RIGHT;
+//							}
 							
 							break;
 						} 
@@ -841,9 +728,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						_hero.y = previousY - testY;
 					}
 
-					_potentialCollides = CollidingGameObjects(_hero); //Update Walls based on testExample
-
-					for (GameObjects GameObj : _potentialCollides) {
+					for (GameObjects GameObj : _gameO) {
 
 						if (CollisionDetection(_hero, GameObj)) {
 							//If the hero would have crashed into the wall 
@@ -867,7 +752,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			
 			if (freeFall) {
-				_hero.currentWall = null;
+				//freefall
 			}
 			
 			
@@ -963,7 +848,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						
 						}	
 
-				gameOverlay.updateGameObject(_moving);
 				}
 			}
 			
@@ -1001,44 +885,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //		}
 			
 			
-
+			//USER_TOUCH = USER_TOUCH_NONE;
 		}
 			
 		
-		public ArrayList<GameObjects> CollidingGameObjects(HeroObject hero) {
-			
-			ArrayList<GameObjects> _potentialCollides = new ArrayList<GameObjects>();
-
-			//Top Left Point
-			int rowTL = (int) Math.round(((int) _hero.y / 100) - 0.5);
-			int columnTL = (int) Math.round(((int) _hero.x / 100) - 0.5);
-
-			//Bottom right point
-			int rowBR = (int) Math.round(((int) (_hero.y + _hero.getHeight()) / 100) - 0.5);
-			int columnBR = (int) Math.round(((int) (_hero.x+ _hero.getWidth()) / 100) - 0.5);
-			
-//			Log.d("GSTA","------------------------------------------");
-			for (int row = rowTL; row <= rowBR; row++) {
-				for (int column = columnTL; column <= columnBR; column++) {
-					//Hero is in overlay[row][column]
-					ArrayList<GameObjects> tempGameObjects = gameOverlay.getGameObjects(row, column);
-					if (tempGameObjects==null){
-						//Log.d("GSTA", "Empty Space! No objects Present");
-					} else {
-						_potentialCollides.addAll(tempGameObjects);
-					}
-					
-//					Log.d("GSTA" , "You are in Column - " + row + "," + column);
-				}
-			}
-			return _potentialCollides;
-		}
-		
-		
-	//NEW Collision Detection. Formated right now for only Hero and Walls, can be easily made generic
+			//NEW Collision Detection. Formated right now for only Hero and Walls, can be easily made generic
 		public boolean CollisionDetection (HeroObject hero, GameObjects GameObj) {
 			//Create JAVA Rect for each object
-			
 																																				//			Log.d("GSTA", "Collision Detection------------");
 			Rect heroRect = new Rect((int) hero.x,(int) hero.y, (int) (hero.x + hero.getWidth()), (int) (hero.y + hero.getHeight()));
 			Rect wallRect = new Rect((int) GameObj.x,(int) GameObj.y, (int) (GameObj.x + GameObj.width), (int) (GameObj.y + GameObj.height));
@@ -1125,40 +978,40 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		}
 		//OLD Collision Detection... was terrible.
-		public boolean TestImpact(HeroObject object1, Walls object2) {
-			double object1XRangeStart = (double) (object1.x);
-			double object1XRangeEnd = (double) (object1.x + object1.getWidth());
-			double object1YRangeStart = (double) (object1.y);
-			double object1YRangeEnd = (double) (object1.y + object1.getHeight());
-			
-			
-			double object2XRangeStart = (double) (object2.X);
-			double object2XRangeEnd = (double) (object2.X + object2.width);
-			double object2YRangeStart = (double) (object2.Y);
-			double object2YRangeEnd = (double) (object2.Y + object2.height);
-			
-			
-			
-			
-			//if (((object1XRangeStart >= object2XRangeStart) && (object1XRangeStart <= object2XRangeEnd)) && (object1YRangeStart >= object2YRangeStart) && (object1YRangeStart <= object2YRangeEnd)){
-			if ((((object1XRangeStart >= object2XRangeStart) && (object1XRangeStart <= object2XRangeEnd)) && (object1YRangeStart >= object2YRangeStart) && (object1YRangeStart <= object2YRangeEnd)) || (((object1XRangeEnd >= object2XRangeStart) && (object1XRangeEnd <= object2XRangeEnd)) && (object1YRangeStart >= object2YRangeStart) && (object1YRangeStart <= object2YRangeEnd)) || (((object1XRangeStart >= object2XRangeStart) && (object1XRangeStart <= object2XRangeEnd)) && (object1YRangeEnd >= object2YRangeStart) && (object1YRangeEnd <= object2YRangeEnd)) || (((object1XRangeEnd >= object2XRangeStart) && (object1XRangeEnd <= object2XRangeEnd)) && (object1YRangeEnd >= object2YRangeStart) && (object1YRangeEnd <= object2YRangeEnd))) { 
-			return true;
-		}
-		
-		
-		//////////////////////
-		
-		
-		/* if ((object2XRangeStart >= object1XRangeStart && object2XRangeStart <= object1XRangeEnd) || (object2XRangeEnd >= object1XRangeStart && object2XRangeEnd <= object1XRangeEnd)) {
-		Log.d("GSTA", "FIRST TEST");
-		if ((object2YRangeStart >= object1YRangeStart && object2YRangeStart <= object1YRangeEnd) || (object2YRangeEnd >= object1YRangeStart && object2YRangeEnd <= object1YRangeEnd)) {
-		Log.d("GSTA", "second TEST");
-		//Log.d("PHYS", "Collide");
-		return true;
-		}
-		}*/
-		return false;
-		}
+//		public boolean TestImpact(HeroObject object1, Walls object2) {
+//			double object1XRangeStart = (double) (object1.x);
+//			double object1XRangeEnd = (double) (object1.x + object1.getWidth());
+//			double object1YRangeStart = (double) (object1.y);
+//			double object1YRangeEnd = (double) (object1.y + object1.getHeight());
+//			
+//			
+//			double object2XRangeStart = (double) (object2.X);
+//			double object2XRangeEnd = (double) (object2.X + object2.width);
+//			double object2YRangeStart = (double) (object2.Y);
+//			double object2YRangeEnd = (double) (object2.Y + object2.height);
+//			
+//			
+//			
+//			
+//			//if (((object1XRangeStart >= object2XRangeStart) && (object1XRangeStart <= object2XRangeEnd)) && (object1YRangeStart >= object2YRangeStart) && (object1YRangeStart <= object2YRangeEnd)){
+//			if ((((object1XRangeStart >= object2XRangeStart) && (object1XRangeStart <= object2XRangeEnd)) && (object1YRangeStart >= object2YRangeStart) && (object1YRangeStart <= object2YRangeEnd)) || (((object1XRangeEnd >= object2XRangeStart) && (object1XRangeEnd <= object2XRangeEnd)) && (object1YRangeStart >= object2YRangeStart) && (object1YRangeStart <= object2YRangeEnd)) || (((object1XRangeStart >= object2XRangeStart) && (object1XRangeStart <= object2XRangeEnd)) && (object1YRangeEnd >= object2YRangeStart) && (object1YRangeEnd <= object2YRangeEnd)) || (((object1XRangeEnd >= object2XRangeStart) && (object1XRangeEnd <= object2XRangeEnd)) && (object1YRangeEnd >= object2YRangeStart) && (object1YRangeEnd <= object2YRangeEnd))) { 
+//			return true;
+//		}
+//		
+//		
+//		//////////////////////
+//		
+//		
+//		/* if ((object2XRangeStart >= object1XRangeStart && object2XRangeStart <= object1XRangeEnd) || (object2XRangeEnd >= object1XRangeStart && object2XRangeEnd <= object1XRangeEnd)) {
+//		Log.d("GSTA", "FIRST TEST");
+//		if ((object2YRangeStart >= object1YRangeStart && object2YRangeStart <= object1YRangeEnd) || (object2YRangeEnd >= object1YRangeStart && object2YRangeEnd <= object1YRangeEnd)) {
+//		Log.d("GSTA", "second TEST");
+//		//Log.d("PHYS", "Collide");
+//		return true;
+//		}
+//		}*/
+//		return false;
+//		}
 	}
 }
 

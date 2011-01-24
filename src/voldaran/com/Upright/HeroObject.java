@@ -13,7 +13,6 @@ public class HeroObject {
 	boolean walking = false;
 	int gravity = 1;
 	int directionLocked=999;
-	Walls collidingWall;
 	
 	int movementState = 0;
 	
