@@ -73,6 +73,9 @@ Obstacle Ideas
 	
 	
 
+
+
+Notes: 
 */
 //END NOTES
 
@@ -140,7 +143,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		mCurrentTouchX = x;
 		mCurrentTouchY = y;
 
-		
+		Log.d("GSTA","Historical Points " + event.getHistorySize());
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		
@@ -167,7 +170,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 				
 		//Finger press up
-			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_UP: 
 				//Log.d("GSTA", "You released!");
 				bolFingerDown = false;
 				
@@ -234,7 +237,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				if (dd>35) {
 					bolDragActive = true;
 //					int OLD_TOUCH = USER_TOUCH;
-					Log.d("GSTA", "CLEARING OUT TOUCH");
+					//Log.d("GSTA", "CLEARING OUT TOUCH");
 					USER_TOUCH = USER_TOUCH_NONE;
 				} else {
 					if (mCurrentTouchX>getWidth()-(getWidth()/3)) {
@@ -471,7 +474,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			//Handle USER_TOUCH
 			
-			Log.d("GSTA", "" + USER_TOUCH);
+			//Log.d("GSTA", "" + USER_TOUCH);
 			switch (USER_TOUCH) {
 			case (USER_PRESS_RIGHT):
 				fingerRight = true;
