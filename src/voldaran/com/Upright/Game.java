@@ -3,6 +3,8 @@ package voldaran.com.Upright;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import voldaran.com.Upright.UserInput.Input;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -119,16 +121,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public int USER_TOUCH = 1000;
 	
-	public UserInput _input = null;
+	public UserInput _input = new UserInput();
 	
 	HeroAnimated hero;
 	
 	public Game(Context context) {
 		super(context);
 		getHolder().addCallback(this);
-		Log.d("GSTA","here1");
-		
-		Log.d("GSTA","here2");
+
 		thread = new GameThread(getHolder(), this);
 		setFocusable(true);
 	}
@@ -137,9 +137,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
 		
-		Log.d("GSTA", "" + getWidth());
-		_input = new UserInput();
-		_input.UpdateInput(event);
+//		Log.d("GSTA", "" + getWidth());
+		
+		_input.UpdateInput(event, getWidth(), getHeight());
 		
 
 		
@@ -274,7 +274,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
-	// TODO Auto-generated method stub
+
 	}
 	
 	
@@ -311,7 +311,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		//public MapClass.TileClass[][] aTile;
 		
 		public Bitmap bitHero;
-		
+		GameHero _hero2;
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
 		
 		private ArrayList<GameObjects> _gameO = new ArrayList<GameObjects>();
@@ -357,7 +357,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 				Vector2D v = new Vector2D(60,60);
 				Extent e = new Extent(10,10);
-				GameHero _hero2 = new GameHero(v, e);
+				_hero2 = new GameHero(v, e);
 				
 
 				//_hero2.bitHero = bitHero
@@ -492,7 +492,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			int Gravity = 0;
 
-			//Log.d("GSTA", "" + _input.uInput);
+			
+			//TODO
+			Log.d("GSTA", "" + _input.uInput);
+			
+			_hero2.update(_input);
+			
 			
 			
 			//Handle USER_TOUCH
