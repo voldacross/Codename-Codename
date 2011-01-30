@@ -8,10 +8,11 @@ import android.graphics.Color;
 public class GameObjects {
 	final public int GAME_OBJECT_WALL = 0000;
 	final public int GAME_OBJECT_ARMOR = 0001;
-	final public int GAME_OBJECT_ENEMY = 0001;
-	final public int GAME_OBJECT_MOVING_ENEMY = 0001;
-	final public int GAME_OBJECT_PLATFORM = 0001;
-	final public int GAME_OBJECT_DOOR = 0001;
+	final public int GAME_OBJECT_ENEMY = 0002;
+	final public int GAME_OBJECT_MOVING_ENEMY = 0003;
+	final public int GAME_OBJECT_PLATFORM = 0004;
+	final public int GAME_OBJECT_DOOR = 0005;
+	final public int GAME_OBJECT_HERO = 0006;
 	
 	final public int GAME_OBJECT_VERTICAL = 90;
 	final public int GAME_OBJECT_HORIZONTAL = 0;
@@ -26,8 +27,6 @@ public class GameObjects {
 	
 	private ArrayList<Integer[]> pathPoints = new ArrayList<Integer[]>();
 	
-	
-
 	
 
 	public ArrayList<Integer[]> getPathPoints() {
@@ -47,15 +46,7 @@ public class GameObjects {
 	
 	public void Initialize (int Type) {
 		type = Type;
-//		switch (Type) {
-//		case GAME_OBJECT_WALL:
-//			break;
-//		
-//		case GAME_OBJECT_ARMOR:
-//			
-//			break;
-//		
-//		}
+
 	}
 	
 	public class Wall extends GameObjects {

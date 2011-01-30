@@ -10,11 +10,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.animation.AnimationSet;
 
 // To "play" the game, played with the unit placed horizontally. Press on the right side to move right, press on the 
 // left side to move left. "Swiping" your fingers up or down will shift the gravity in the direction you swipe.
@@ -81,7 +81,7 @@ Notes:
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
-
+	
 	private GameThread thread;
 	private SurfaceHolder mSurfaceHolder;
 	public float fingerX;
@@ -119,21 +119,29 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public int USER_TOUCH = 1000;
 	
+	public UserInput _input = null;
 	
 	HeroAnimated hero;
 	
 	public Game(Context context) {
 		super(context);
 		getHolder().addCallback(this);
-		setFocusable(true);
+		Log.d("GSTA","here1");
+		
+		Log.d("GSTA","here2");
 		thread = new GameThread(getHolder(), this);
 		setFocusable(true);
-
 	}
 	
 	
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
+		
+		Log.d("GSTA", "" + getWidth());
+		_input = new UserInput();
+		_input.UpdateInput(event);
+		
+
 		
 		final int action = event.getAction();
 		bolFingerDown = true;
@@ -143,7 +151,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		mCurrentTouchX = x;
 		mCurrentTouchY = y;
 
-		Log.d("GSTA","Historical Points " + event.getHistorySize());
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		
@@ -180,7 +187,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					fingerDragEndX = event.getX();
 					fingerDragEndY = event.getY();
 
-					
+
 					double dd = distance(fingerDragStartX, fingerDragStartY, event.getX(), event.getY());
 					
 					if (dd>35) {
@@ -261,6 +268,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	//Finds distance
 	public double distance (float X1, float Y1, float X2, float Y2) {
 		return Math.sqrt(((X2 - X1) * ( X2 - X1)) + ((Y2 - Y1) * (Y2 - Y1)));
+
 	}
 	
 	@Override
@@ -326,6 +334,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					_tempWall.vertical = false;
 				}
 				_gameO.add(_tempWall);
+				
+				
 		}
 		
 		
@@ -341,9 +351,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			_hero = new HeroObject();
 				_hero.x = 600;
 				_hero.y = 600;
-				_hero.direction = 1;
 				_hero.bitHero = bitHero;
+			
 				
+				
+				Vector2D v = new Vector2D(60,60);
+				Extent e = new Extent(10,10);
+				GameHero _hero2 = new GameHero(v, e);
+				
+
+				//_hero2.bitHero = bitHero
+				Log.d("GSTA","_hero2 " + _hero2.pos.x + "," + _hero2.pos.y);
+				Log.d("GSTA","_hero2 topLet" + _hero2.topLeft.x + "," + _hero2.topLeft.y);
+				
+
 		addWall(0,475,800,10);
 		addWall(0,0,800,10);
 		addWall(0,100,290,10);
@@ -471,6 +492,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			int Gravity = 0;
 
+			//Log.d("GSTA", "" + _input.uInput);
+			
 			
 			//Handle USER_TOUCH
 			

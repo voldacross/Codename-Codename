@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 public class HeroObject {
 	float x, y;
-	int direction = 1;
+	//int direction = 1;
 	Bitmap bitHero;
 	boolean freeFall = true;
 	int walkingDirection;
