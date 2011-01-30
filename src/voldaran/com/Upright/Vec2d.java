@@ -37,7 +37,7 @@ public class Vec2d {
 	}
 	
 	@Override public String toString(){
-		return x + ", " + y;
+		return x + "," + y;
 	}
 	
 	public Vec2d set(long x, long y){
@@ -70,13 +70,13 @@ public class Vec2d {
 	
 	public Vec2d add(float scalar){
 		x += round(scalar);
-		y += (long)scalar;
+		y += round(scalar);
 		return this;
 	}
 	
 	public Vec2d add(float x, float y){
-		this.x += (long)x;
-		this.y += (long)y;
+		this.x += round(x);
+		this.y += round(y);
 		return this;
 	}
 	

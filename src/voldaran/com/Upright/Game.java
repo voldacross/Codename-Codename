@@ -295,6 +295,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
+		private GameHero hero;
 		public boolean mRun = false;
 		//public MapClass.TileClass[][] aTile;
 		
@@ -313,12 +314,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 		//Arcahic way of creating a level, added hero and walls.
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.icon);
-			GameHero hero = new GameHero(new Vec2d(600000,300000), new Vec2d(72000,72000), bitHero);
+			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(38000,38000), bitHero);
 
 			//_hero2.bitHero = bitHero
 			Log.d("GSTA", "hero : " + hero.pos);
-			Log.d("GSTA", "hero top, left, bottom,right : " + hero.pos.sub(hero.extent) + ", " + hero.pos.add(hero.extent));
-				
+			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
+					                                         + (hero.pos.y - hero.extent.y) + ","
+					                                         + (hero.pos.x + hero.extent.x) + ","
+					                                         + (hero.pos.y + hero.extent.y));
 
 			addWall(400,475,400,10);
 			addWall(400,5,400,10);
@@ -377,9 +380,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
+			Vec2d offset = new Vec2d();
+			GameObject.offset = offset;
+			Canvas c = null;
 			while (mRun) {
 				gameTIME += 1;
-				Canvas c = null;
 				
 				//MovingObject.updateObjects();
 				
@@ -387,6 +392,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					c = _surfaceHolder.lockCanvas(null);
 					synchronized (_surfaceHolder) {
 						clearScreen(c);
+						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
+						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
 						GameObject.drawObjects(c);
 					}
                 } finally {

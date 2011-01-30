@@ -9,6 +9,7 @@ import android.graphics.Rect;
 
 public class GameObject {
 	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+	public static Vec2d offset;
 	public static void drawObjects(Canvas c){
 		for(GameObject o : GameObject.gameObjects){
 			o.draw(c);
@@ -52,7 +53,7 @@ public class GameObject {
 	
 	public void draw(Canvas c){
 		
-		Vec2d p = new Vec2d(pos).div(1000);
+		Vec2d p = new Vec2d(pos).sub(GameObject.offset).div(1000);
 		Vec2d e = new Vec2d(extent).div(1000);
 		
 		Rect recWall = new Rect((int)(p.x - e.x), (int)(p.y - e.y), (int)(p.x + e.x - 1), (int)(p.y + e.y - 1));

@@ -21,6 +21,6 @@ public class GameHero extends MovingObject{
 	}
 	
 	public void draw(Canvas c){
-		c.drawBitmap(bitmap, left() / 1000, top() / 1000, null);
+		c.drawBitmap(bitmap, (left() - GameObject.offset.x) / 1000, (top() - GameObject.offset.y) / 1000, null);
 	}
 }
