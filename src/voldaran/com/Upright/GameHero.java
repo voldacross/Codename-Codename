@@ -1,27 +1,26 @@
 package voldaran.com.Upright;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
-public class GameHero extends GameObject{
-	
-	public Bitmap bitHero;
+public class GameHero extends MovingObject{
+	public Bitmap bitmap;
 
-	public Vector2D velocity = new Vector2D(0,0);
-
-	public GameHero(Vector2D pos, Extent extent) {
+	public GameHero(Vec2d pos,Vec2d extent, Bitmap bitmap) {
 		super(pos, extent);
+		this.bitmap = bitmap;
 	}
 	
-	public GameHero(Vector2D v, Extent extent, Vector2D vel) {
-		super(v, extent);
-		velocity = vel;
+	public GameHero(Vec2d pos, Vec2d extent, Vec2d vel, Bitmap bitmap) {
+		super(pos, extent, vel);
+		this.bitmap = bitmap;
 	}
-
 	
 	public void update() {
-		super.pos.add(velocity);
-		
-		//Collision detection!!
+		pos.add(velocity);
 	}
 	
+	public void draw(Canvas c){
+		c.drawBitmap(bitmap, left() / 1000, top() / 1000, null);
+	}
 }

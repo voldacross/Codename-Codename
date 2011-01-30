@@ -1,9 +1,6 @@
 package voldaran.com.Upright;
 
 
-import android.content.Context;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 
 
@@ -12,19 +9,19 @@ import android.view.MotionEvent;
 public class UserInput {
 	
 	public UserInput() {
-		mCurrentTouch = new Vector2D();
-		mDragStart = new Vector2D();
-		mDragEnd = new Vector2D();
+		mCurrentTouch = new Vec2d();
+		mDragStart = new Vec2d();
+		mDragEnd = new Vec2d();
 		
 	}
 
 	public Input uInput = Input.NONE;
 	public Input previousInput;
 	
-	public Vector2D mCurrentTouch;
+	public Vec2d mCurrentTouch;
 	
-	private Vector2D mDragStart;
-	private Vector2D mDragEnd;
+	private Vec2d mDragStart;
+	private Vec2d mDragEnd;
 
 	
 	
@@ -48,10 +45,10 @@ public class UserInput {
 	
 
 
-	public Input calcDirection (Vector2D mStart, Vector2D mEnd) {
+	public Input calcDirection (Vec2d mStart, Vec2d mEnd) {
 		
-		int xDifference = (int) Math.abs((mStart.x - mEnd.x));
-		int yDifference = (int) Math.abs((mStart.y - mEnd.y));
+		long xDifference = Math.abs(mStart.x - mEnd.x);
+		long yDifference = Math.abs(mStart.y - mEnd.y);
 		
 		if (xDifference>=yDifference) {
 			if (mEnd.x<=mStart.x) {
@@ -81,13 +78,10 @@ public class UserInput {
 		
 		fingerDown = true;
 		
-Log.d("GSTA", "1111111111 " + voldaran.com.Upright.Game.);
         
 		int screenWidth = 0;
-		int screenHeight = 0;
 
-		
-		mCurrentTouch.set(event.getX(), event.getY());
+		mCurrentTouch.set(event.getX() * 1000, event.getY() * 1000);
 		//mCurrentTouch = new Vector2D(event.getX(), event.getY());
 		
 		//Log.d("GSTA", "" + screenWidth);
