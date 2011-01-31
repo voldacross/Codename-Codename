@@ -1,18 +1,21 @@
 package voldaran.com.Upright;
 
 
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 
 
 
 
 public class UserInput {
+	private SurfaceView surface;
 	
 	public UserInput() {
 		mCurrentTouch = new Vec2d();
 		mDragStart = new Vec2d();
 		mDragEnd = new Vec2d();
-		
+
 	}
 
 	public Input uInput = Input.NONE;
@@ -71,7 +74,7 @@ public class UserInput {
 		return null;
 	}
 
-	public void UpdateInput (MotionEvent event) {
+	public void UpdateInput (MotionEvent event, SurfaceView s) {
 		final int action = event.getAction();
 		
 		previousInput = uInput;
@@ -79,19 +82,18 @@ public class UserInput {
 		fingerDown = true;
 		
         
-		int screenWidth = 0;
+		int screenWidth = s.getWidth();
 
-		mCurrentTouch.set(event.getX() * 1000, event.getY() * 1000);
+		mCurrentTouch.set(event.getX(), event.getY());
 		//mCurrentTouch = new Vector2D(event.getX(), event.getY());
 		
 		//Log.d("GSTA", "" + screenWidth);
 
 		
 		switch (action & MotionEvent.ACTION_MASK) {
+		
 		case MotionEvent.ACTION_DOWN:
 			mDragStart.set(event.getX(), event.getY());
-			
-			
 			
 			if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
 				uInput = Input.PRESS_RIGHT;
@@ -109,34 +111,54 @@ public class UserInput {
 		case MotionEvent.ACTION_UP:
 			fingerDown = false;
 			
-			if (userSwipped) {
-				//mDragEnd = new Vector2D
-				mDragEnd.set(event.getX(), event.getY());
-				
-//				float ddd = ((mDragStart.x - mDragEnd.x) * (mDragStart.x - mDragEnd.x)) + ((mDragStart.y - mDragEnd.y) * (mDragStart.y - mDragEnd.y));
-//				if (ddd > 35 * 35) {
+
+
+
 
 				if (uInput.equals(Input.PRESS_DRAGGING)) {
+					mDragEnd.set(event.getX(), event.getY());
 					uInput = calcDirection(mDragStart, mDragEnd);
-					//Log.d("GSTA", "" + uInput);
+				} else {
+					uInput = Input.NONE;
 				}
-
-				
-			}
+			
+			
+			
+			
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
+			
+			
 			float ddd = ((mDragStart.x - mCurrentTouch.x) * (mDragStart.x - mCurrentTouch.x)) + ((mDragStart.y - mCurrentTouch.y) * (mDragStart.y - mCurrentTouch.y));
+			
 			if (ddd>35*35) {
 				uInput = Input.PRESS_DRAGGING;
-				//Log.d("GSTA", "YOU ARE PASS 35");
+				
 			} else {
-				uInput = previousInput;
+				if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
+					uInput = Input.PRESS_RIGHT;
+					
+				} else if (mCurrentTouch.x<screenWidth/3) {
+					
+					uInput = Input.PRESS_LEFT;
+				} else {
+					
+					uInput = Input.PRESS_MIDDLE;
+				}
 			}
 			break;
 			
 		}
 		
+	}
+	
+	public Input getInput() {
+		Input oInput = uInput;
+		if (uInput==Input.SWIPE_DOWN || uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT || uInput==Input.SWIPE_UP) {
+			uInput = Input.NONE;
+		} 
+		return oInput;
 	}
 
 

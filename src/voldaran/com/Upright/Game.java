@@ -114,7 +114,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public int USER_TOUCH = 1000;
 	
-	public UserInput _input = null;
+	public UserInput _input = new UserInput();
 	
 	
 	public Game(Context context) {
@@ -129,8 +129,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
-		_input = new UserInput();
-		_input.UpdateInput(event);
+		_input.UpdateInput(event, this);
 		
 
 		
@@ -386,6 +385,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			while (mRun) {
 				gameTIME += 1;
 				
+				
+				
+				UserInput.Input currentInput = _input.getInput();
 				//MovingObject.updateObjects();
 				
 				try {
