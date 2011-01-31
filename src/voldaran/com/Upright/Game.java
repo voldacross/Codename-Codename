@@ -114,7 +114,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public int USER_TOUCH = 1000;
 	
-	public UserInput _input = new UserInput();
+	public UserInput _input = new UserInput(this);
 	
 	
 	public Game(Context context) {
@@ -129,129 +129,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
-		_input.UpdateInput(event, this);
-		
-
-		
-		final int action = event.getAction();
-		bolFingerDown = true;
-		final float x = event.getX();
-		final float y = event.getY();
-		
-		mCurrentTouchX = x;
-		mCurrentTouchY = y;
-
-		switch (action & MotionEvent.ACTION_MASK) {
-		
-		
-		//Finger press down
-			case MotionEvent.ACTION_DOWN:
-				//Log.d("GSTA", "You pressed down!");
-				
-			//record X,Y locations to determine fingerDrag
-				
-					fingerDragStartX = event.getX();
-					fingerDragStartY = event.getY();
-					
-					if (mCurrentTouchX>getWidth()-(getWidth()/3)) {
-						//Log.d("GSTA", "To the right");
-						USER_TOUCH = USER_PRESS_RIGHT;
-					} else if (mCurrentTouchX<getWidth()/3) {
-						//Log.d("GSTA", "To the left");
-						USER_TOUCH = USER_PRESS_LEFT;
-					} else {
-						//Log.d("GSTA", "the Middle!");
-						USER_TOUCH = USER_PRESS_MIDDLE;
-					}
-				break;
-				
-				
-		//Finger press up
-			case MotionEvent.ACTION_UP: 
-				//Log.d("GSTA", "You released!");
-				bolFingerDown = false;
-				
-				//if finger is dragging above tolerance 
-				if (bolDragActive) {
-					//record ending X, Y
-					fingerDragEndX = event.getX();
-					fingerDragEndY = event.getY();
-
-
-					double dd = distance(fingerDragStartX, fingerDragStartY, event.getX(), event.getY());
-					
-					if (dd>35) {
-						int xDifference = (int) Math.abs((fingerDragStartX - fingerDragEndX));
-						int yDifference = (int) Math.abs((fingerDragStartY - fingerDragEndY));
-						if (xDifference>=yDifference) {
-							if (fingerDragEndX<=fingerDragStartX) {
-								//LEFT
-									USER_TOUCH = USER_SWIPE_LEFT;
-							} else {
-							//They swiped Right						
-							//Jump is not fully implemented
-								USER_TOUCH = USER_SWIPE_RIGHT;
-								}
-							} else if (xDifference<=yDifference) {
-								if (fingerDragEndY<=fingerDragStartY) {
-									//Log.d("GSTA", "You released Up!");
-							//They swiped Up
-									USER_TOUCH = USER_SWIPE_UP;
-								} else {
-									//Log.d("GSTA", "You released Down!");
-							//They swiped down
-									//adjust Gravity Down
-									USER_TOUCH = USER_SWIPE_DOWN;
-								} 
-							}
-					} else {
-						USER_TOUCH = USER_TOUCH_NONE;
-					}
-//					//user is no longer dragging their finger
-//					bolDragActive = false;
-//					//They have activated a Swipe / Drag
-//					bolDragRelease = true;
-
-				}
-				
-				break;
-			
-			case MotionEvent.ACTION_CANCEL:
-				
-				break;
-				
-		//Finger press drag, moving their finger across the screen. Swiping.
-			case MotionEvent.ACTION_MOVE:
-
-				double dd = distance(fingerDragStartX, fingerDragStartY, event.getX(), event.getY());
-				//Log.d("GSTA", "Distance - " + dd);
-				
-				
-				//built in tolerance.
-				//finger press on actual device always yields an ACTION_MOVE. 
-				//built a tolerence of a distance of 35 pixels to allow a little leeway
-				
-				if (dd>35) {
-					bolDragActive = true;
-//					int OLD_TOUCH = USER_TOUCH;
-					//Log.d("GSTA", "CLEARING OUT TOUCH");
-					USER_TOUCH = USER_TOUCH_NONE;
-				} else {
-					if (mCurrentTouchX>getWidth()-(getWidth()/3)) {
-						//Log.d("GSTA", "To the right");
-						USER_TOUCH = USER_PRESS_RIGHT;
-					} else if (mCurrentTouchX<getWidth()/3) {
-						//Log.d("GSTA", "To the left");
-						USER_TOUCH = USER_PRESS_LEFT;
-					} else {
-						//Log.d("GSTA", "the Middle!");
-						USER_TOUCH = USER_PRESS_MIDDLE;
-					}
-				}
-				
-				break;
-			}
-		
+		_input.UpdateInput(event);
 		return true;
 	}
 	
@@ -382,12 +260,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			Vec2d offset = new Vec2d();
 			GameObject.offset = offset;
 			Canvas c = null;
+			UserInput.Input currentInput;
 			while (mRun) {
 				gameTIME += 1;
 				
-				
-				
-				UserInput.Input currentInput = _input.getInput();
+				 currentInput = _input.getInput();
+				 Log.d("GSTA","cI : " + currentInput);
 				//MovingObject.updateObjects();
 				
 				try {
