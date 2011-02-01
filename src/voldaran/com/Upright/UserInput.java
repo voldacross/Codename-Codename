@@ -1,7 +1,6 @@
 package voldaran.com.Upright;
 
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -9,13 +8,13 @@ import android.view.SurfaceView;
 
 
 public class UserInput {
-	private SurfaceView surface;
+	private static SurfaceView surface;
 	
-	public UserInput() {
+	public UserInput(SurfaceView surface) {
 		mCurrentTouch = new Vec2d();
 		mDragStart = new Vec2d();
 		mDragEnd = new Vec2d();
-
+		UserInput.surface = surface;
 	}
 
 	public Input uInput = Input.NONE;
@@ -74,7 +73,7 @@ public class UserInput {
 		return null;
 	}
 
-	public void UpdateInput (MotionEvent event, SurfaceView s) {
+	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
 		previousInput = uInput;
@@ -82,7 +81,7 @@ public class UserInput {
 		fingerDown = true;
 		
         
-		int screenWidth = s.getWidth();
+		int screenWidth = UserInput.surface.getWidth();
 
 		mCurrentTouch.set(event.getX(), event.getY());
 		//mCurrentTouch = new Vector2D(event.getX(), event.getY());

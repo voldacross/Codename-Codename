@@ -138,21 +138,21 @@ public class Vec2d {
 		return this;
 	}
 	
-	public Vec2d mul(float scalar){
-		x = round(x * scalar);
-		y = round(y * scalar);
+	public Vec2d mul(double scalar){
+		x = (long)(x * scalar);
+		y = (long)(y * scalar);
 		return this;
 	}
 	
 	public Vec2d div(long scalar){
-		x = round(x / scalar);
-		y = round(y / scalar);
+		x = (long)(x / scalar);
+		y = (long)(y / scalar);
 		return this;
 	}
 	
 	public Vec2d div(float scalar){
-		x = round(x / scalar);
-		y = round(y / scalar);
+		x = (long)(x / scalar);
+		y = (long)(y / scalar);
 		return this;
 	}
 	

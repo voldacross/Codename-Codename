@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class GameHero extends MovingObject{
+	private final static Vec2d leftVelocity = new Vec2d(-2666, 0);
+	private final static Vec2d rightVelocity = new Vec2d(2666, 0);
+	
 	public Bitmap bitmap;
 
 	public GameHero(Vec2d pos,Vec2d extent, Bitmap bitmap) {
@@ -16,11 +19,19 @@ public class GameHero extends MovingObject{
 		this.bitmap = bitmap;
 	}
 	
+	public void processInput(UserInput.Input input){
+		switch(input){
+		case PRESS_LEFT: applyForce(leftVelocity); break;
+		case PRESS_RIGHT: applyForce(rightVelocity); break;
+		}
+	}
+	
 	public void update() {
-		pos.add(velocity);
+		super.update();
+		velocity.mul(0.60);
 	}
 	
 	public void draw(Canvas c){
-		c.drawBitmap(bitmap, (left() - GameObject.offset.x) / 1000, (top() - GameObject.offset.y) / 1000, null);
+		c.drawBitmap(bitmap, (left - GameObject.offset.x) / 1000, (top - GameObject.offset.y) / 1000, null);
 	}
 }
