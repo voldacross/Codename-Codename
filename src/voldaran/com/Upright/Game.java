@@ -78,8 +78,6 @@ Notes:
 //END NOTES
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
-
-	
 	private GameThread thread;
 	public float fingerX;
 	public float fingerY;
@@ -120,9 +118,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public Game(Context context) {
 		super(context);
 		getHolder().addCallback(this);
-		Log.d("GSTA","here1");
-		Log.d("GSTA","here2");
-		thread = new GameThread(getHolder(), this);
 		setFocusable(true);
 	}
 	
@@ -139,6 +134,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 	}
 	
+	public void createThread(){
+		thread = new GameThread(getHolder(), this);
+		thread.setRunning(true);
+		thread.start();		
+	}
+	
+	public void stopThread(){
+		thread.setRunning(false);
+		thread = null;
+	}
+	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
@@ -148,26 +154,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		synchronized(thread){
-			if(thread.isAlive()){
-				if(thread.threadSuspended){
-					thread.threadSuspended = false;
-					thread.notify();
-				} else Log.d("GSTA", "Thread alive && not suspended in surfaceCreated");
-			}else{
-				thread.setRunning(true);
-				thread.start();		
-			}
-		}
 	}
 	
 	//Destroys thread if app is closed, kind of buggy at the moment.
 	//Game doesn't force close on shutdown, but doesn't re-open smoothly
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		synchronized(thread){	
-			thread.threadSuspended = true;
-		}
+	@Override public void surfaceDestroyed(SurfaceHolder holder) {
 	}
 	
 	//GAME THREAD
@@ -175,7 +166,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		private SurfaceHolder _surfaceHolder;
 		private GameHero hero;
 		public boolean mRun = false;
-		public boolean threadSuspended = false;
 		//public MapClass.TileClass[][] aTile;
 		
 		public Bitmap bitHero;
@@ -190,19 +180,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			_surfaceHolder = surfaceHolder;
 			
+			GameObject.gameObjects.clear();
+			MovingObject.movingObjects.clear();
 			
-		//Arcahic way of creating a level, added hero and walls.
+		//creating a level, added hero and walls.
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.icon);
-			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(38000,38000), bitHero);
+			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
 
-			//_hero2.bitHero = bitHero
 			Log.d("GSTA", "hero : " + hero.pos);
 			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
 					                                         + (hero.pos.y - hero.extent.y) + ","
 					                                         + (hero.pos.x + hero.extent.x) + ","
 					                                         + (hero.pos.y + hero.extent.y));
 
-/*			addWall(400,475,400,10);
+			addWall(400,475,400,10);
 			addWall(400,5,400,10);
 			addWall(145,105,145,10);
 			addWall(375,100,10,100);
@@ -210,7 +201,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addWall(85,185,10,30);
 			addWall(185,260,10,65);
 			addWall(140,315,40,10);
-			addWall(290,260,10,65);*/
+			addWall(290,260,10,65);
 			addWall(465,270,10,200);
 		
 		
@@ -264,13 +255,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			Canvas c = null;
 			UserInput.Input currentInput;
 			while (mRun) {
-				try {
-					synchronized(this){
-						while (threadSuspended)
-							wait();
-					}
-				} catch (InterruptedException e){
-				}
 				gameTIME += 1;
 				
 				
