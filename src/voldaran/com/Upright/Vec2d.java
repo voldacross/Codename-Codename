@@ -167,4 +167,5 @@ public class Vec2d {
 	public Vec2d normalize(){
 		return this.div(this.len());
 	}
+
 }
