@@ -20,6 +20,11 @@ public class GameObject {
 	public Vec2d extent;
 	public Vec2d velocity;
 	
+	public long left;
+	public long top;
+	public long right;
+	public long bottom;
+	
 	private int color;
 	
 	
@@ -30,33 +35,22 @@ public class GameObject {
 	public GameObject(Vec2d pos, Vec2d extent, Vec2d velocity){
 		this.pos = pos;
 		this.extent = extent;
+		left = pos.x - extent.x;
+		top = pos.y - extent.y;
+		right = pos.x + extent.x;
+		bottom = pos.y + extent.y;
+		
 		this.velocity = velocity;
 		color = Color.WHITE;
 		GameObject.gameObjects.add(this);
 	}
 	
-	public long top(){
-		return pos.y - extent.y;
-	}
-	
-	public long left(){
-		return pos.x - extent.x;
-	}
-	
-	public long bottom(){
-		return pos.y + extent.x;
-	}
-	
-	public long right(){
-		return pos.x + extent.x;
-	}
-	
 	public void draw(Canvas c){
 		
-		Vec2d p = new Vec2d(pos).sub(GameObject.offset).div(1000);
-		Vec2d e = new Vec2d(extent).div(1000);
-		
-		Rect recWall = new Rect((int)(p.x - e.x), (int)(p.y - e.y), (int)(p.x + e.x - 1), (int)(p.y + e.y - 1));
+		Rect recWall = new Rect((int)((left - GameObject.offset.x) / 1000), 
+				                (int)((top - GameObject.offset.y) / 1000), 
+				                (int)((right - GameObject.offset.x)/ 1000 - 1), 
+				                (int)((bottom - GameObject.offset.y) / 1000 - 1));
 		
 		Paint paintWall = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 		paintWall.setColor(color);
