@@ -20,6 +20,17 @@ public class upright extends Activity {
         setContentView(new Game(this));
     }
     
+    
+    
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+    	Log.d("GSTA" ,"onSaveInstanceState is called");
+    }
+    
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+    	
+    }
 
 
 }

@@ -124,6 +124,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		Log.d("GSTA","here2");
 		thread = new GameThread(getHolder(), this);
 		setFocusable(true);
+		
 	}
 	
 	
@@ -158,13 +159,30 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceDestroyed(SurfaceHolder holder) {
 			// tell the thread to shut down and wait for it to finish
 			// this is a clean shutdown
+		Log.d("GSTA" ,"surfaceDestroyed is called");
+		
+    	boolean retry = true;
+        thread.setRunning(false);
+        
+        while (retry) {
+            try {
+                thread.join();
+//                thread.wait();
+                retry = false;
+            } catch (InterruptedException e) {
+                // we will try it again and again...
+            }
+        }
+        
+
 //			boolean retry = true;
 //			while (retry) {
 //				try {
-//					thread.join();
+//					thread.wait();
 //					retry = false;
 //				} catch (InterruptedException e) {
 //					// try again shutting down the thread
+//					Thread.currentThread().interrupt();
 //				}
 //			}
 	}
@@ -265,7 +283,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				gameTIME += 1;
 				
 				 currentInput = _input.getInput();
-				 Log.d("GSTA","cI : " + currentInput);
+//				 Log.d("GSTA","cI : " + currentInput);
 				//MovingObject.updateObjects();
 				
 				try {
