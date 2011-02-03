@@ -150,7 +150,7 @@ public class Vec2d {
 		return this;
 	}
 	
-	public Vec2d div(float scalar){
+	public Vec2d div(double scalar){
 		x = (long)(x / scalar);
 		y = (long)(y / scalar);
 		return this;
@@ -165,7 +165,7 @@ public class Vec2d {
 	}
 	
 	public Vec2d normalize(){
-		return this.div(this.len());
+		return this.div(this.len() / 1000.0);
 	}
 
 }

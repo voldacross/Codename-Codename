@@ -10,7 +10,7 @@ import android.graphics.Rect;
 public class GameObject {
 	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	public static Vec2d offset;
-	public static void drawObjects(Canvas c){
+	public static void drawAll(Canvas c){
 		for(GameObject o : GameObject.gameObjects){
 			o.draw(c);
 		}
@@ -27,6 +27,7 @@ public class GameObject {
 	
 	private int color;
 	
+	public GameObject ground = null;
 	
 	public GameObject (Vec2d pos, Vec2d extent) {
 		this(pos, extent, new Vec2d(0,0));
@@ -43,6 +44,13 @@ public class GameObject {
 		this.velocity = velocity;
 		color = Color.WHITE;
 		GameObject.gameObjects.add(this);
+	}
+	
+	protected GameObject grounding(){
+		return ground;
+	}
+	
+	public void update(){
 	}
 	
 	public void draw(Canvas c){

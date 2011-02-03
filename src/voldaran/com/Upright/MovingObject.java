@@ -5,12 +5,15 @@ import java.util.ArrayList;
 public class MovingObject extends GameObject{
 	public static ArrayList<MovingObject> movingObjects = new ArrayList<MovingObject>();
 	
-	public static void updateObjects(){
+	public static void updateAll(){
 		for(MovingObject o : MovingObject.movingObjects){
 			o.update();
 		}
+		for(MovingObject o: MovingObject.movingObjects){
+			o.grounding();
+		}
 	}
-
+	
 	public MovingObject(Vec2d pos, Vec2d extent, Vec2d velocity){
 		super(pos, extent, velocity);
 		MovingObject.movingObjects.add(this);
@@ -26,6 +29,7 @@ public class MovingObject extends GameObject{
 		return this;
 	}
 	
+	@Override
 	public void update(){
 		pos.add(velocity);
 		updateSides();
@@ -78,7 +82,7 @@ public class MovingObject extends GameObject{
 		if(overlaps(b)) return null;
 		
 		float[] to = {-1, -1};								// No collision flag
-		float[] ts = {1, 1};								// No separtion flag
+		float[] ts = {1, 1};								// No separation flag
 		
 		Vec2d v = new Vec2d(velocity).sub(b.velocity);		// calculate from b's frame of reference
 		

@@ -204,22 +204,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addWall(290,260,10,65);
 //			addWall(465,270,10,200);
 		
-		
-/*			GameObjects _firstPlatform = new GameObjects();
-			_firstPlatform.x = 600;
-			_firstPlatform.y = 300;
-			_firstPlatform.type = _firstPlatform.GAME_OBJECT_PLATFORM;
-			_firstPlatform.width = 100;
-			_firstPlatform.height = 10;
-			_firstPlatform.speed = 1;
-			_firstPlatform.addPathPoint(600, 300);
-			_firstPlatform.addPathPoint(450, 300);
-			_firstPlatform.addPathPoint(450, 150);
-			_firstPlatform.addPathPoint(600, 150);
-			_gameMoving.add(_firstPlatform);
-			_gameO.add(_firstPlatform);
-*/			
-
+			Platform p = new Platform(new Vec2d(700000, 120000), new Vec2d(50000, 10000));
+			p.addStep(-200000, 0);
+			p.addStep(200000,426000);
+//			p.addStep(200000, 0);
+			
+			
 			//gameOverlay.addWall(_wall2);
 			
 //			Log.d("GSTA", "Wall test : " + gameOverlay.testWall(0, 0, _wall9));
@@ -262,8 +252,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				currentInput = _input.getInput();
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
-				hero.update();
-				//MovingObject.updateObjects();
+				MovingObject.updateAll();
 				
 				try {
 					c = _surfaceHolder.lockCanvas(null);
@@ -271,7 +260,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						clearScreen(c);
 						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
 						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
-						GameObject.drawObjects(c);
+						GameObject.drawAll(c);
 					}
                 }catch (NullPointerException e){
                 }
