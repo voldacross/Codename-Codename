@@ -114,6 +114,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public UserInput _input = new UserInput(this);
 	
+	public enum GameState {
+		TITLE,
+		PLAYING,
+		PAUSED,
+		LEVEL_COMPLETE
+	}
+	
+	public GameState gameState;
 	
 	public Game(Context context) {
 		super(context);
@@ -137,11 +145,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void createThread(){
 		thread = new GameThread(getHolder(), this);
 		thread.setRunning(true);
-		thread.start();		
 	}
 	
 	public void stopThread(){
 		thread.setRunning(false);
+		boolean retry = false;
+		while(retry){
+			try{
+				thread.join();
+				retry = false;
+			}catch(InterruptedException e){
+				
+			}
+		}
 		thread = null;
 	}
 	
@@ -154,6 +170,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("Game.surfaceCreated", "Surface created");
+		thread.start();		
 	}
 	
 	//Destroys thread if app is closed, kind of buggy at the moment.
@@ -164,6 +182,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
+		private Game game;
 		private GameHero hero;
 		public boolean mRun = false;
 		//public MapClass.TileClass[][] aTile;
@@ -179,6 +198,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
 			
 			_surfaceHolder = surfaceHolder;
+			this.game = game;
 			
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
@@ -209,24 +229,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			p.addStep(200000,426000);
 //			p.addStep(200000, 0);
 			
-			
-			//gameOverlay.addWall(_wall2);
-			
-//			Log.d("GSTA", "Wall test : " + gameOverlay.testWall(0, 0, _wall9));
-//			Log.d("GSTA", "Wall test : " + gameOverlay.testWall(0, 0, _wall5));
-//			Log.d("GSTA", "Wall test : " + gameOverlay.testWall(1, 1, _wall5));
-			
-			//ArrayList returnTest = gameOverlay.findWall(_wall9);
-			
-//			ArrayList returnTest = gameOverlay.getTile(0, 0);
-			
-//			if (returnTest.contains(_wall9)) {
-//				Log.d("GSTA", "Wall9 is in 0,0");
-//			}
-			
-			
-			
-			
 		}
 		
 		public void setRunning(boolean run) {
@@ -240,15 +242,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
+			gameState = GameState.PLAYING;
+			while (mRun) {
+				switch(gameState){
+				case TITLE:break;
+				case PLAYING:gameState = gameLoop();
+				case PAUSED:break;
+				case LEVEL_COMPLETE:break;
+				}
+			}
+		}
+		
+		public GameState gameLoop(){
 			Vec2d offset = new Vec2d();
 			GameObject.offset = offset;
-			Canvas c = null;
 			UserInput.Input currentInput;
-			while (mRun) {
+			while(gameState == GameState.PLAYING){
+				Canvas c = null;
 				gameTIME += 1;
-				
-				
-				
 				currentInput = _input.getInput();
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
@@ -257,18 +268,46 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				try {
 					c = _surfaceHolder.lockCanvas(null);
 					synchronized (_surfaceHolder) {
+						Log.d("gameThread.run", "clear screen");
 						clearScreen(c);
 						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
 						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
+						Log.d("gameThread.run", "draw");
 						GameObject.drawAll(c);
 					}
-                }catch (NullPointerException e){
+                }catch(NullPointerException e){
                 }
 				finally {
                     if (c != null) {
                         _surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
+			}
+			return gameState;
+		}
+		
+		public void pause(){
+			Vec2d offset = new Vec2d();
+			while(mRun){
+				Canvas c = null;
+				try {
+					c = _surfaceHolder.lockCanvas(null);
+					synchronized (_surfaceHolder) {
+						Log.d("gameThread.run", "clear screen");
+						clearScreen(c);
+						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
+						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
+						Log.d("gameThread.run", "draw");
+						GameObject.drawAll(c);
+					}
+                }catch(NullPointerException e){
+                }
+				finally {
+                    if (c != null) {
+                        _surfaceHolder.unlockCanvasAndPost(c);
+                    }
+                }
+				
 			}
 		}
 		
