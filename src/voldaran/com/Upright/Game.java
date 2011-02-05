@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -126,6 +127,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
 		_input.UpdateInput(event);
+		
 		return true;
 	}
 	
@@ -143,6 +145,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public void stopThread(){
 		thread.setRunning(false);
+		
+		boolean retry = true;
+        while (retry) {
+        	try {
+                thread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+            }
+        }
+        
 		thread = null;
 	}
 	
@@ -160,20 +172,46 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	//Destroys thread if app is closed, kind of buggy at the moment.
 	//Game doesn't force close on shutdown, but doesn't re-open smoothly
 
-	@Override public void surfaceDestroyed(SurfaceHolder holder) {
-
+	@Override 
+	public void surfaceDestroyed(SurfaceHolder holder) {
 	}
+	
+	public GameThread getThread () {
+		return thread;
+	}
+	
 	
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
 		private GameHero hero;
 		public boolean mRun = false;
+		
+		public MenuTitle menuSetup, menuAbout, menuPlay;
+
+		
 		//public MapClass.TileClass[][] aTile;
 		
 		public Bitmap bitHero;
 		
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
+		
+		public Bundle saveGameState() {
+			Bundle save = new Bundle();
+			//Data to be saved
+			save.putLong("HERO_X",hero.pos.x);
+			save.putLong("HERO_Y",hero.pos.y);
+			save.putBoolean("HERO_GRAVITY", hero.gravityDown);
+			return save;
+		}
+		
+		public void resumeGameState(Bundle resume) {
+			Log.d("GSTA", "Setting hero.pos");
+			Log.d("GSTA","resuming... " + resume.getLong("HERO_X") + "," +  resume.getLong("HERO_Y"));
+			hero.pos.set(resume.getLong("HERO_X"), resume.getLong("HERO_Y"));
+			
+			hero.gravityDown = resume.getBoolean("HERO_GRAVITY");
+		}
 		
 		public void addWall(int posx, int posy, int extentx, int extenty){
 			new GameObject(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
@@ -187,6 +225,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			MovingObject.movingObjects.clear();
 			
 		//creating a level, added hero and walls.
+			
+			
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.icon);
 			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
 
@@ -205,7 +245,26 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addWall(185,260,10,65);
 			addWall(140,315,40,10);
 			addWall(290,260,10,65);
-			addWall(465,270,10,200);
+			
+			
+			int height = 480;
+			int width = 800;
+			Rect recSetup = new Rect(0, 0, width, height);
+			Rect recPlay = new Rect(0, 0, width, height);
+			Rect recAbout = new Rect(0, 0, width, height);
+
+			
+			Bitmap bitPlay = BitmapFactory.decodeResource(getResources(),R.drawable.menu_play);
+			Bitmap bitAbout = BitmapFactory.decodeResource(getResources(),R.drawable.menu_about);
+			Bitmap bitSetup= BitmapFactory.decodeResource(getResources(),R.drawable.menu_setup);
+			
+			
+			menuSetup = new MenuTitle(recSetup, 0, 0, 0, bitSetup, 0);
+			menuAbout = new MenuTitle(recAbout, 0, 533, 800, bitAbout, 1);
+			menuPlay = new MenuTitle(recPlay, 0, -533, -800, bitPlay, 2);
+
+
+//			addWall(465,270,10,200);
 		
 		
 /*			GameObjects _firstPlatform = new GameObjects();
@@ -249,7 +308,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
      //for consistent rendering
         //amount of time to sleep for (in milliseconds)
         BigInteger StartTime;
-
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
@@ -257,18 +315,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.offset = offset;
 			Canvas c = null;
 			UserInput.Input currentInput;
+			
 			while (mRun) {
 				gameTIME += 1;
 				
 				currentInput = _input.getInput();
+				
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
 				hero.update();
-				//MovingObject.updateObjects();
+//				MovingObject.updateObjects();
+				Log.d("GSTA", "Hero - " + hero.pos.toString());
 				
 				try {
 					c = _surfaceHolder.lockCanvas(null);
 					synchronized (_surfaceHolder) {
+						if (true) pause(c);
 						clearScreen(c);
 						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
 						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
@@ -284,14 +346,75 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 		
-		public void clearScreen(Canvas c){
-			int height = getHeight();
-			int width = getWidth();
-			Rect rec = new Rect (0,0, width, height);
-			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			backgroundPaint.setColor(Color.DKGRAY);
-			c.drawRect(rec, backgroundPaint);
+		public void pause(Canvas c) {
+
+			while (mRun) {
+//				gameTIME += 1;
+				Log.d("GSTA", "Starting Pause Loop");
+				UserInput.Input currentInput = _input.getInput();
+//				Log.d("GSTA","" + currentInput);
+				transition(currentInput);
+				
+				
+				try {
+					c = _surfaceHolder.lockCanvas(null);
+					synchronized (_surfaceHolder) {
+						Log.d("GSTA", "Clearing Screen");
+						clearScreen(c);
+						Log.d("GSTA", "Drawing Menu");
+						drawTitleScreen(c);
+					}
+                }catch (NullPointerException e){
+                }
+				finally {
+                    if (c != null) {
+                        _surfaceHolder.unlockCanvasAndPost(c);
+                    }
+                }
+			}
 		}
+		
+		public void transition(UserInput.Input input) {
+			
+			if (!MenuTitle.inTransition) {
+				Log.d("GSTA", "Not in Transition");
+				if (MenuTitle.activePanel==menuPlay) {
+					Log.d("GSTA", "Play - Active");
+					if (input==UserInput.Input.PRESS_RIGHT) MenuTitle.activePanel = null;
+				} else if (MenuTitle.activePanel==menuAbout) {
+					Log.d("GSTA", "About - Active");
+					if (input==UserInput.Input.PRESS_LEFT) MenuTitle.activePanel = null;
+				} else if (MenuTitle.activePanel==menuSetup) {
+					Log.d("GSTA", "Setup - Active");
+					if (input==UserInput.Input.PRESS_MIDDLE) MenuTitle.activePanel = null;
+				} else {
+					
+					Log.d("GSTA", "Null - Active");
+					if (input==UserInput.Input.PRESS_MIDDLE) MenuTitle.activePanel = menuSetup;
+					if (input==UserInput.Input.PRESS_LEFT) MenuTitle.activePanel = menuPlay;
+					if (input==UserInput.Input.PRESS_RIGHT) MenuTitle.activePanel = menuAbout;
+				}
+			} else Log.d("GSTA", "In Transition");
+		}
+		
+		public void drawTitleScreen(Canvas c){
+			MenuSystem.activeMenu=null;
+			MenuTitle.drawMenus(c);
+		}
+		
+		public void clearScreen(Canvas c){
+			synchronized (_surfaceHolder) {
+				int height = getHeight();
+				int width = getWidth();
+				Rect rec = new Rect (0,0, width, height);
+				Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+				backgroundPaint.setColor(Color.DKGRAY);
+				c.drawRect(rec, backgroundPaint);
+			}
+		}
+
+
+
 	}
 }
 

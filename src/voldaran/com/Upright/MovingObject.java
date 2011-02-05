@@ -58,7 +58,8 @@ public class MovingObject extends GameObject{
 		Collision firstcollision;
 		int i = 0;
 		
-		while(true && i < 10){
+
+		while(i < 10){
 			firstcollision = null;
 			for(GameObject o : GameObject.gameObjects){
 				if(o != this) 
