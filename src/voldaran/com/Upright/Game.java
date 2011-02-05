@@ -136,13 +136,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public void createThread(){
 		thread = new GameThread(getHolder(), this);
-		thread.setRunning(true);
-		thread.start();		
+
 	}
 	
 	public void stopThread(){
 		thread.setRunning(false);
 		thread = null;
+		
 	}
 	
 	@Override
@@ -154,6 +154,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("GSTA", "surfaceCreated");
+		thread.setRunning(true);
+		thread.start();		
 	}
 	
 	//Destroys thread if app is closed, kind of buggy at the moment.
@@ -177,7 +180,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
-			
 			_surfaceHolder = surfaceHolder;
 			
 			GameObject.gameObjects.clear();
@@ -244,25 +246,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.offset = offset;
 			Canvas c = null;
 			UserInput.Input currentInput;
+//			try {
+//				sleep(250);
+//			} catch (InterruptedException e1) {
+//				// TODO Auto-generated catch block
+////				e1.printStackTrace();
+//			}
 			while (mRun) {
-				gameTIME += 1;
+				if (true) pause();
 				
 				
-				
-				currentInput = _input.getInput();
-				hero.processInput(currentInput);
-				hero.collisionAvoid();
-				MovingObject.updateAll();
+//				gameTIME += 1;
+//				
+//				
+//				
+//				currentInput = _input.getInput();
+//				hero.processInput(currentInput);
+//				hero.collisionAvoid();
+//				MovingObject.updateAll();
 				
 				try {
 					c = _surfaceHolder.lockCanvas(null);
 					synchronized (_surfaceHolder) {
+						
 						clearScreen(c);
 						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
 						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
 						GameObject.drawAll(c);
 					}
-                }catch (NullPointerException e){
                 }
 				finally {
                     if (c != null) {
@@ -271,6 +282,41 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                 }
 			}
 		}
+		
+		
+		public void pause() {
+			Canvas c = null;
+
+			while (mRun) {
+				try {
+					c = _surfaceHolder.lockCanvas(null);
+					synchronized (_surfaceHolder) {
+						Log.d("GSTA", "clearScreens");
+						clearScreen(c);
+						Log.d("GSTA", "clearMenu");
+						drawMenu(c);
+					}
+                }
+				finally {
+                    if (c != null) {
+                        _surfaceHolder.unlockCanvasAndPost(c);
+                    }
+                }
+			}
+		}
+		
+		public void drawMenu(Canvas c) {
+			int height = getHeight();
+			int width = getWidth();
+			Rect rec = new Rect (0,0, width, height);
+			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+			backgroundPaint.setColor(Color.RED);
+			c.drawRect(rec, backgroundPaint);	
+			c.drawBitmap(bitHero, 50, 50, null);
+
+			
+		}
+		
 		
 		public void clearScreen(Canvas c){
 			int height = getHeight();
