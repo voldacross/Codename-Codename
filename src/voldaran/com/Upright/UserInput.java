@@ -6,7 +6,6 @@ import android.view.SurfaceView;
 
 
 
-
 public class UserInput {
 	private static SurfaceView surface;
 	
@@ -109,10 +108,6 @@ public class UserInput {
 			
 		case MotionEvent.ACTION_UP:
 			fingerDown = false;
-			
-
-
-
 
 				if (uInput.equals(Input.PRESS_DRAGGING)) {
 					mDragEnd.set(event.getX(), event.getY());

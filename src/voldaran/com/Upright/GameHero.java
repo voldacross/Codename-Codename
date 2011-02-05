@@ -9,9 +9,12 @@ public class GameHero extends MovingObject{
 	private final static Vec2d RIGHTVELOCITY = new Vec2d(2000, 0);
 	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-20000, -15000);
 	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(20000, -15000);
+
+	
 	
 	public Bitmap bitmap;
 	private GameObject ground = null;
+
 
 	public GameHero(Vec2d pos,Vec2d extent, Bitmap bitmap) {
 		super(pos, extent);
@@ -59,13 +62,8 @@ public class GameHero extends MovingObject{
 		if(ground != null)
 			velocity.x += ground.velocity.x;
 		super.update();
-		if(ground != null){
-			velocity.x -= ground.velocity.x;
-			velocity.mul(0.75);
-		}
-		else
-			velocity.mul(0.95);
-		velocity.add(0, 1000);
+		velocity.mul(.75);
+		velocity.add(0, 10000);
 	}
 	
 	@Override
