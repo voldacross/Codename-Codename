@@ -39,18 +39,19 @@ public class GameHero extends MovingObject{
 	}
 	
 	public void processInput(UserInput.Input input){
-		switch(input){
-		case PRESS_LEFT: applyForce(LEFTVELOCITY); break;
-		case PRESS_RIGHT: applyForce(RIGHTVELOCITY); break;
-		case SWIPE_LEFT: 
-			applyForce(JUMPLEFTVELOCITY);
-			ground = null;
-			break;
-		case SWIPE_RIGHT: 
-			applyForce(JUMPRIGHTVELOCITY);
-			ground = null;
-			break;
-		}
+		if(ground != null)
+			switch(input){
+			case PRESS_LEFT: applyForce(LEFTVELOCITY); break;
+			case PRESS_RIGHT: applyForce(RIGHTVELOCITY); break;
+			case SWIPE_LEFT: 
+				applyForce(JUMPLEFTVELOCITY);
+				ground = null;
+				break;
+			case SWIPE_RIGHT: 
+				applyForce(JUMPRIGHTVELOCITY);
+				ground = null;
+				break;
+			}
 	}
 	
 	@Override

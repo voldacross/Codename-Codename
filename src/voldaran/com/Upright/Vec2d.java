@@ -14,7 +14,7 @@ public class Vec2d {
 		this.y = y;
 	}
 	
-	public Vec2d(float x, float y){
+	public Vec2d(double x, double y){
 		this(round(x), round(y));
 	}
 	
@@ -46,7 +46,7 @@ public class Vec2d {
 		return this;
 	}
 	
-	public Vec2d set(float x, float y){
+	public Vec2d set(double x, double y){
 		return set(round(x), round(y));
 	}
 	
@@ -68,13 +68,13 @@ public class Vec2d {
 		return this;
 	}
 	
-	public Vec2d add(float scalar){
+	public Vec2d add(double scalar){
 		x += round(scalar);
 		y += round(scalar);
 		return this;
 	}
 	
-	public Vec2d add(float x, float y){
+	public Vec2d add(double x, double y){
 		this.x += round(x);
 		this.y += round(y);
 		return this;
@@ -98,13 +98,13 @@ public class Vec2d {
 		return this;
 	}
 	
-	public Vec2d sub(float scalar){
+	public Vec2d sub(double scalar){
 		x -= round(scalar);
 		y -= round(scalar);
 		return this;
 	}
 	
-	public Vec2d sub(float x, float y){
+	public Vec2d sub(double x, double y){
 		this.x -= round(x);
 		this.y -= round(y);
 		return this;
@@ -122,7 +122,7 @@ public class Vec2d {
 		return this;
 	}
 	
-	public Vec2d dot(float x, float y){
+	public Vec2d dot(double x, double y){
 		this.x = round(this.x * x);
 		this.y = round(this.y * y);
 		return this;

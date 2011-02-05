@@ -12,7 +12,8 @@ public class GameObject {
 	public static Vec2d offset;
 	public static void drawAll(Canvas c){
 		for(GameObject o : GameObject.gameObjects){
-			o.draw(c);
+			if(o.onScreen(c))
+				o.draw(c);
 		}
 	}
 	
@@ -53,17 +54,21 @@ public class GameObject {
 	public void update(){
 	}
 	
+	private boolean onScreen(Canvas c){
+		return (right - GameObject.offset.x) >= 0 
+			&& (left - GameObject.offset.x) <= c.getWidth() * 1000 
+			&& (bottom - GameObject.offset.y) >= 0 
+			&& (top - GameObject.offset.y) <= c.getHeight() * 1000;
+	}
+	
 	public void draw(Canvas c){
-		
-		Rect recWall = new Rect((int)((left - GameObject.offset.x) / 1000), 
-				                (int)((top - GameObject.offset.y) / 1000), 
-				                (int)((right - GameObject.offset.x)/ 1000 - 1), 
-				                (int)((bottom - GameObject.offset.y) / 1000 - 1));
-		
-		Paint paintWall = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintWall.setColor(color);
-		c.drawRect(recWall, paintWall);
-
+		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
+				                  (int)((top - GameObject.offset.y) / 1000), 
+				                  (int)((right - GameObject.offset.x)/ 1000 - 1), 
+		 		                 (int)((bottom - GameObject.offset.y) / 1000 - 1));
+		 
+		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+		paintObject.setColor(color);
+		c.drawRect(recObject, paintObject);
 	}
 }
-

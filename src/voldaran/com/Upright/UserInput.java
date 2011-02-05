@@ -84,7 +84,7 @@ public class UserInput {
 		int screenWidth = UserInput.surface.getWidth();
 
 		mCurrentTouch.set(event.getX(), event.getY());
-		//mCurrentTouch = new Vector2D(event.getX(), event.getY());
+		//mCurrentTouch = new Vec2D(event.getX(), event.getY());
 		
 		//Log.d("GSTA", "" + screenWidth);
 

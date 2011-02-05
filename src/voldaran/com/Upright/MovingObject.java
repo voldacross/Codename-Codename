@@ -122,8 +122,8 @@ public class MovingObject extends GameObject{
 		
 		// calculate the avoidance velocity
 		if(to[0] > to[1]) 
-			return new Collision(tom, new Vec2d((long) (velocity.x * tom + b.velocity.x * (tsm - tom)), velocity.y));
+			return new Collision(tom, new Vec2d(velocity.x * tom + b.velocity.x * (tsm - tom), velocity.y));
 		else 
-			return new Collision(tom, new Vec2d(velocity.x, (long)(velocity.y * tom + b.velocity.y * (tsm - tom))));
+			return new Collision(tom, new Vec2d(velocity.x, velocity.y * tom + b.velocity.y * (tsm - tom)));
 	}
 }
