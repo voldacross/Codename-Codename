@@ -23,7 +23,7 @@ public class UserInput {
 	
 	private Vec2d mDragStart;
 	private Vec2d mDragEnd;
-
+	private Vec2d mCurrentPress;
 	
 	
 	public enum Input {
@@ -92,6 +92,7 @@ public class UserInput {
 		
 		case MotionEvent.ACTION_DOWN:
 			mDragStart.set(event.getX(), event.getY());
+			mCurrentPress = new Vec2d(event.getX(), event.getY());
 			
 			if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
 				uInput = Input.PRESS_RIGHT;
@@ -145,6 +146,12 @@ public class UserInput {
 			
 		}
 		
+	}
+	
+	public Vec2d getCurrentPress() {
+		Vec2d tempCurrentPress = mCurrentPress;
+		mCurrentPress = null;
+		return tempCurrentPress;
 	}
 	
 	public Input getInput() {

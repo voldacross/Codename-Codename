@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import voldaran.com.Upright.UserInput.Input;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -47,27 +46,53 @@ public class MenuTitleScreen {
 		menuTitlePanels.add(Setup);
 		menuTitlePanels.add(About);
 		menuTitlePanels.add(Play);
+		
+		Rect butContinue = new Rect(50, 52, 250, 115);
+		
+		MenuButton button = new MenuButton(butContinue, "CONTINUE") {
+			public void onClick() {
+				Log.d("GSTA", "You clicked CONTINUE --- OVVVVVERRIDE");
+			}
+		};
+		Play.addButton(button);
+		
 	}
 	
-	public void processInput(Input input) {
-		if (!inTransition) {
+	public void processInput(Input input, Vec2d clicked) {
+		
+		
+		if ((!inTransition) && (clicked!=null)){
 			if (activePanel==About) {
 				if (input==UserInput.Input.PRESS_LEFT) {
 					activePanel = null;
-					Log.d("GSTA", "setting releasePanel to About");
+//					Log.d("GSTA", "setting releasePanel to About");
 					releasePanel = About;
+					inTransition = true;
+				} else {
+					
+					
 				}
-				inTransition = true;
+				
 			} else if (activePanel==Play) {
 				if (input==UserInput.Input.PRESS_RIGHT) {
 					activePanel = null;
 					releasePanel = Play;
-					Log.d("GSTA", "setting releasePanel to Play");
+//					Log.d("GSTA", "setting releasePanel to Play");
+					inTransition = true;
+				} else {
+					
+					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)){
+						Log.d("GSTA", "You clicked " + Play.returnButton(clicked).name);
+						Play.returnButton(clicked).onClick();
+					}
 				}
-				inTransition = true;
+				
 			} else if (activePanel==Setup) {
-				if (input==UserInput.Input.PRESS_MIDDLE) activePanel = null;
-				inTransition = true;
+				if (input==UserInput.Input.PRESS_MIDDLE){
+					activePanel = null;
+					inTransition = true;
+				}
+				
 			} else {
 				if (!inTransition) {
 					if (input==UserInput.Input.PRESS_MIDDLE) activePanel = Setup;
@@ -78,11 +103,13 @@ public class MenuTitleScreen {
 			
 			if (!inTransition) {
 				
-				Log.d("GSTA", "setting releasePanel to null");
+//				Log.d("GSTA", "setting releasePanel to null");
 				releasePanel=null;
 			}
 		} 
 	}
+	
+	public final int transitionSpeed = 30;
 	
 	public void update() {
 		
@@ -97,10 +124,10 @@ public class MenuTitleScreen {
 						//not in the correct position
 						//Transition to correct Active position
 						if (m.currentLeft > m.activeLeft) {
-							m.currentLeft -= 30;
+							m.currentLeft -= transitionSpeed;
 							if (m.currentLeft < m.activeLeft) m.currentLeft = m.activeLeft;
 						} else if (m.currentLeft < m.activeLeft) {
-							m.currentLeft += 30;
+							m.currentLeft += transitionSpeed;
 							if (m.currentLeft > m.activeLeft) m.currentLeft = m.activeLeft;
 						}
 					}
@@ -109,10 +136,10 @@ public class MenuTitleScreen {
 					if (m.currentLeft!=m.mainLeft) {
 						inTransition = true;
 						if (m.currentLeft > m.mainLeft) {
-							m.currentLeft -= 30;
+							m.currentLeft -= transitionSpeed;
 							if (m.currentLeft < m.mainLeft) m.currentLeft = m.mainLeft;
 						} else if (m.currentLeft < m.mainLeft) {
-							m.currentLeft += 30;
+							m.currentLeft += transitionSpeed;
 							if (m.currentLeft > m.mainLeft) m.currentLeft = m.mainLeft;
 						}
 					}
@@ -123,10 +150,10 @@ public class MenuTitleScreen {
 							inTransition = true;
 							//Transition back 
 							if (m.currentLeft > m.goneLeft) {
-								m.currentLeft -= 30;
+								m.currentLeft -= transitionSpeed;
 								if (m.currentLeft < m.goneLeft) m.currentLeft = m.goneLeft;
 							} else if (m.currentLeft < m.goneLeft) {
-								m.currentLeft += 30;
+								m.currentLeft += transitionSpeed;
 								if (m.currentLeft > m.goneLeft) m.currentLeft = m.goneLeft;
 							}
 						}

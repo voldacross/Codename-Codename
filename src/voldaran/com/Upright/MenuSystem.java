@@ -2,13 +2,12 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
-import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class MenuSystem {
 	
 	public static MenuSystem activeMenu;
-	public static ArrayList<MenuButton> menuButtons = new ArrayList<MenuButton>();
+	public ArrayList<MenuButton> menuButtons = new ArrayList<MenuButton>();
 	public static ArrayList<MenuSystem> menus = new ArrayList<MenuSystem>();
 	
 	
@@ -18,7 +17,11 @@ public class MenuSystem {
 
 	public void addButton(Rect b, String name) {
 		MenuButton button = new MenuButton(b, name);
-		MenuSystem.menuButtons.add(button);
+		menuButtons.add(button);
+	}
+	
+	public void addButton(MenuButton button) {
+		menuButtons.add(button);
 	}
 	
 	public MenuSystem() {
@@ -30,19 +33,18 @@ public class MenuSystem {
 		r = menu;
 	}
 	
-	
-	public static void updateActive() {
-		
-	}	
-	
-	public void Transition() {
-		MenuSystem.activeMenu = this;
-	}
-	
-	
-	public void draw(Canvas c) {
-		
-		
+	public MenuButton returnButton(Vec2d click) {
+		for(MenuButton b : menuButtons){
+			
+			Rect test = b.clickableArea;
+			
+			if (test.intersects((int) click.x,(int) click.y,(int) click.x,(int) click.y)) {
+//				Log.d("GSTA", "You have clicked on " + b.name);
+				return b;
+			}
+			
+		}
+		return null;
 	}
 	
 }

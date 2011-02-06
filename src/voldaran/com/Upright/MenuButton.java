@@ -6,11 +6,17 @@ public class MenuButton {
 
 	public String name;
 	public int id;
-	public Rect button;
+	public Rect clickableArea;
 	
 	public MenuButton(Rect r, String Name) {
-		button = r;
+		clickableArea = r;
 		name = Name;
+
+	}
+	
+	public void onClick() {
+		
+		
 	}
 	
 }

@@ -193,8 +193,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		private GameHero hero;
 		public boolean mRun = false;
 		
-		public MenuTitle menuSetup, menuAbout, menuPlay;
-
+		
 		
 		//public MapClass.TileClass[][] aTile;
 		
@@ -254,26 +253,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addWall(140,315,40,10);
 			addWall(290,260,10,65);
 			
+			
+			//Load Title menu into memory
 			titleMenu = new MenuTitleScreen(game.mContext);
+		
 			
-			
-			int height = 480;
-			int width = 800;
-			Rect recSetup = new Rect(0, 0, width, height);
-			Rect recPlay = new Rect(0, 0, width, height);
-			Rect recAbout = new Rect(0, 0, width, height);
-
-			
-			Bitmap bitPlay = BitmapFactory.decodeResource(getResources(),R.drawable.menu_play);
-			Bitmap bitAbout = BitmapFactory.decodeResource(getResources(),R.drawable.menu_about);
-			Bitmap bitSetup= BitmapFactory.decodeResource(getResources(),R.drawable.menu_setup);
-			
-			
-			menuSetup = new MenuTitle(recSetup, 0, 0, 0, bitSetup, 0);
-			menuAbout = new MenuTitle(recAbout, 0, 533, 800, bitAbout, 1);
-			menuPlay = new MenuTitle(recPlay, 0, -533, -800, bitPlay, 2);
-
-
 //			addWall(465,270,10,200);
 		
 			Platform p = new Platform(new Vec2d(700000, 120000), new Vec2d(50000, 10000));
@@ -326,14 +310,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				if (true) pause();
 				
 				
-//				gameTIME += 1;
-//				
-//				
-//				
-//				currentInput = _input.getInput();
-//				hero.processInput(currentInput);
-//				hero.collisionAvoid();
-//				MovingObject.updateAll();
+				gameTIME += 1;
+				
+				
+				
+				currentInput = _input.getInput();
+				hero.processInput(currentInput);
+				hero.collisionAvoid();
+				MovingObject.updateAll();
 				
 				try {
 					c = _surfaceHolder.lockCanvas(null);
@@ -377,54 +361,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public void showTitleScreen(Canvas c) {
 			Input currentInput = _input.getInput();
-			titleMenu.processInput(currentInput);
+			Vec2d mClicked = _input.getCurrentPress();
+			titleMenu.processInput(currentInput, mClicked);
 			titleMenu.update();
 			titleMenu.drawPanels(c);
-			
-//			MenuTitle.drawMenus(c);
-		}
-		
-		
-		public void drawMenu(Canvas c) {
-			int height = getHeight();
-			int width = getWidth();
-			Rect rec = new Rect (0,0, width, height);
-			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			backgroundPaint.setColor(Color.RED);
-			c.drawRect(rec, backgroundPaint);	
-			c.drawBitmap(bitHero, 50, 50, null);
 
-			
 		}
-		
-		public void transition(UserInput.Input input) {
-			
-			if (!MenuTitle.inTransition) {
-				Log.d("GSTA", "Not in Transition");
-				if (MenuTitle.activePanel==menuPlay) {
-					Log.d("GSTA", "Play - Active");
-					if (input==UserInput.Input.PRESS_RIGHT) MenuTitle.activePanel = null;
-				} else if (MenuTitle.activePanel==menuAbout) {
-					Log.d("GSTA", "About - Active");
-					if (input==UserInput.Input.PRESS_LEFT) MenuTitle.activePanel = null;
-				} else if (MenuTitle.activePanel==menuSetup) {
-					Log.d("GSTA", "Setup - Active");
-					if (input==UserInput.Input.PRESS_MIDDLE) MenuTitle.activePanel = null;
-				} else {
-					
-					Log.d("GSTA", "Null - Active");
-					if (input==UserInput.Input.PRESS_MIDDLE) MenuTitle.activePanel = menuSetup;
-					if (input==UserInput.Input.PRESS_LEFT) MenuTitle.activePanel = menuPlay;
-					if (input==UserInput.Input.PRESS_RIGHT) MenuTitle.activePanel = menuAbout;
-				}
-			} else Log.d("GSTA", "In Transition");
-		}
-		
-		public void drawTitleScreen(Canvas c){
-	//			MenuSystem.activeMenu=null;
-			MenuTitle.drawMenus(c);
-		}
-		
 		
 		public void clearScreen(Canvas c){
 			synchronized (_surfaceHolder) {

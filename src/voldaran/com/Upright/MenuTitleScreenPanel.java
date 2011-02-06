@@ -3,7 +3,7 @@ package voldaran.com.Upright;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-public class MenuTitleScreenPanel {
+public class MenuTitleScreenPanel extends MenuSystem{
 	public int mainLeft;
 	public int activeLeft;
 	public int drawOrder;
@@ -19,8 +19,6 @@ public class MenuTitleScreenPanel {
 		mainLeft = mainL;
 		activeLeft = activeL;
 		goneLeft = goneL;
-		
-		
 	}
 
 }
