@@ -2,6 +2,7 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
+import voldaran.com.Upright.Game.GameState;
 import voldaran.com.Upright.UserInput.Input;
 
 import android.graphics.Bitmap;
@@ -9,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
-import android.content.Context;
 
 public class MenuTitleScreen {
 
@@ -38,24 +38,32 @@ public class MenuTitleScreen {
 		Bitmap bitSetup= BitmapFactory.decodeResource(mGame.mContext.getResources(),R.drawable.menu_setup);
 		
 
-		//main, active, gone
+		//Create Panels - #s - main, active, gone
 		Setup = new MenuTitleScreenPanel(recSetup, bitSetup, 0, 0, 0);
 		About = new MenuTitleScreenPanel(recAbout, bitAbout, 533, 0, 800);
 		Play = new MenuTitleScreenPanel(recPlay, bitPlay, -533, 0,-800);
 
 		activePanel = null;
 		
+
 		menuTitlePanels.add(Setup);
 		menuTitlePanels.add(About);
 		menuTitlePanels.add(Play);
 		
+		
+		//Button Location
 		Rect butContinue = new Rect(50, 52, 250, 115);
 		
-		MenuButton button = new MenuButton(butContinue, "CONTINUE") {
+		//Create Button with onClick Function
+		MenuButton button = new MenuButton(butContinue, "CONTINUE", mGame) {
 			public void onClick() {
 				Log.d("GSTA", "You clicked CONTINUE --- OVVVVVERRIDE");
+				game.thread.loadLevel();
+				game.gameState = GameState.PLAYING;
 			}
 		};
+		
+		//Add button to Correct Panel
 		Play.addButton(button);
 		
 	}

@@ -164,6 +164,10 @@ public class Vec2d {
 		return x * x + y * y;
 	}
 	
+	public Vec2d Negative() {
+		return new Vec2d(-x,-y);
+		
+	}
 	public Vec2d normalize(){
 		return this.div(this.len() / 1000.0);
 	}

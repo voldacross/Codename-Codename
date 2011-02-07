@@ -1,9 +1,5 @@
 package voldaran.com.Upright;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.math.BigInteger;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -80,7 +77,7 @@ Notes:
 //END NOTES
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
-	private GameThread thread;
+	public GameThread thread;
 	public float fingerX;
 	public float fingerY;
 	public boolean keyDown;
@@ -145,6 +142,23 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 	}
 	
+	//creates a bundle with all valued gamestate information.
+	// current GameState
+	// current level
+	// hero/platform/item position
+	public Bundle saveGameBundle() {
+		
+		Bundle saveGame = new Bundle();
+		saveGame.putInt("GAME_STATE", gameState.ordinal());
+		return saveGame;
+	}
+	
+
+	//Receives savedgame Bundle and sets game
+	public void resumeGameBundle(Bundle resumeGame) {
+		gameState=GameState.values()[resumeGame.getInt("GAME_STATE")];
+	}
+	
 	public void createThread(){
 		thread = new GameThread(getHolder(), this);
 	}
@@ -177,15 +191,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		thread.start();		
 	}
 	
-	//Destroys thread if app is closed, kind of buggy at the moment.
-	//Game doesn't force close on shutdown, but doesn't re-open smoothly
 	@Override public void surfaceDestroyed(SurfaceHolder holder) {
 	}
 	
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
-		private Game game;
 		private GameHero hero;
 		public boolean mRun = false;
 		//public MapClass.TileClass[][] aTile;
@@ -200,8 +211,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			new GameObject(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
 		}
 		
-		
+		//Loads a level, still needs a function to parse level file and load correct level
 		public void loadLevel() {
+			
+			//loading new level
+			
+			//Clear out old level if present
+			GameObject.gameObjects.clear();
+			MovingObject.movingObjects.clear();
+			
+			
+			//Create hero
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.icon);
 			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
 
@@ -228,28 +248,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //			p.addStep(200000, 0);
 		}
 		
+		
+		//When thread is created, thread creates title screen
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
-			
 			_surfaceHolder = surfaceHolder;
-			this.game = game;
-			
+//			this.game = game;
 			titleMenu = new MenuTitleScreen(game);
-			
-			GameObject.gameObjects.clear();
-			MovingObject.movingObjects.clear();
-			
-		//creating a level, added hero and walls.
-			
-			
 		}
 		
 		public void setRunning(boolean run) {
 			mRun = run;
 		}
 		
-     //for consistent rendering
-        //amount of time to sleep for (in milliseconds)
-        BigInteger StartTime;
 
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
@@ -287,9 +297,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                     if (c != null) {
                         _surfaceHolder.unlockCanvasAndPost(c);
                     }
-                }	
-				
-				
+                }
 			}
 			return gameState;
 		}
@@ -299,7 +307,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			Vec2d offset = new Vec2d();
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
-			while(gameState == GameState.PLAYING){
+			while((gameState == GameState.PLAYING)  && (mRun)){
 				Canvas c = null;
 				currentInput = _input.getInput();
 				hero.processInput(currentInput);
@@ -348,7 +356,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                         _surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
-				
 			}
 		}
 		
