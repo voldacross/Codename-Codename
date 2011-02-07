@@ -6,7 +6,6 @@ import android.view.SurfaceView;
 
 
 
-
 public class UserInput {
 	private static SurfaceView surface;
 	
@@ -24,7 +23,7 @@ public class UserInput {
 	
 	private Vec2d mDragStart;
 	private Vec2d mDragEnd;
-
+	private Vec2d mCurrentPress;
 	
 	
 	public enum Input {
@@ -93,6 +92,7 @@ public class UserInput {
 		
 		case MotionEvent.ACTION_DOWN:
 			mDragStart.set(event.getX(), event.getY());
+			mCurrentPress = new Vec2d(event.getX(), event.getY());
 			
 			if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
 				uInput = Input.PRESS_RIGHT;
@@ -109,10 +109,6 @@ public class UserInput {
 			
 		case MotionEvent.ACTION_UP:
 			fingerDown = false;
-			
-
-
-
 
 				if (uInput.equals(Input.PRESS_DRAGGING)) {
 					mDragEnd.set(event.getX(), event.getY());
@@ -152,6 +148,12 @@ public class UserInput {
 		
 	}
 	
+	public Vec2d getCurrentPress() {
+		Vec2d tempCurrentPress = mCurrentPress;
+		mCurrentPress = null;
+		return tempCurrentPress;
+	}
+	
 	public Input getInput() {
 		Input oInput = uInput;
 		if (uInput==Input.SWIPE_DOWN || uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT || uInput==Input.SWIPE_UP) {
@@ -163,4 +165,3 @@ public class UserInput {
 
 
 }
-

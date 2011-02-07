@@ -1,5 +1,7 @@
 package voldaran.com.Upright;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigInteger;
 
 import android.content.Context;
@@ -100,7 +102,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     
 	public int gameTIME = 0;
 	
-	
+	public Context mContext;
 	public static final int USER_TOUCH_NONE = 1000;
 	public static final int USER_SWIPE_LEFT = 1001;
 	public static final int USER_SWIPE_RIGHT = 1002;
@@ -127,6 +129,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		super(context);
 		getHolder().addCallback(this);
 		setFocusable(true);
+		mContext = context;
 	}
 	
 	
@@ -144,7 +147,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public void createThread(){
 		thread = new GameThread(getHolder(), this);
-		thread.setRunning(true);
 	}
 	
 	public void stopThread(){
@@ -171,6 +173,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d("Game.surfaceCreated", "Surface created");
+		thread.setRunning(true);
 		thread.start();		
 	}
 	
@@ -189,21 +192,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public Bitmap bitHero;
 		
+		private MenuTitleScreen titleMenu;
+		
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
 		
 		public void addWall(int posx, int posy, int extentx, int extenty){
 			new GameObject(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
 		}
 		
-		public GameThread(SurfaceHolder surfaceHolder, Game game) {
-			
-			_surfaceHolder = surfaceHolder;
-			this.game = game;
-			
-			GameObject.gameObjects.clear();
-			MovingObject.movingObjects.clear();
-			
-		//creating a level, added hero and walls.
+		
+		public void loadLevel() {
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.icon);
 			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
 
@@ -228,6 +226,20 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			p.addStep(-200000, 0);
 			p.addStep(200000,426000);
 //			p.addStep(200000, 0);
+		}
+		
+		public GameThread(SurfaceHolder surfaceHolder, Game game) {
+			
+			_surfaceHolder = surfaceHolder;
+			this.game = game;
+			
+			titleMenu = new MenuTitleScreen(game);
+			
+			GameObject.gameObjects.clear();
+			MovingObject.movingObjects.clear();
+			
+		//creating a level, added hero and walls.
+			
 			
 		}
 		
@@ -242,24 +254,53 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
-			gameState = GameState.PLAYING;
+			gameState = GameState.TITLE;
 			while (mRun) {
 				switch(gameState){
-				case TITLE:break;
+				case TITLE:gameState = titleScreen();
 				case PLAYING:gameState = gameLoop();
 				case PAUSED:break;
 				case LEVEL_COMPLETE:break;
 				}
 			}
 		}
+
+		public GameState titleScreen() {
+			while((gameState == GameState.TITLE) && (mRun)){
+				Canvas c = null;
+				UserInput.Input currentInput = _input.getInput();
+				Vec2d mClicked = _input.getCurrentPress();
+				titleMenu.processInput(currentInput, mClicked);
+				titleMenu.update();
+				try {
+					c = _surfaceHolder.lockCanvas(null);
+					synchronized (_surfaceHolder) {
+						Log.d("gameThread.run", "clear screen");
+						clearScreen(c);
+						Log.d("gameThread.run", "draw screen");
+						titleMenu.drawPanels(c);
+					}
+					
+				}catch(NullPointerException e){
+                }
+				finally {
+                    if (c != null) {
+                        _surfaceHolder.unlockCanvasAndPost(c);
+                    }
+                }	
+				
+				
+			}
+			return gameState;
+		}
 		
+
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d();
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			while(gameState == GameState.PLAYING){
 				Canvas c = null;
-				gameTIME += 1;
 				currentInput = _input.getInput();
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
