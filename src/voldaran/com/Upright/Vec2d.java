@@ -92,6 +92,17 @@ public class Vec2d {
 		return this;
 	}
 	
+	
+	public Vec2d clear(){
+		this.x = 0;
+		this.y = 0;
+		return this;
+	}
+	
+	public Vec2d subtract(Vec2d vector2) {
+		Vec2d vector1 = new Vec2d(this);
+		return vector1.sub(vector2);
+	}
 	public Vec2d sub(long x, long y){
 		this.x -= x;
 		this.y -= y;

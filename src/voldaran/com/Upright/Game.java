@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -112,6 +113,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public int USER_TOUCH = 1000;
 	
 	public UserInput _input = new UserInput(this);
+	private PauseMenu pause = new PauseMenu(this);
 	
 	public enum GameState {
 		TITLE,
@@ -180,7 +182,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
-	// TODO Auto-generated method stub
+
 	}
 	
 	
@@ -222,8 +224,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			
 			//Create hero
-			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.icon);
-			hero = new GameHero(new Vec2d(600000,300000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
+			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad);
+			hero = new GameHero(new Vec2d(30000,30000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
 
 			Log.d("GSTA", "hero : " + hero.pos);
 			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
@@ -231,33 +233,64 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					                                         + (hero.pos.x + hero.extent.x) + ","
 					                                         + (hero.pos.y + hero.extent.y));
 
-			addWall(400,475,400,10);
-			addWall(400,5,400,10);
-			addWall(145,105,145,10);
-			addWall(375,100,10,100);
-			addWall(190,205,110,10);
-			addWall(85,185,10,30);
-			addWall(185,260,10,65);
-			addWall(140,315,40,10);
-			addWall(290,260,10,65);
+			//Top
+			addWall(400,0,400,10);
+			
+			//bottom
+			addWall(400,470,400,10);
+			
+			addWall(0,400,10,400);
+			addWall(800,240,10,400);
+			
+			addWall(100,100,100,10);
+			
+			addWall(560,100,80,10);
+			
+			
+//			addWall(400,475,400,10);
+//			addWall(400,5,400,10);
+//			addWall(145,105,145,10);
+//			addWall(375,100,10,100);
+//			addWall(190,205,110,10);
+//			addWall(85,185,10,30);
+//			addWall(185,260,10,65);
+//			addWall(140,315,40,10);
+//			addWall(290,260,10,65);
+			
+			
+			
 //			addWall(465,270,10,200);
 		
-			Platform p = new Platform(new Vec2d(700000, 120000), new Vec2d(50000, 10000));
-			p.addStep(-200000, 0);
-			p.addStep(200000,426000);
+			Platform p = new Platform(new Vec2d(500000, 100000), new Vec2d(50000, 10000));
+			p.addStep(-250000, 0);
+			
+			Platform p2 = new Platform(new Vec2d(740000, 100000), new Vec2d(50000, 10000));
+			p2.addStep(0, 320000);
+//			p.addStep(200000,426000);
 //			p.addStep(200000, 0);
 		}
 		
-		
+		public Game mGame;
 		//When thread is created, thread creates title screen
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
 			_surfaceHolder = surfaceHolder;
-//			this.game = game;
+			mGame = game;
 			titleMenu = new MenuTitleScreen(game);
 		}
 		
 		public void setRunning(boolean run) {
 			mRun = run;
+		}
+		
+		public void drawAd(Canvas c) {
+			
+			Rect ad = new Rect(0,
+					0,
+					320,
+					50);
+			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+			backgroundPaint.setColor(Color.YELLOW);
+			c.drawRect(ad, backgroundPaint);
 		}
 		
 
@@ -269,7 +302,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				switch(gameState){
 				case TITLE:gameState = titleScreen();
 				case PLAYING:gameState = gameLoop();
-				case PAUSED:break;
+				case PAUSED:gameState = pause();
 				case LEVEL_COMPLETE:break;
 				}
 			}
@@ -302,14 +335,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			return gameState;
 		}
 		
-
+		Bitmap pausedState;
+		Picture picture = new Picture();
+		
+		
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d();
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
+			
 			while((gameState == GameState.PLAYING)  && (mRun)){
 				Canvas c = null;
 				currentInput = _input.getInput();
+				Vec2d mClicked = _input.getCurrentPress();
+
+				if (mClicked!=null) 
+					if ((mClicked.x>750)&&(mClicked.y<50)) {
+						pause.createPause(picture, hero.pos);
+						gameState=GameState.PAUSED;
+						break;
+					}
+				
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
 				MovingObject.updateAll();
@@ -323,6 +369,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
 						Log.d("gameThread.run", "draw");
 						GameObject.drawAll(c);
+						
+						drawAd(c);
+						
 					}
                 }catch(NullPointerException e){
                 }
@@ -331,23 +380,40 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                         _surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
+				
+				
+				
+				
 			}
 			return gameState;
 		}
 		
-		public void pause(){
-			Vec2d offset = new Vec2d();
-			while(mRun){
+		public GameState pause(){
+			
+			
+			
+			while((gameState == GameState.PAUSED) && (mRun)){
 				Canvas c = null;
+				Vec2d mClicked = _input.getCurrentPress();
+				if (mClicked!=null) 
+					if ((mClicked.x>750)&&(mClicked.y<50)) {
+						Log.d("GSTA", "you clicked to unpause");
+						pause.exiting = true;
+					}
+				
+				if (pause.exiting) 
+					if (pause.zoomOut()) {
+						
+						gameState=GameState.PLAYING; //unPause
+						_input.Clear(); //Clear inputs
+					}
+				pause.Update(_input.mDragVelocity);
+				
 				try {
 					c = _surfaceHolder.lockCanvas(null);
 					synchronized (_surfaceHolder) {
-						Log.d("gameThread.run", "clear screen");
 						clearScreen(c);
-						offset.x = hero.pos.x - (long)(getWidth() / 2 * 1000);
-						offset.y = hero.pos.y - (long)(getHeight() / 2 * 1000);
-						Log.d("gameThread.run", "draw");
-						GameObject.drawAll(c);
+						pause.Draw(c);
 					}
                 }catch(NullPointerException e){
                 }
@@ -357,6 +423,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                     }
                 }
 			}
+			
+			return gameState;
 		}
 		
 		public void clearScreen(Canvas c){

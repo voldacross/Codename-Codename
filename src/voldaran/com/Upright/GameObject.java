@@ -10,6 +10,15 @@ import android.graphics.Rect;
 public class GameObject {
 	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	public static Vec2d offset;
+	
+	public static void drawPause(Canvas c) {
+		for (GameObject o : GameObject.gameObjects){
+			
+			o.drawP(c);
+		}
+		
+		
+	}
 	public static void drawAll(Canvas c){
 		for(GameObject o : GameObject.gameObjects){
 			if(o.onScreen(c))
@@ -60,6 +69,14 @@ public class GameObject {
 			&& (bottom - GameObject.offset.y) >= 0 
 			&& (top - GameObject.offset.y) <= c.getHeight() * 1000;
 	}
+	
+	public void drawP(Canvas c){
+		Rect recObject = new Rect((int) left / 1000, (int) top  / 1000, (int) right  / 1000, (int)bottom  / 1000);
+		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+		paintObject.setColor(color);
+		c.drawRect(recObject, paintObject);
+	}
+	
 	
 	public void draw(Canvas c){
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 

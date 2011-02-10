@@ -13,6 +13,8 @@ public class UserInput {
 		mCurrentTouch = new Vec2d();
 		mDragStart = new Vec2d();
 		mDragEnd = new Vec2d();
+		mDragVelocity = new Vec2d();
+		mDragVelocityStart = new Vec2d();
 		UserInput.surface = surface;
 	}
 
@@ -25,8 +27,10 @@ public class UserInput {
 	private Vec2d mDragEnd;
 	private Vec2d mCurrentPress;
 	
+	public Vec2d mDragVelocity;
+	public Vec2d mDragVelocityStart;
 	
-	public enum Input {
+	public static enum Input {
 		PRESS_RIGHT,
 		PRESS_MIDDLE,
 		PRESS_LEFT,
@@ -72,6 +76,9 @@ public class UserInput {
 		return null;
 	}
 
+	public void Clear() {
+		uInput = Input.NONE;
+	}
 	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
@@ -79,18 +86,17 @@ public class UserInput {
 		
 		fingerDown = true;
 		
-        
 		int screenWidth = UserInput.surface.getWidth();
 
 		mCurrentTouch.set(event.getX(), event.getY());
 		//mCurrentTouch = new Vec2D(event.getX(), event.getY());
-		
 		//Log.d("GSTA", "" + screenWidth);
 
 		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		case MotionEvent.ACTION_DOWN:
+			mDragVelocityStart.set(event.getX(), event.getY());
 			mDragStart.set(event.getX(), event.getY());
 			mCurrentPress = new Vec2d(event.getX(), event.getY());
 			
@@ -109,7 +115,7 @@ public class UserInput {
 			
 		case MotionEvent.ACTION_UP:
 			fingerDown = false;
-
+			mDragVelocity.clear();
 				if (uInput.equals(Input.PRESS_DRAGGING)) {
 					mDragEnd.set(event.getX(), event.getY());
 					uInput = calcDirection(mDragStart, mDragEnd);
@@ -117,14 +123,12 @@ public class UserInput {
 					uInput = Input.NONE;
 				}
 			
-			
-			
-			
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
 			
-			
+			mDragVelocity = (mCurrentTouch.subtract(mDragVelocityStart));
+			mDragVelocityStart.set(event.getX(), event.getY());
 			float ddd = ((mDragStart.x - mCurrentTouch.x) * (mDragStart.x - mCurrentTouch.x)) + ((mDragStart.y - mCurrentTouch.y) * (mDragStart.y - mCurrentTouch.y));
 			
 			if (ddd>35*35) {

@@ -1,6 +1,7 @@
 package voldaran.com.Upright;
 
 
+import voldaran.com.Upright.Game.GameState;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.Window;
 
 public class upright extends Activity{
 	private Game game;
+	public String test;
 	
 	public static final String PREFS_NAME = "savedGameState";
 	
@@ -20,19 +22,23 @@ public class upright extends Activity{
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         game = new Game(this);
+
         setContentView(game);
+    	game.setDrawingCacheEnabled(true); 
+    	
+
     }
     
 
     @Override
     protected void onResume(){
     	super.onResume();
+    	
     	//start thread
     	game.createThread();
     	
     	//resume previous gamestate
     	game.resumeGameBundle(resumeGameState());
-    	
     }
     
     @Override
@@ -76,7 +82,7 @@ public class upright extends Activity{
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     	SharedPreferences.Editor editor = settings.edit();
     	
-    	editor.putString("GAME_STATE", SaveState.getString("GAME_STATE"));
+//    	editor.putString("GAME_STATE", SaveState.getString("GAME_STATE"));
     	
     	//commit
     	editor.commit();
