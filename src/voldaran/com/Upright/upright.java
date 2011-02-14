@@ -1,7 +1,6 @@
 package voldaran.com.Upright;
 
 
-import voldaran.com.Upright.Game.GameState;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,14 +36,17 @@ public class upright extends Activity{
     	//start thread
     	game.createThread();
     	
+    	
+    	
     	//resume previous gamestate
     	game.resumeGameBundle(resumeGameState());
+    	
     }
     
     @Override
     protected void onPause(){
     	super.onPause();
-    	
+    	Log.d("GSTA", "onPause called");
     	//Load SavedBundle to SharedPreferences
     	saveBundletoShared(game.saveGameBundle());
     	
@@ -73,7 +75,9 @@ public class upright extends Activity{
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     	
     	Bundle resumeState = new Bundle();
-    	resumeState.putString("GAME_STATE", "TITLE");
+    	
+    	
+    	resumeState.putInt("GAME_STATE", settings.getInt("GAME_STATE", 0));
     	
     	return resumeState;
     }
@@ -82,9 +86,9 @@ public class upright extends Activity{
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     	SharedPreferences.Editor editor = settings.edit();
     	
-//    	editor.putString("GAME_STATE", SaveState.getString("GAME_STATE"));
+    	editor.putInt("GAME_STATE", SaveState.getInt("GAME_STATE"));
     	
-    	//commit
+//    	commit
     	editor.commit();
     }
 }

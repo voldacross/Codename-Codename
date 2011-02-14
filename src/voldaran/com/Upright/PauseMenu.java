@@ -3,7 +3,6 @@ package voldaran.com.Upright;
 import android.graphics.Canvas;
 import android.graphics.Picture;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.SurfaceView;
 
 public class PauseMenu {
@@ -14,21 +13,21 @@ public class PauseMenu {
 	private Rect dst;
 
 	private SurfaceView surface;
-	private Vec2d hero, offset;
+	private Vec2d hero, offset, mapSize, cameraSize;
 	
 	
 	public boolean exiting = false;
 	private double zoomMagnify = 1;
 	
-	public PauseMenu(SurfaceView s) {
-		offset = new Vec2d();
-		offset.x = 0;
-		offset.y = 0;
-		surface = s;
+	public PauseMenu(Vec2d c) {
+		offset = new Vec2d(0,0);
+		cameraSize = c;
 	}
 	
-	public void createPause(Picture p, Vec2d h) {
-		GameObject.drawPause(p.beginRecording(800, 480));
+	public void createPause(Picture p, Vec2d h, Vec2d m) {
+		mapSize = new Vec2d(m);
+		GameObject.drawPause(p.beginRecording((int)mapSize.x, (int)mapSize.y));
+		
 		p.endRecording();
 		picture = p;
 		dst = new Rect();
@@ -44,15 +43,14 @@ public class PauseMenu {
 	//Centers Screen on the hero
 	public void centerScreen(double magnify, Vec2d centerPoint) {
 		
-		int pictureCenterX = (int) (surface.getWidth() / (2 * magnify)); //200
-		int pictureCenterY = (int) (surface.getHeight() / (2 * magnify)); //120
+		int pictureCenterX = (int) (mapSize.x / (2 * magnify)); //200
+		int pictureCenterY = (int) (mapSize.y / (2 * magnify)); //120
 		
-		int canvasCenterX=  (surface.getWidth() / 2); //400
-		int canvasCenterY = (surface.getHeight() / 2); //240
+		int canvasCenterX=  ((int) cameraSize.x / 2); //400  //Map Center
+		int canvasCenterY = ((int) cameraSize.y / 2); //240
 		
 		offset.x = (int) (pictureCenterX - ((centerPoint.x/1000)/magnify)) + canvasCenterX;
 		offset.y = (int) (pictureCenterY - ((centerPoint.y/1000)/magnify)) + canvasCenterY;
-		
 	}
 
 	
@@ -71,7 +69,6 @@ public class PauseMenu {
 	public boolean zoomedIn() {
 		if (zoomMagnify>=2) return true;
 		
-		Log.d("GSTA", "zoom - " + zoomMagnify);
 		zoomMagnify += 0.05;
 		centerScreen(zoomMagnify, hero);
 		UpdateRect(zoomMagnify);
@@ -84,7 +81,6 @@ public class PauseMenu {
 	public boolean zoomOut() {
 		if (zoomMagnify<=1) return true;
 		
-		Log.d("GSTA", "zoom - " + zoomMagnify);
 		zoomMagnify -= 0.05;
 		centerScreen(zoomMagnify, hero);
 		UpdateRect(zoomMagnify);
@@ -98,8 +94,8 @@ public class PauseMenu {
 	
 	
 	public void UpdateRect(double magnify) {
-		int pictureWidth = (surface.getWidth() / 2); 
-		int pictureHeight = (surface.getHeight() / 2);
+		int pictureWidth = (int) (mapSize.x / 2); 
+		int pictureHeight = (int) (mapSize.y / 2);
 
 		dst = new Rect( (int) (offset.x - (pictureWidth / magnify)),
 				(int) (offset.y - (pictureHeight / magnify)),

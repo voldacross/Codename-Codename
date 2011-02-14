@@ -2,6 +2,11 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
+import voldaran.com.Upright.Game.GameThread;
+import android.util.Log;
+
+
+
 public class MovingObject extends GameObject{
 	public static ArrayList<MovingObject> movingObjects = new ArrayList<MovingObject>();
 	
@@ -12,6 +17,14 @@ public class MovingObject extends GameObject{
 		for(MovingObject o: MovingObject.movingObjects){
 			o.grounding();
 		}
+	}
+	
+	
+	GameThread thread;
+	
+	public void setGame(GameThread t) {
+		
+		thread = t;
 	}
 	
 	public MovingObject(Vec2d pos, Vec2d extent, Vec2d velocity){
@@ -68,6 +81,11 @@ public class MovingObject extends GameObject{
 				if(o != this) 
 					collision = sweepOverlaps(o);
 					if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
+							if (o.obstacle) {
+								thread.loadLevel();
+								Log.d("GSTA", "YOU HIT AN ENEMY!!!!!!!!!!!!!!!!!!!!");
+								break;
+							}
 							firstcollision = collision;
 					}
 			}

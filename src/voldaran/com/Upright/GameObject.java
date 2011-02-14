@@ -13,12 +13,10 @@ public class GameObject {
 	
 	public static void drawPause(Canvas c) {
 		for (GameObject o : GameObject.gameObjects){
-			
 			o.drawP(c);
 		}
-		
-		
 	}
+
 	public static void drawAll(Canvas c){
 		for(GameObject o : GameObject.gameObjects){
 			if(o.onScreen(c))
@@ -35,7 +33,9 @@ public class GameObject {
 	public long right;
 	public long bottom;
 	
-	private int color;
+	public boolean obstacle = false;
+	
+	public int color;
 	
 	public GameObject ground = null;
 	

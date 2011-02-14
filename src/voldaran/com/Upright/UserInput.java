@@ -1,6 +1,7 @@
 package voldaran.com.Upright;
 
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -8,14 +9,20 @@ import android.view.SurfaceView;
 
 public class UserInput {
 	private static SurfaceView surface;
+	private Vec2d cameraSize, surfaceSize;
 	
-	public UserInput(SurfaceView surface) {
+	public UserInput(Vec2d c, Vec2d s) {
 		mCurrentTouch = new Vec2d();
 		mDragStart = new Vec2d();
 		mDragEnd = new Vec2d();
 		mDragVelocity = new Vec2d();
 		mDragVelocityStart = new Vec2d();
-		UserInput.surface = surface;
+//		UserInput.surface = surface;
+		
+		cameraSize = c;
+		surfaceSize = s;
+		
+		
 	}
 
 	public Input uInput = Input.NONE;
@@ -86,19 +93,19 @@ public class UserInput {
 		
 		fingerDown = true;
 		
-		int screenWidth = UserInput.surface.getWidth();
-
-		mCurrentTouch.set(event.getX(), event.getY());
-		//mCurrentTouch = new Vec2D(event.getX(), event.getY());
-		//Log.d("GSTA", "" + screenWidth);
-
+		int screenWidth = (int) cameraSize.x;
+		
+		double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * event.getX();
+		double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * event.getY();
+		
+		mCurrentTouch.set(convertX, convertY);
 		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		case MotionEvent.ACTION_DOWN:
-			mDragVelocityStart.set(event.getX(), event.getY());
-			mDragStart.set(event.getX(), event.getY());
-			mCurrentPress = new Vec2d(event.getX(), event.getY());
+			mDragVelocityStart.set(mCurrentTouch.x, mCurrentTouch.y);
+			mDragStart.set(mCurrentTouch.x, mCurrentTouch.y);
+			mCurrentPress = new Vec2d(mCurrentTouch.x, mCurrentTouch.y);
 			
 			if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
 				uInput = Input.PRESS_RIGHT;
@@ -117,7 +124,7 @@ public class UserInput {
 			fingerDown = false;
 			mDragVelocity.clear();
 				if (uInput.equals(Input.PRESS_DRAGGING)) {
-					mDragEnd.set(event.getX(), event.getY());
+					mDragEnd.set(mCurrentTouch.x, mCurrentTouch.y);
 					uInput = calcDirection(mDragStart, mDragEnd);
 				} else {
 					uInput = Input.NONE;
@@ -128,7 +135,7 @@ public class UserInput {
 		case MotionEvent.ACTION_MOVE:
 			
 			mDragVelocity = (mCurrentTouch.subtract(mDragVelocityStart));
-			mDragVelocityStart.set(event.getX(), event.getY());
+			mDragVelocityStart.set(mCurrentTouch.x, mCurrentTouch.y);
 			float ddd = ((mDragStart.x - mCurrentTouch.x) * (mDragStart.x - mCurrentTouch.x)) + ((mDragStart.y - mCurrentTouch.y) * (mDragStart.y - mCurrentTouch.y));
 			
 			if (ddd>35*35) {

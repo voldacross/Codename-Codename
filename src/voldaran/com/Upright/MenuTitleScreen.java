@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import voldaran.com.Upright.Game.GameState;
 import voldaran.com.Upright.UserInput.Input;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -25,9 +24,13 @@ public class MenuTitleScreen {
 
 	public MenuTitleScreen(Game game) {
 		//Create the 3 panels
+		
 		mGame = game;
-		int height = 480;
-		int width = 800;
+
+		int height = (int) game.cameraSize.y;
+		int width = (int) game.cameraSize.x;
+
+		
 		Rect recSetup = new Rect(0, 0, width, height);
 		Rect recPlay = new Rect(0, 0, width, height);
 		Rect recAbout = new Rect(0, 0, width, height);
@@ -40,8 +43,8 @@ public class MenuTitleScreen {
 
 		//Create Panels - #s - main, active, gone
 		Setup = new MenuTitleScreenPanel(recSetup, bitSetup, 0, 0, 0);
-		About = new MenuTitleScreenPanel(recAbout, bitAbout, 533, 0, 800);
-		Play = new MenuTitleScreenPanel(recPlay, bitPlay, -533, 0,-800);
+		About = new MenuTitleScreenPanel(recAbout, bitAbout, width * 2 / 3, 0, width);
+		Play = new MenuTitleScreenPanel(recPlay, bitPlay, -(width * 2 / 3), 0,-width);
 
 		activePanel = null;
 		
@@ -179,6 +182,8 @@ public class MenuTitleScreen {
 	}
 	
 	public void drawPanels(Canvas c) {
+		
+		
 		
 		c.drawBitmap(Setup.bit, null, Setup.rec, null);
 
