@@ -30,7 +30,12 @@ public class GameHero extends MovingObject{
 	
 	@Override
 	protected GameObject grounding(){
-		  if(ground != null && (bottom != ground.top || right <= ground.left || left >= ground.right)) ground = null;
+		  
+		  
+		
+		if (GRAVITY>0) if(ground != null && (bottom != ground.top || right <= ground.left || left >= ground.right)) ground = null;		
+		if (GRAVITY<0) if(ground != null && (top != ground.bottom || right <= ground.left || left >= ground.right)) ground = null;
+		  
 		  for(GameObject o : GameObject.gameObjects){
 		    if(o != this && o != ground && right > o.left && left < o.right){
 		      if((GRAVITY>0 && bottom == o.top) || (GRAVITY < 0 && top == o.bottom)){
