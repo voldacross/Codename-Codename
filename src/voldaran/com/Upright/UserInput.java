@@ -100,6 +100,8 @@ public class UserInput {
 		
 		mCurrentTouch.set(convertX, convertY);
 		
+		Log.d("GSTA", "You just pressed - " + convertX + "," + convertY);
+		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		case MotionEvent.ACTION_DOWN:

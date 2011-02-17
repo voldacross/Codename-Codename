@@ -73,7 +73,7 @@ public class MenuTitleScreen {
 	
 	public void processInput(Input input, Vec2d clicked) {
 		
-		
+//		Log.d("GSTA", "" + inTransition);
 		if ((!inTransition) && (clicked!=null)){
 			if (activePanel==About) {
 				if (input==UserInput.Input.PRESS_LEFT) {
@@ -94,6 +94,9 @@ public class MenuTitleScreen {
 					inTransition = true;
 				} else {
 					
+					
+					
+//					Log.d("GSTA", "You clicked!!!" + Play.returnButton(clicked).name);
 					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)){
 						Log.d("GSTA", "You clicked " + Play.returnButton(clicked).name);
 						Play.returnButton(clicked).onClick();

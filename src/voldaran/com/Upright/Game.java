@@ -174,7 +174,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	public void createThread(){
+		
 		thread = new GameThread(getHolder(), this);
+		
 	}
 	
 	public void stopThread(){
@@ -199,6 +201,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("GSTA", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
 		thread.setRunning(true);
 		thread.start();
@@ -242,7 +245,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			//Create hero
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad);
-			hero = new GameHero(new Vec2d(30000,30000), new Vec2d(bitHero.getWidth() / 2 * 1000,bitHero.getHeight() / 2 * 1000), bitHero);
+			hero = new GameHero(new Vec2d(30000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
 			hero.setGame(this);
 			Log.d("GSTA", "hero : " + hero.pos);
 			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
@@ -253,21 +256,52 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			//Top
 			
 			//x,y, extentx, extenty
-			addWall(400,0,400,10);
 
+			//Borders
+//			addWall(4,240,4,232);
+//			addWall(392,4,400,4);
+//			addWall(372,476,428,4);
+//			addWall(796,232,4,240);
 			
-			addWall(100, 470, 100, 10);
-			addWall(500, 470, 100, 10);
-			addWall(900, 470, 100, 10);
-			addWall(1300, 470, 100, 10);
-			addWall(1700, 470, 100, 10);
-			addWall(2100, 470, 100, 10);
 			
-			Platform p = new Platform(new Vec2d(500000, 100000), new Vec2d(50000, 10000));
-			p.addStep(-250000, 0);
 			
-			Platform p2 = new Platform(new Vec2d(740000, 100000), new Vec2d(50000, 10000));
-			p2.addStep(0, 400000);
+			addWall(356,220,4,4);
+			addWall(160,408,64,8);
+			addWall(248,352,8,64);
+			addWall(184,304,8,48);
+			addWall(232,232,56,8);
+			addWall(552,248,56,8);
+			addWall(488,200,8,56);
+			addWall(568,136,8,56);
+			addWall(552,72,24,8);
+			addWall(464,72,48,8);
+			addWall(4,240,4,232);
+			addWall(392,4,400,4);
+			addWall(372,476,428,4);
+			addWall(796,232,4,240);
+			addWall(336,80,16,16);
+			addWall(368,80,16,16);
+			addWall(336,112,16,16);
+			addWall(368,112,16,16);
+			addWall(336,176,16,16);
+			addWall(368,176,16,16);
+			addWall(368,208,16,16);
+			addWall(336,208,16,16);
+			addWall(336,272,16,16);
+			addWall(368,272,16,16);
+			addWall(336,304,16,16);
+			addWall(368,304,16,16);
+			addWall(336,368,16,16);
+			addWall(368,368,16,16);
+			addWall(336,400,16,16);
+			addWall(368,400,16,16);
+			
+			
+//			Platform p = new Platform(new Vec2d(500000, 100000), new Vec2d(50000, 10000));
+//			p.addStep(-250000, 0);
+//			
+//			Platform p2 = new Platform(new Vec2d(740000, 100000), new Vec2d(50000, 10000));
+//			p2.addStep(0, 400000);
 
 		}
 		
@@ -316,7 +350,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		
 		public GameState gameLoop(){
-			Vec2d offset = new Vec2d();
+			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			
@@ -334,8 +368,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 				synchronized (_surfaceHolder) {
 					clearScreen(c, cameraSize);
-					offset.x = hero.pos.x - (long)(cameraSize.x / 2 * 1000);
-					offset.y = hero.pos.y - (long)(cameraSize.y / 2 * 1000);
+//					offset.x = hero.pos.x - (long)(cameraSize.x / 2 * 1000);
+//					offset.y = hero.pos.y - (long)(cameraSize.y / 2 * 1000);
 					GameObject.drawAll(c);
 //					drawAd(c);
 					

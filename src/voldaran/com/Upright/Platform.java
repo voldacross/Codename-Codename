@@ -22,7 +22,7 @@ public class Platform extends MovingObject {
 	public void addStep(long x, long y){
 		Vec2d step = new Vec2d(steps.get(steps.size() - 1)).add(x, y);
 		steps.add(step);
-		Log.d("Platform", "Adding step " + step);
+//		Log.d("Platform", "Adding step " + step);
 		if(steps.size() == 2) checkStep();
 	}
 
@@ -40,8 +40,8 @@ public class Platform extends MovingObject {
 	@Override
 	public void update(){
 		super.update();
-		Log.d("Platform", "Before update pos " + pos + " velocity " + velocity + " step " + step + " : " + steps.get(step));
+//		Log.d("Platform", "Before update pos " + pos + " velocity " + velocity + " step " + step + " : " + steps.get(step));
 		checkStep();
-		Log.d("Platform", "After update pos " + pos + " velocity " + velocity + " step " + step + " : " + steps.get(step));
+//		Log.d("Platform", "After update pos " + pos + " velocity " + velocity + " step " + step + " : " + steps.get(step));
 	}
 }

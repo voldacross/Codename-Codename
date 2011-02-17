@@ -2,8 +2,9 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
+import android.graphics.Color;
+
 import voldaran.com.Upright.Game.GameThread;
-import android.util.Log;
 
 
 
@@ -17,6 +18,8 @@ public class MovingObject extends GameObject{
 		for(MovingObject o: MovingObject.movingObjects){
 			o.grounding();
 		}
+		
+		
 	}
 	
 	
@@ -81,11 +84,6 @@ public class MovingObject extends GameObject{
 				if(o != this) 
 					collision = sweepOverlaps(o);
 					if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
-							if (o.obstacle) {
-								thread.loadLevel();
-								Log.d("GSTA", "YOU HIT AN ENEMY!!!!!!!!!!!!!!!!!!!!");
-								break;
-							}
 							firstcollision = collision;
 					}
 			}

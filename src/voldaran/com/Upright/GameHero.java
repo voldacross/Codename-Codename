@@ -2,13 +2,15 @@ package voldaran.com.Upright;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.util.Log;
 
 public class GameHero extends MovingObject{
-	private final static Vec2d LEFTVELOCITY = new Vec2d(-2000, 0);
-	private final static Vec2d RIGHTVELOCITY = new Vec2d(2000, 0);
-	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-20000, -15000);
-	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(20000, -15000);
+	private final static Vec2d LEFTVELOCITY = new Vec2d(-1000, 0);
+	private final static Vec2d RIGHTVELOCITY = new Vec2d(1000, 0);
+	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-10000, -7500);
+	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(10000, -7500);
 	
 	private int GRAVITY = 1000;  //RICK: added to make swapping gravity work
 	
@@ -23,28 +25,27 @@ public class GameHero extends MovingObject{
 	public GameHero(Vec2d pos, Vec2d extent, Vec2d vel, Bitmap bitmap) {
 		super(pos, extent, vel);
 		this.bitmap = bitmap;
+
 	}
 	
 	@Override
 	protected GameObject grounding(){
-		if(ground != null && (bottom != ground.top || right <= ground.left || left >= ground.right)) ground = null;
-		for(GameObject o : GameObject.gameObjects){
-			if(o != this && o != ground){
-				if (GRAVITY>0) {
-					if(bottom == o.top && right > o.left && left < o.right){
-						ground = o;
-						break;
-					}
-				} else if (GRAVITY<0) {  //RICK: added to make swapping gravity work
-					if(top == o.bottom && right > o.left && left < o.right){
-						ground = o;
-						break;
-					}
-					
-				}
-			}
-		}
-		if(ground != null) Log.d("Hero", "Ground :" + ground + " ground top " + ground.top + " ground velocity " + ground.velocity);
+		  if(ground != null && (bottom != ground.top || right <= ground.left || left >= ground.right)) ground = null;
+		  for(GameObject o : GameObject.gameObjects){
+		    if(o != this && o != ground && right > o.left && left < o.right){
+		      if((GRAVITY>0 && bottom == o.top) || (GRAVITY < 0 && top == o.bottom)){
+		        ground = o;
+
+		        if (o.color==Color.WHITE) {
+		         o.color=Color.GREEN;
+		        } else o.color=Color.WHITE;
+		      
+		        break;
+		      }
+		    }
+		  }
+		
+//		if(ground != null) Log.d("Hero", "Ground :" + ground + " ground top " + ground.top + " ground velocity " + ground.velocity);
 		return ground;
 	}
 	
@@ -90,6 +91,12 @@ public class GameHero extends MovingObject{
 	
 	@Override
 	public void draw(Canvas c){
-		c.drawBitmap(bitmap, (left - GameObject.offset.x) / 1000, (top - GameObject.offset.y) / 1000, null);
+		Rect recHero = new Rect((int) ((pos.x - extent.x) / 1000),
+				(int) ((pos.y - extent.y) / 1000),
+				(int) ((pos.x + extent.x) / 1000),
+				(int) ((pos.y + extent.y) / 1000));
+
+		c.drawBitmap(bitmap, null, recHero, null);
+//		c.drawBitmap(bitmap, (left - GameObject.offset.x) / 1000, (top - GameObject.offset.y) / 1000, null);
 	}
 }
