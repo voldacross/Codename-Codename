@@ -247,7 +247,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			//Create hero
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad2);
-			bitArrow = BitmapFactory.decodeResource(getResources(),R.drawable.arrow);
+//			bitArrow = BitmapFactory.decodeResource(getResources(),R.drawable.arrow);
 			
 			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
 			
@@ -366,7 +366,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 			int FPSTotal = 0;
 			int total = 0;
-			int time = 1;
 			while((gameState == GameState.PLAYING)  && (mRun)){
 				
 				previousTime = currentTime;
@@ -401,18 +400,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					clearScreen(c, cameraSize);
 //					offset.x = hero.pos.x - (long)(cameraSize.x / 2 * 1000);
 //					offset.y = hero.pos.y - (long)(cameraSize.y / 2 * 1000);
-					int arrowOffsetX = 120;
-					int arrowOffsetY = 445;
-					int scale = 4;
-					Rect arrow = new Rect(arrowOffsetX - (bitArrow.getWidth() / 2 / scale),
-									arrowOffsetY - (bitArrow.getHeight() / 2 / scale),
-									arrowOffsetX + (bitArrow.getWidth() / 2 / scale),
-									arrowOffsetY + (bitArrow.getHeight() / 2 / scale));
-					
-					
+
 					
 					GameObject.drawAll(c);
-					c.drawBitmap(bitArrow, null, arrow, null);
 //					drawAd(c);
 					
 					picScreen.endRecording();
