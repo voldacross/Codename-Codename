@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
-import android.widget.ImageView;
 
 
 public class upright extends Activity{

@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.util.Log;
 
 public class GameHero extends MovingObject{
 	private final static Vec2d LEFTVELOCITY = new Vec2d(-2000, 0);

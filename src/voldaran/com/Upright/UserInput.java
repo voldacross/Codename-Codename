@@ -1,9 +1,9 @@
 package voldaran.com.Upright;
 
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+
 
 
 
@@ -21,7 +21,6 @@ public class UserInput {
 		
 		cameraSize = c;
 		surfaceSize = s;
-		
 		
 	}
 

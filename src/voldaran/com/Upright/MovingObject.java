@@ -2,8 +2,6 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
-import android.graphics.Color;
-
 import voldaran.com.Upright.Game.GameThread;
 
 

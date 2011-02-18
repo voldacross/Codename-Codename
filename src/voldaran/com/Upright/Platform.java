@@ -2,8 +2,6 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 public class Platform extends MovingObject {
 	private ArrayList<Vec2d> steps = new ArrayList<Vec2d>();
 	private int speed;
