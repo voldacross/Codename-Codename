@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
+import android.widget.ImageView;
 
 
 public class upright extends Activity{
@@ -21,7 +22,7 @@ public class upright extends Activity{
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         game = new Game(this);
-
+        
         setContentView(game);
     	game.setDrawingCacheEnabled(true); 
     	

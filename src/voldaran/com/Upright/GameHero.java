@@ -7,12 +7,12 @@ import android.graphics.Rect;
 import android.util.Log;
 
 public class GameHero extends MovingObject{
-	private final static Vec2d LEFTVELOCITY = new Vec2d(-1000, 0);
-	private final static Vec2d RIGHTVELOCITY = new Vec2d(1000, 0);
-	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-10000, -7500);
-	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(10000, -7500);
+	private final static Vec2d LEFTVELOCITY = new Vec2d(-2000, 0);
+	private final static Vec2d RIGHTVELOCITY = new Vec2d(2000, 0);
+	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-7500, -5625); //20000, -15000
+	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(7500, -5625);
 	
-	private int GRAVITY = 1000;  //RICK: added to make swapping gravity work
+	private int GRAVITY = 400;  //RICK: added to make swapping gravity work ORG: 500
 	
 	public Bitmap bitmap;
 	private GameObject ground = null;
@@ -68,12 +68,12 @@ public class GameHero extends MovingObject{
 				ground = null;
 				break;
 			case SWIPE_UP:  //RICK: added/modified to make swapping gravity work
-				GRAVITY = -1000;
+				GRAVITY = -300;
 				ground = null;
 				break;
 				
 			case SWIPE_DOWN:
-				GRAVITY = 1000;
+				GRAVITY = 300;
 				ground = null;
 				break;
 			}
@@ -86,10 +86,10 @@ public class GameHero extends MovingObject{
 		super.update();
 		if(ground != null){
 			velocity.x -= ground.velocity.x;
-			velocity.mul(0.75);
+			velocity.mul(0.25);
 		}
-		else 
-			velocity.mul(0.95);
+		else velocity.mul(0.95); //ORG: 0.95
+		
 			
 		velocity.add(0, GRAVITY); //RICK: added/modified to make swapping gravity work
 	}
@@ -100,7 +100,13 @@ public class GameHero extends MovingObject{
 				(int) ((pos.y - extent.y) / 1000),
 				(int) ((pos.x + extent.x) / 1000),
 				(int) ((pos.y + extent.y) / 1000));
-
+//		Log.d("GSTA", "-----------------------------");
+//		Log.d("GSTA", "" + ((pos.x - extent.x) / 1000));
+//		Log.d("GSTA", "" + ((pos.y - extent.y) / 1000));
+//		Log.d("GSTA", "" + ((pos.x + extent.x) / 1000));
+//		Log.d("GSTA", "" + ((pos.y + extent.y) / 1000));
+		
+//		Log.d("GSTA", "POS " + pos.toString() + " EXT " + extent.toString() + " HERO " + " bitmap " + bitmap.getWidth() + "," + bitmap.getHeight());
 		c.drawBitmap(bitmap, null, recHero, null);
 //		c.drawBitmap(bitmap, (left - GameObject.offset.x) / 1000, (top - GameObject.offset.y) / 1000, null);
 	}

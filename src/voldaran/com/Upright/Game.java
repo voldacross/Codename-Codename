@@ -1,6 +1,8 @@
 package voldaran.com.Upright;
 
 
+import java.math.BigInteger;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -221,7 +223,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		Vec2d mapSize;
 		//public MapClass.TileClass[][] aTile;
 		
-		public Bitmap bitHero;
+		public Bitmap bitHero, bitArrow;
 		
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
 		
@@ -244,8 +246,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			mapSize = new Vec2d(10000,1000);
 			
 			//Create hero
-			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad);
+			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad2);
+			bitArrow = BitmapFactory.decodeResource(getResources(),R.drawable.arrow);
+			
+			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
+			
 			hero = new GameHero(new Vec2d(30000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
+			
 			hero.setGame(this);
 			Log.d("GSTA", "hero : " + hero.pos);
 			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
@@ -331,11 +338,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 
-
+		Long previousTime;
+		Long currentTime;	
 		
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
+			currentTime = System.currentTimeMillis();
 			gameState = GameState.TITLE;
 			while (mRun) {
 				switch(gameState){
@@ -347,14 +356,36 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 
-		
+	
 		
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			
+
+			int FPSTotal = 0;
+			int total = 0;
+			int time = 1;
 			while((gameState == GameState.PLAYING)  && (mRun)){
+				
+				previousTime = currentTime;
+				currentTime = System.currentTimeMillis();
+				Long FPS = ((currentTime - previousTime));
+				int iFPS = Integer.valueOf(String.valueOf(BigInteger.valueOf(FPS)));
+				
+				
+//				time = time * 0.9 + last_frame * 0.1
+				
+				
+				FPSTotal += iFPS;
+				total += 1;
+				
+				int average = FPSTotal / total;
+				
+//				Log.d("GSTA", "FPSToal = " + FPSTotal + " total " + total);
+				Log.d("GSTA", "" + String.valueOf(average));
+				
 				
 				currentInput = _input.getInput();
 				Vec2d mClicked = _input.getCurrentPress();
@@ -370,7 +401,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					clearScreen(c, cameraSize);
 //					offset.x = hero.pos.x - (long)(cameraSize.x / 2 * 1000);
 //					offset.y = hero.pos.y - (long)(cameraSize.y / 2 * 1000);
+					int arrowOffsetX = 120;
+					int arrowOffsetY = 445;
+					int scale = 4;
+					Rect arrow = new Rect(arrowOffsetX - (bitArrow.getWidth() / 2 / scale),
+									arrowOffsetY - (bitArrow.getHeight() / 2 / scale),
+									arrowOffsetX + (bitArrow.getWidth() / 2 / scale),
+									arrowOffsetY + (bitArrow.getHeight() / 2 / scale));
+					
+					
+					
 					GameObject.drawAll(c);
+					c.drawBitmap(bitArrow, null, arrow, null);
 //					drawAd(c);
 					
 					picScreen.endRecording();
@@ -425,7 +467,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			Picture picScreen = new Picture();
 			
 			while((gameState == GameState.PAUSED) && (mRun)){
-				Canvas c = null;
+//				Canvas c = null;
 				Vec2d mClicked = _input.getCurrentPress();
 				if (mClicked!=null) 
 					if ((mClicked.x>750)&&(mClicked.y<50)) {
@@ -488,7 +530,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			int width = (int) size.x;
 			Rect rec = new Rect (0,0, width, height);
 			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			backgroundPaint.setColor(Color.DKGRAY);
+			backgroundPaint.setColor(Color.BLACK);
 			c.drawRect(rec, backgroundPaint);
 		}
 	}

@@ -93,14 +93,17 @@ public class UserInput {
 		
 		fingerDown = true;
 		
-		int screenWidth = (int) cameraSize.x;
+//		int screenWidth = (int) cameraSize.x;
 		
-		double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * event.getX();
-		double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * event.getY();
+
+//		
+//		mCurrentTouch.set(convertX, convertY);
+
 		
-		mCurrentTouch.set(convertX, convertY);
+//		Log.d("GSTA", "You just pressed - " + convertX + "," + convertY);
+		int screenWidth = (int) surfaceSize.x;
+		mCurrentTouch.set(event.getX(), event.getY());
 		
-		Log.d("GSTA", "You just pressed - " + convertX + "," + convertY);
 		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
@@ -163,6 +166,11 @@ public class UserInput {
 	
 	public Vec2d getCurrentPress() {
 		Vec2d tempCurrentPress = mCurrentPress;
+		if (mCurrentPress!=null) {
+			double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * mCurrentPress.x;
+			double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * mCurrentPress.y;
+			tempCurrentPress.set(convertX, convertY);
+		}
 		mCurrentPress = null;
 		return tempCurrentPress;
 	}
