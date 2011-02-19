@@ -10,6 +10,7 @@ import android.graphics.Rect;
 public class GameObject {
 	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	public static Vec2d offset;
+	public static GameHero hero;
 	
 	public static void drawPause(Canvas c) {
 		for (GameObject o : GameObject.gameObjects){
@@ -17,16 +18,33 @@ public class GameObject {
 		}
 	}
 
-	public static void drawAll(Canvas c){
+	public static void drawAll(Canvas c){  //TODO Not entirely needed anymore
 		for(GameObject o : GameObject.gameObjects){
 			if(o.onScreen(c))
 				o.draw(c);
 		}
 	}
 	
-	public Vec2d pos;
+	public static void saveCheckpointAll() {
+		if (hero.ground!=null) {
+			for(GameObject o : GameObject.gameObjects){
+				o.saveCheckpoint();
+			}
+		}
+	}
+	
+	public static void restoreCheckpointAll() {
+		for(GameObject o : GameObject.gameObjects){
+			o.restoreCheckpoint();
+		}
+	}
+	
+	public Vec2d pos, checkpointPOS;
 	public Vec2d extent;
-	public Vec2d velocity;
+	public Vec2d velocity, checkpointVelocity;
+	public int GRAVITY = 400;  //RICK: added to make swapping gravity work ORG: 500
+	public int checkpointGRAVITY;
+	
 	
 	public long left;
 	public long top;
@@ -34,8 +52,9 @@ public class GameObject {
 	public long bottom;
 	
 	public boolean obstacle = false;
+	public boolean death = false;
 	
-	public int color;
+	public int color, checkPointColor;
 	
 	public GameObject ground = null;
 	
@@ -53,6 +72,13 @@ public class GameObject {
 		
 		this.velocity = velocity;
 		color = Color.WHITE;
+		
+		
+		checkPointColor = color;
+		checkpointPOS = new Vec2d(pos);
+		checkpointVelocity = new Vec2d(velocity);
+		checkpointGRAVITY = GRAVITY;
+		
 		GameObject.gameObjects.add(this);
 	}
 	
@@ -77,6 +103,31 @@ public class GameObject {
 		c.drawRect(recObject, paintObject);
 	}
 	
+	public void saveCheckpoint() {
+		checkPointColor = color;
+		checkpointPOS.set(pos);
+		checkpointVelocity.set(velocity);
+		checkpointGRAVITY = GRAVITY;
+		if (this.equals(GameObject.hero)) {
+//			Log.d("GSTA", "saving gravity " + GRAVITY);
+//			Log.d("GSTA", "saving pos " + pos.toString());
+//			Log.d("GSTA", "saving velocity " + velocity.toString());
+		}
+	}
+	
+	public void restoreCheckpoint() {
+		GRAVITY = checkpointGRAVITY;
+		color=checkPointColor;
+		pos.set(checkpointPOS);
+		velocity.set(checkpointVelocity);
+		
+		if (this.equals(GameObject.hero)) {
+//			Log.d("GSTA", "restoring Checkpoint gravity " + GRAVITY);
+//			Log.d("GSTA", "restoring Checkpoint pos " + pos.toString());
+//			Log.d("GSTA", "restoring Checkpoint vel " + velocity.toString());
+		}
+		
+	}
 	
 	public void draw(Canvas c){
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 

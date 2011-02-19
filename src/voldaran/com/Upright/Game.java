@@ -1,8 +1,6 @@
 package voldaran.com.Upright;
 
 
-import java.math.BigInteger;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -231,6 +229,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			new GameObject(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
 		}
 		
+		public void addObstacle(int posx, int posy, int extentx, int extenty){
+			new GameObstacle(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
+		}
+		
 		//Loads a level, still needs a function to parse level file and load correct level
 		public void loadLevel() {
 			
@@ -251,7 +253,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
 			
-			hero = new GameHero(new Vec2d(30000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
+			hero = new GameHero(new Vec2d(300000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
 			
 			hero.setGame(this);
 			Log.d("GSTA", "hero : " + hero.pos);
@@ -271,6 +273,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //			addWall(796,232,4,240);
 			
 			
+			//Boarders //Obstacles
+			addObstacle(4,240,4,232);
+			addObstacle(392,4,400,4);
+			addObstacle(372,476,428,4);
+			addObstacle(796,232,4,240);
 			
 			addWall(356,220,4,4);
 			addWall(160,408,64,8);
@@ -282,10 +289,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addWall(568,136,8,56);
 			addWall(552,72,24,8);
 			addWall(464,72,48,8);
-			addWall(4,240,4,232);
-			addWall(392,4,400,4);
-			addWall(372,476,428,4);
-			addWall(796,232,4,240);
+
 			addWall(336,80,16,16);
 			addWall(368,80,16,16);
 			addWall(336,112,16,16);
@@ -344,7 +348,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
-			currentTime = System.currentTimeMillis();
 			gameState = GameState.TITLE;
 			while (mRun) {
 				switch(gameState){
@@ -356,42 +359,44 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 
-	
+	boolean restoreCheckpoint = false;
 		
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			
-
-			int FPSTotal = 0;
-			int total = 0;
-			while((gameState == GameState.PLAYING)  && (mRun)){
-				
-				previousTime = currentTime;
-				currentTime = System.currentTimeMillis();
-				Long FPS = ((currentTime - previousTime));
-				int iFPS = Integer.valueOf(String.valueOf(BigInteger.valueOf(FPS)));
-				
-				
-//				time = time * 0.9 + last_frame * 0.1
-				
-				
-				FPSTotal += iFPS;
-				total += 1;
-				
-				int average = FPSTotal / total;
-				
-//				Log.d("GSTA", "FPSToal = " + FPSTotal + " total " + total);
-				Log.d("GSTA", "" + String.valueOf(average));
-				
-				
+			long startTime = System.currentTimeMillis();
+			Long lastSavedTime = startTime; 
+			currentTime = System.currentTimeMillis();
+			
+			long sft = 0;
+  			currentTime = System.currentTimeMillis();
+  			while((gameState == GameState.PLAYING)  && (mRun)){
+  		    
+	  		    previousTime = currentTime;
+	  		    currentTime = System.currentTimeMillis();
+	  		    long ft = ((currentTime - previousTime));
+	  		    
+	  		    sft = (long) (sft * 0.9 + ft * 0.1);
+	  		    
+	  		    Log.d("FPS", "" + String.valueOf(sft));
+			
 				currentInput = _input.getInput();
 				Vec2d mClicked = _input.getCurrentPress();
 				
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
 				MovingObject.updateAll();
+				
+
+				//Every ten Seconds save checkpoint
+				
+				if (currentTime>lastSavedTime+10000) {
+					lastSavedTime = currentTime;
+					Log.d("GSTA", "Saving!");
+					GameObject.saveCheckpointAll();
+				}
 				
 				Picture picScreen = new Picture();
 				Canvas c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
@@ -400,22 +405,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					clearScreen(c, cameraSize);
 //					offset.x = hero.pos.x - (long)(cameraSize.x / 2 * 1000);
 //					offset.y = hero.pos.y - (long)(cameraSize.y / 2 * 1000);
-
-					
 					GameObject.drawAll(c);
 //					drawAd(c);
 					
+					Checkpoint.Update(c, cameraSize);  //Saves gamestate for Checkpoint
+					
 					picScreen.endRecording();
 					drawToScreen(picScreen);
+//				}
+				
+
 				}
 				
 				if (mClicked!=null) //Pause
-					if ((mClicked.x>750)&&(mClicked.y<50)) {
+					if ((mClicked.x>700)&&(mClicked.y<100)) {
 						pause.createPause(picture, hero.pos, mapSize);
 						gameState=GameState.PAUSED;
 						break;
 					}
-				
 			}
 			return gameState;
 		}
@@ -525,6 +532,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 }
+
+
 
 
 

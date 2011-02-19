@@ -46,6 +46,12 @@ public class Vec2d {
 		return this;
 	}
 	
+	public Vec2d set(Vec2d vec){
+		this.x = vec.x;
+		this.y = vec.y;
+		return this;
+	}
+	
 	public Vec2d set(double x, double y){
 		return set(round(x), round(y));
 	}

@@ -8,6 +8,7 @@ public class GameObstacle extends GameObject{
 		super(pos, extent);
 		super.obstacle = true;
 		super.color = Color.RED;
+		super.checkPointColor = Color.RED;
 	}
 
 }

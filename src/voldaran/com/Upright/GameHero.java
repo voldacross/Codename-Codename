@@ -11,20 +11,21 @@ public class GameHero extends MovingObject{
 	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-7500, -5625); //20000, -15000
 	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(7500, -5625);
 	
-	private int GRAVITY = 400;  //RICK: added to make swapping gravity work ORG: 500
+	//Gravity moved to GameObject for testing
 	
 	public Bitmap bitmap;
-	private GameObject ground = null;
+	public GameObject ground = null;
 
 	public GameHero(Vec2d pos,Vec2d extent, Bitmap bitmap) {
 		super(pos, extent);
 		this.bitmap = bitmap;
+		GameObject.hero = this;
 	}
 	
 	public GameHero(Vec2d pos, Vec2d extent, Vec2d vel, Bitmap bitmap) {
 		super(pos, extent, vel);
 		this.bitmap = bitmap;
-
+		GameObject.hero = this;
 	}
 	
 	@Override
@@ -40,9 +41,9 @@ public class GameHero extends MovingObject{
 		      if((GRAVITY>0 && bottom == o.top) || (GRAVITY < 0 && top == o.bottom)){
 		        ground = o;
 
-		        if (o.color==Color.WHITE) {
+		        if (o.color==Color.WHITE && !o.obstacle) {
 		         o.color=Color.GREEN;
-		        } else o.color=Color.WHITE;
+		        } else if (o.color==Color.GREEN && !o.obstacle) o.color=Color.WHITE;
 		      
 		        break;
 		      }
@@ -92,6 +93,8 @@ public class GameHero extends MovingObject{
 			
 		velocity.add(0, GRAVITY); //RICK: added/modified to make swapping gravity work
 	}
+	
+
 	
 	@Override
 	public void draw(Canvas c){

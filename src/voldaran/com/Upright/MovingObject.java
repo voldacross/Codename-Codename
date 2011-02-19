@@ -16,8 +16,6 @@ public class MovingObject extends GameObject{
 		for(MovingObject o: MovingObject.movingObjects){
 			o.grounding();
 		}
-		
-		
 	}
 	
 	
@@ -35,6 +33,7 @@ public class MovingObject extends GameObject{
 
 	public MovingObject(Vec2d pos, Vec2d extent){
 		super(pos, extent);
+		
 		MovingObject.movingObjects.add(this);
 	}
 	
@@ -82,6 +81,7 @@ public class MovingObject extends GameObject{
 				if(o != this) 
 					collision = sweepOverlaps(o);
 					if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
+						if (o.obstacle) death=true;
 							firstcollision = collision;
 					}
 			}
@@ -140,4 +140,5 @@ public class MovingObject extends GameObject{
 		else 
 			return new Collision(tom, new Vec2d(velocity.x, velocity.y * tom + b.velocity.y * (tsm - tom)));
 	}
+	
 }

@@ -92,14 +92,7 @@ public class UserInput {
 		
 		fingerDown = true;
 		
-//		int screenWidth = (int) cameraSize.x;
-		
 
-//		
-//		mCurrentTouch.set(convertX, convertY);
-
-		
-//		Log.d("GSTA", "You just pressed - " + convertX + "," + convertY);
 		int screenWidth = (int) surfaceSize.x;
 		mCurrentTouch.set(event.getX(), event.getY());
 		
