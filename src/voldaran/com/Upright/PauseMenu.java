@@ -3,7 +3,6 @@ package voldaran.com.Upright;
 import android.graphics.Canvas;
 import android.graphics.Picture;
 import android.graphics.Rect;
-import android.view.SurfaceView;
 
 public class PauseMenu {
 	
@@ -12,7 +11,6 @@ public class PauseMenu {
 	private Picture picture;
 	private Rect dst;
 
-	private SurfaceView surface;
 	private Vec2d hero, offset, mapSize, cameraSize;
 	
 	

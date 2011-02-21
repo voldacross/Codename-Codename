@@ -9,6 +9,10 @@ public class Vec2d {
 		y = 0;
 	}
 	
+	public Vec2d(Vec2d vector){
+		this(vector.x, vector.y);
+	}
+	
 	public Vec2d(long x, long y){
 		this.x = x;
 		this.y = y;
@@ -16,10 +20,6 @@ public class Vec2d {
 	
 	public Vec2d(double x, double y){
 		this(round(x), round(y));
-	}
-	
-	public Vec2d(Vec2d vector){
-		this(vector.x, vector.y);
 	}
 	
 	static private long round(double n){
@@ -40,15 +40,15 @@ public class Vec2d {
 		return x + "," + y;
 	}
 	
-	public Vec2d set(long x, long y){
-		this.x = x;
-		this.y = y;
+	public Vec2d set(Vec2d vector){
+		this.x = vector.x;
+		this.y = vector.y;
 		return this;
 	}
 	
-	public Vec2d set(Vec2d vec){
-		this.x = vec.x;
-		this.y = vec.y;
+	public Vec2d set(long x, long y){
+		this.x = x;
+		this.y = y;
 		return this;
 	}
 	
@@ -181,12 +181,29 @@ public class Vec2d {
 		return x * x + y * y;
 	}
 	
-	public Vec2d Negative() {
+	public Vec2d negative() {
 		return new Vec2d(-x,-y);
 		
 	}
+	
 	public Vec2d normalize(){
 		return this.div(this.len() / 1000.0);
+	}
+	
+	public boolean up(){
+		return y < 0;
+	}
+	
+	public boolean down(){
+		return y > 0;
+	}
+	
+	public boolean left(){
+		return x < 0;
+	}
+	
+	public boolean right(){
+		return x > 0;
 	}
 
 }

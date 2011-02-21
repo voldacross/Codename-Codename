@@ -1,14 +1,8 @@
 package voldaran.com.Upright;
 
-
 import android.view.MotionEvent;
-import android.view.SurfaceView;
-
-
-
 
 public class UserInput {
-	private static SurfaceView surface;
 	private Vec2d cameraSize, surfaceSize;
 	
 	public UserInput(Vec2d c, Vec2d s) {

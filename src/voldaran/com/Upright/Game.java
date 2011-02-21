@@ -249,13 +249,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			//Create hero
 			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad2);
-//			bitArrow = BitmapFactory.decodeResource(getResources(),R.drawable.arrow);
 			
 			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
 			
-			hero = new GameHero(new Vec2d(300000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
+			hero = new GameHero(new Vec2d(350000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
 			
-			hero.setGame(this);
 			Log.d("GSTA", "hero : " + hero.pos);
 			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
 					                                         + (hero.pos.y - hero.extent.y) + ","
@@ -359,21 +357,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 
-	boolean restoreCheckpoint = false;
-		
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			
 			long startTime = System.currentTimeMillis();
-			Long lastSavedTime = startTime; 
-			currentTime = System.currentTimeMillis();
-			
+			long lastSavedTime = startTime; 
 			long sft = 0;
   			currentTime = System.currentTimeMillis();
   			while((gameState == GameState.PLAYING)  && (mRun)){
-  		    
 	  		    previousTime = currentTime;
 	  		    currentTime = System.currentTimeMillis();
 	  		    long ft = ((currentTime - previousTime));
@@ -390,43 +383,58 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				MovingObject.updateAll();
 				
 
-				//Every ten Seconds save checkpoint
-				
-				if (currentTime>lastSavedTime+10000) {
-					lastSavedTime = currentTime;
-					Log.d("GSTA", "Saving!");
-					GameObject.saveCheckpointAll();
-				}
 				
 				Picture picScreen = new Picture();
 				Canvas c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
 					clearScreen(c, cameraSize);
-//					offset.x = hero.pos.x - (long)(cameraSize.x / 2 * 1000);
-//					offset.y = hero.pos.y - (long)(cameraSize.y / 2 * 1000);
 					GameObject.drawAll(c);
-//					drawAd(c);
-					
-					Checkpoint.Update(c, cameraSize);  //Saves gamestate for Checkpoint
-					
 					picScreen.endRecording();
 					drawToScreen(picScreen);
-//				}
-				
-
 				}
-				
-				if (mClicked!=null) //Pause
+
+				if(hero.dead){
+					death();
+				}else if (currentTime>lastSavedTime+10000){			//Every ten Seconds save checkpoint
+					if(GameObject.saveCheckpointAll())
+						lastSavedTime = currentTime;
+				}
+
+				if(mClicked!=null) //Pause
 					if ((mClicked.x>700)&&(mClicked.y<100)) {
 						pause.createPause(picture, hero.pos, mapSize);
-						gameState=GameState.PAUSED;
-						break;
+						gameState = GameState.PAUSED;
 					}
 			}
 			return gameState;
 		}
 		
+		public void death(){
+			float alpha = 255;
+			int height = (int) cameraSize.y;
+			int width = (int) cameraSize.x;
+
+			GameObject.restoreCheckpointAll();
+			while(mRun && alpha > 50){
+				Picture picScreen = new Picture();
+				Canvas c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
+				
+				synchronized (_surfaceHolder) {
+					clearScreen(c, cameraSize);
+					GameObject.drawAll(c);
+					Rect rec = new Rect (0,0, width, height);
+					Paint whitePaint = new Paint();
+					whitePaint.setColor(Color.WHITE);
+					whitePaint.setAlpha((int) alpha);
+					c.drawRect(rec, whitePaint);
+					picScreen.endRecording();
+					drawToScreen(picScreen);
+				}
+				alpha -= 20;
+				
+			}
+		}
 		
 		public GameState titleScreen() {
 			createTitleScreen();

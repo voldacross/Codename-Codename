@@ -1,16 +1,24 @@
 package voldaran.com.Upright;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class GameObject {
 	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	public static Vec2d offset;
-	public static GameHero hero;
+	public final  int NODIR = 0; 
+	public final static int RIGHT = 1; 
+	public final static int UP = 2; 
+	public final static int TOP = 2; 
+	public final static int LEFT = 3; 
+	public final static int DOWN = 4; 
+	public final static int BOTTOM = 4; 
 	
 	public static void drawPause(Canvas c) {
 		for (GameObject o : GameObject.gameObjects){
@@ -25,12 +33,20 @@ public class GameObject {
 		}
 	}
 	
-	public static void saveCheckpointAll() {
-		if (hero.ground!=null) {
+	public static boolean saveCheckpointAll() {
+		boolean checkpointOK = true;
+		
+		Iterator<GameObject> iter = GameObject.gameObjects.iterator();
+		while(checkpointOK && iter.hasNext()){
+			checkpointOK = checkpointOK && iter.next().allowCheckpoint(); 
+		}
+		if(checkpointOK){
+			Log.d("CP", "Saved!");
 			for(GameObject o : GameObject.gameObjects){
 				o.saveCheckpoint();
 			}
 		}
+		return checkpointOK;
 	}
 	
 	public static void restoreCheckpointAll() {
@@ -42,7 +58,6 @@ public class GameObject {
 	public Vec2d pos, checkpointPOS;
 	public Vec2d extent;
 	public Vec2d velocity, checkpointVelocity;
-	public int GRAVITY = 400;  //RICK: added to make swapping gravity work ORG: 500
 	public int checkpointGRAVITY;
 	
 	
@@ -52,7 +67,6 @@ public class GameObject {
 	public long bottom;
 	
 	public boolean obstacle = false;
-	public boolean death = false;
 	
 	public int color, checkPointColor;
 	
@@ -65,19 +79,10 @@ public class GameObject {
 	public GameObject(Vec2d pos, Vec2d extent, Vec2d velocity){
 		this.pos = pos;
 		this.extent = extent;
-		left = pos.x - extent.x;
-		top = pos.y - extent.y;
-		right = pos.x + extent.x;
-		bottom = pos.y + extent.y;
+		setSides();
 		
 		this.velocity = velocity;
 		color = Color.WHITE;
-		
-		
-		checkPointColor = color;
-		checkpointPOS = new Vec2d(pos);
-		checkpointVelocity = new Vec2d(velocity);
-		checkpointGRAVITY = GRAVITY;
 		
 		GameObject.gameObjects.add(this);
 	}
@@ -86,7 +91,46 @@ public class GameObject {
 		return ground;
 	}
 	
+	public void setSides(){
+		left = pos.x - extent.x;
+		top = pos.y - extent.y;
+		right = pos.x + extent.x;
+		bottom = pos.y + extent.y;
+	}
+	
+	// touching - tests is this object's side is touching GameObject o
+	// 	in: side - right = 1, top = 2, left = 3, bottom = 4
+	//      o - any GameObject
+	//  returns: True - if this objects side touches o
+	//  calls: overlap
+	public boolean touching(int side, GameObject o){
+        if(side == RIGHT)
+            return right == o.left && overlap(o, false);
+        else if(side == TOP)
+            return top == o.bottom && overlap(o, true);
+        else if(side == LEFT)
+            return left == o.right && overlap(o, false);
+        else
+            return bottom == o.top && overlap(o, true);
+	
+	}
+	
+	// overlap - tests if the project of the horizontal or vertical extent of this object and given object overlap
+	// in: o - object to test against
+	//     horizontal - true = horizontal extent, false = vertical extent
+	// returns: True if there is overlap
+	//          False if not
+	public boolean overlap(GameObject o, boolean horizontal){
+        if(horizontal)
+            return right > o.left && left < o.right;
+        else
+        	return bottom > o.top && top < o.bottom;
+	}
+	
 	public void update(){
+	}
+	
+	public void touch(GameObject o){
 	}
 	
 	private boolean onScreen(Canvas c){
@@ -103,40 +147,24 @@ public class GameObject {
 		c.drawRect(recObject, paintObject);
 	}
 	
-	public void saveCheckpoint() {
-		checkPointColor = color;
-		checkpointPOS.set(pos);
-		checkpointVelocity.set(velocity);
-		checkpointGRAVITY = GRAVITY;
-		if (this.equals(GameObject.hero)) {
-//			Log.d("GSTA", "saving gravity " + GRAVITY);
-//			Log.d("GSTA", "saving pos " + pos.toString());
-//			Log.d("GSTA", "saving velocity " + velocity.toString());
-		}
-	}
-	
-	public void restoreCheckpoint() {
-		GRAVITY = checkpointGRAVITY;
-		color=checkPointColor;
-		pos.set(checkpointPOS);
-		velocity.set(checkpointVelocity);
-		
-		if (this.equals(GameObject.hero)) {
-//			Log.d("GSTA", "restoring Checkpoint gravity " + GRAVITY);
-//			Log.d("GSTA", "restoring Checkpoint pos " + pos.toString());
-//			Log.d("GSTA", "restoring Checkpoint vel " + velocity.toString());
-		}
-		
-	}
-	
 	public void draw(Canvas c){
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
 				                  (int)((top - GameObject.offset.y) / 1000), 
-				                  (int)((right - GameObject.offset.x)/ 1000 - 1), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000 - 1));
+				                  (int)((right - GameObject.offset.x)/ 1000), 
+		 		                 (int)((bottom - GameObject.offset.y) / 1000));
 		 
 		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 		paintObject.setColor(color);
 		c.drawRect(recObject, paintObject);
+	}
+	
+	protected boolean allowCheckpoint(){
+		return true;
+	}
+	
+	protected void saveCheckpoint(){
+	}
+	
+	protected void restoreCheckpoint(){
 	}
 }

@@ -2,10 +2,6 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
-import voldaran.com.Upright.Game.GameThread;
-
-
-
 public class MovingObject extends GameObject{
 	public static ArrayList<MovingObject> movingObjects = new ArrayList<MovingObject>();
 	
@@ -18,23 +14,18 @@ public class MovingObject extends GameObject{
 		}
 	}
 	
-	
-	GameThread thread;
-	
-	public void setGame(GameThread t) {
-		
-		thread = t;
-	}
+	protected Vec2d posCheckpoint = new Vec2d();
+	protected Vec2d velocityCheckpoint = new Vec2d();
 	
 	public MovingObject(Vec2d pos, Vec2d extent, Vec2d velocity){
 		super(pos, extent, velocity);
 		MovingObject.movingObjects.add(this);
+		posCheckpoint.set(pos);
+		velocityCheckpoint.set(velocity);
 	}
 
 	public MovingObject(Vec2d pos, Vec2d extent){
-		super(pos, extent);
-		
-		MovingObject.movingObjects.add(this);
+		this(pos, extent, new Vec2d(0,0));
 	}
 	
 	public MovingObject applyForce(Vec2d force){
@@ -45,23 +36,18 @@ public class MovingObject extends GameObject{
 	@Override
 	public void update(){
 		pos.add(velocity);
-		updateSides();
-	}
-	
-	public void updateSides(){
-		left = pos.x - extent.x;
-		top = pos.y - extent.y;
-		right = pos.x + extent.x;
-		bottom = pos.y + extent.y;
+		setSides();
 	}
 	
 	protected class Collision{
 		public float time;
 		public Vec2d correctedVelocity;
+		public GameObject collider;
 		
-		public Collision(float time, Vec2d correctedVelocity){
+		public Collision(float time, Vec2d correctedVelocity, GameObject collider){
 			this.time = time;
 			this.correctedVelocity = correctedVelocity;
+			this.collider = collider;
 		}
 		
 	}
@@ -81,12 +67,13 @@ public class MovingObject extends GameObject{
 				if(o != this) 
 					collision = sweepOverlaps(o);
 					if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
-						if (o.obstacle) death=true;
-							firstcollision = collision;
+						firstcollision = collision;
 					}
 			}
 			if(firstcollision != null){
 				this.velocity = firstcollision.correctedVelocity;
+				this.touch(firstcollision.collider);
+				firstcollision.collider.touch(this);
 			}else break;
 			i++;
 		}
@@ -136,9 +123,23 @@ public class MovingObject extends GameObject{
 		
 		// calculate the avoidance velocity
 		if(to[0] > to[1]) 
-			return new Collision(tom, new Vec2d(velocity.x * tom + b.velocity.x * (tsm - tom), velocity.y));
+			return new Collision(tom, new Vec2d(velocity.x * tom + b.velocity.x * (tsm - tom), velocity.y), b);
 		else 
-			return new Collision(tom, new Vec2d(velocity.x, velocity.y * tom + b.velocity.y * (tsm - tom)));
+			return new Collision(tom, new Vec2d(velocity.x, velocity.y * tom + b.velocity.y * (tsm - tom)), b);
 	}
 	
+	@Override
+	protected void saveCheckpoint(){
+		super.saveCheckpoint();
+		posCheckpoint.set(pos);
+		velocityCheckpoint.set(velocity);
+	}
+	
+	@Override
+	protected void restoreCheckpoint(){
+		super.restoreCheckpoint();
+		pos.set(posCheckpoint);
+		velocity.set(velocityCheckpoint);
+		setSides();
+	}
 }
