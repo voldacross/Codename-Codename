@@ -133,6 +133,11 @@ public class GameObject {
 	public void touch(GameObject o){
 	}
 	
+	public void toggle(GameObject o){
+		if(color == Color.WHITE) color = Color.GREEN;
+		else color = Color.WHITE;
+	}
+	
 	private boolean onScreen(Canvas c){
 		return (right - GameObject.offset.x) >= 0 
 			&& (left - GameObject.offset.x) <= c.getWidth() * 1000 

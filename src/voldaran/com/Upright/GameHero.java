@@ -26,6 +26,8 @@ public class GameHero extends MovingObject{
 	
 	public Bitmap bitmap;
 	protected GameObject groundCheckpoint = null;
+	protected GameObject lastToggled = null; 
+	protected GameObject lastToggledCheckpoint = null; 
 	protected int walking = NODIR;
 	protected int walkingCheckpoint = NODIR;
 	protected int down = DOWN;
@@ -82,6 +84,12 @@ public class GameHero extends MovingObject{
             ground = findGround(walking, ground);
             if(ground == null) walking = NODIR;
         }
+        if(ground != null){
+        	if(ground != lastToggled){
+        		lastToggled = ground;
+        		ground.toggle(this);
+        	}
+        }
         return ground;
 	}
 	
@@ -137,16 +145,28 @@ public class GameHero extends MovingObject{
 					applyForce(UPVELOCITY);
 				break;
 			case SWIPE_LEFT: 
-				if(walking == RIGHT)
+				if(walking == RIGHT){
 					if(down == UP) applyForce(JUMPRIGHTVELOCITY.negative());
 					else applyForce(JUMPLEFTVELOCITY);
+					ground = null;
+					walking = NODIR;
+				}
+				break;
+			case SWIPE_RIGHT:
+				if(walking == LEFT){
+					if(down == UP) applyForce(JUMPLEFTVELOCITY.negative());
+					else applyForce(JUMPRIGHTVELOCITY);
+					ground = null;
+					walking = NODIR;
+				}
+				break;
+			case SWIPE_UP:
+				down = UP;
 				ground = null;
 				walking = NODIR;
 				break;
-			case SWIPE_RIGHT:
-				if(walking == LEFT)
-					if(down == UP) applyForce(JUMPLEFTVELOCITY.negative());
-					else applyForce(JUMPRIGHTVELOCITY);
+			case SWIPE_DOWN:
+				down = DOWN;
 				ground = null;
 				walking = NODIR;
 				break;
@@ -204,6 +224,7 @@ public class GameHero extends MovingObject{
 		groundCheckpoint = ground;
 		walkingCheckpoint = walking;
 		downCheckpoint = down;
+		lastToggledCheckpoint = lastToggled;
 	}
 	
 	@Override
@@ -212,6 +233,7 @@ public class GameHero extends MovingObject{
 		ground = groundCheckpoint;
 		walking = walkingCheckpoint;
 		down = downCheckpoint;
+		lastToggled = lastToggledCheckpoint;
 		dead = false;
 	}
 }
