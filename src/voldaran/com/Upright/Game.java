@@ -226,7 +226,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
 		
 		public void addWall(int posx, int posy, int extentx, int extenty){
-			new GameObject(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
+			new Wall(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
 		}
 		
 		public void addObstacle(int posx, int posy, int extentx, int extenty){

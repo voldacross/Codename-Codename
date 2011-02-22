@@ -193,7 +193,7 @@ public class GameHero extends MovingObject{
 	
 	@Override
 	public void touch(GameObject o){
-		dead = o.obstacle;
+		dead = o instanceof GameObstacle;
 	}
 	
 	@Override

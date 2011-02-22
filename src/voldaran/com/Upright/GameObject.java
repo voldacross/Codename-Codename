@@ -55,10 +55,9 @@ public class GameObject {
 		}
 	}
 	
-	public Vec2d pos, checkpointPOS;
+	public Vec2d pos;
 	public Vec2d extent;
-	public Vec2d velocity, checkpointVelocity;
-	public int checkpointGRAVITY;
+	public Vec2d velocity;
 	
 	
 	public long left;
@@ -68,7 +67,7 @@ public class GameObject {
 	
 	public boolean obstacle = false;
 	
-	public int color, checkPointColor;
+	public int color;
 	
 	public GameObject ground = null;
 	
@@ -134,10 +133,8 @@ public class GameObject {
 	}
 	
 	public void toggle(GameObject o){
-		if(color == Color.WHITE) color = Color.GREEN;
-		else color = Color.WHITE;
 	}
-	
+		
 	private boolean onScreen(Canvas c){
 		return (right - GameObject.offset.x) >= 0 
 			&& (left - GameObject.offset.x) <= c.getWidth() * 1000 
