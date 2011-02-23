@@ -7,13 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class GameHero extends MovingObject{
-	private final static int WALKSPEED = 2000;
+	private final static int WALKSPEED = 1000;
 	private final static Vec2d LEFTVELOCITY = new Vec2d(-WALKSPEED, 0);
 	private final static Vec2d RIGHTVELOCITY = new Vec2d(WALKSPEED, 0);
 	private final static Vec2d UPVELOCITY = new Vec2d(0, -WALKSPEED);
 	private final static Vec2d DOWNVELOCITY = new Vec2d(0, WALKSPEED);
-	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-7500, -5625);
-	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(7500, -5625);
+	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-7500, -4625);
+	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(7500, -4625);
 	private final static Vec2d[] gravity = {
 		new Vec2d(0, 300),
 		new Vec2d(300, 0),
@@ -99,9 +99,22 @@ public class GameHero extends MovingObject{
 			case PRESS_LEFT: 
 				applyForce(LEFTVELOCITY);
 				break;
+			case PRESS_LEFT_DOWN: 
+				applyForce(LEFTVELOCITY);//Rick added	TODO
+				break;
+			case PRESS_LEFT_UP: 
+				applyForce(LEFTVELOCITY);//Rick added	TODO
+				break;
 			case PRESS_RIGHT: 
 				applyForce(RIGHTVELOCITY);
 				break;
+			case PRESS_RIGHT_DOWN: 
+				applyForce(RIGHTVELOCITY); //Rick added.	TODO
+				break;
+			case PRESS_RIGHT_UP: 
+				applyForce(RIGHTVELOCITY);//Rick added	TODO
+				break;				
+			
 			case SWIPE_LEFT: 
 				if(walking == UP) applyForce(JUMPRIGHTVELOCITY.negative()); 
 				else applyForce(JUMPLEFTVELOCITY);
@@ -128,22 +141,58 @@ public class GameHero extends MovingObject{
 					walking = NODIR;
 				}
 				break;
+				
+
 			}
+			
+				
 		}
 		else if(walking == LEFT || walking == RIGHT){
 			switch(input){
-			case PRESS_LEFT:
-				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-					applyForce(UPVELOCITY);
-				else
+//			case PRESS_LEFT:
+//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
+//					applyForce(UPVELOCITY);
+//				else
+//					applyForce(DOWNVELOCITY);
+//				break;
+
+				//Rick added	TODO	
+			case PRESS_LEFT_DOWN: 
+//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
+//					applyForce(UPVELOCITY);
+//				else
 					applyForce(DOWNVELOCITY);
 				break;
-			case PRESS_RIGHT: 
-				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
+			case PRESS_LEFT_UP: 
+//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
+					applyForce(UPVELOCITY);
+//				else
+//					applyForce(DOWNVELOCITY);
+				break;
+				//Rick end	TODO
+				
+//			case PRESS_RIGHT: 
+//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
+//					applyForce(DOWNVELOCITY);
+//				else
+//					applyForce(UPVELOCITY);
+//				break;
+				
+				//Rick added	TODO
+			case PRESS_RIGHT_DOWN:
+//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
 					applyForce(DOWNVELOCITY);
-				else
+//				else
+//					applyForce(UPVELOCITY);
+				break;
+				
+			case PRESS_RIGHT_UP:
+//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
+//					applyForce(DOWNVELOCITY);
+//				else
 					applyForce(UPVELOCITY);
 				break;
+				//Rick end	TODO
 			case SWIPE_LEFT: 
 				if(walking == RIGHT){
 					if(down == UP) applyForce(JUMPRIGHTVELOCITY.negative());

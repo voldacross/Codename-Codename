@@ -1,5 +1,6 @@
 package voldaran.com.Upright;
 
+
 public class Vec2d {
 	public long x;
 	public long y;
@@ -206,4 +207,15 @@ public class Vec2d {
 		return x > 0;
 	}
 
+	
+	//sets the vector to a fictitious Void value
+	public void setVoid(){
+		x = -478643;  //ISVOID SPELLED OUT ON A PHONE
+		y = -478643;
+	}
+	
+	public boolean isVoid(){
+		return (x==-478643&&y==-478643);
+	}
+	
 }

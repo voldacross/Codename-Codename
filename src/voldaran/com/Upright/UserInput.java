@@ -1,39 +1,31 @@
 package voldaran.com.Upright;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class UserInput {
-	private Vec2d cameraSize, surfaceSize;
 	
-	public UserInput(Vec2d c, Vec2d s) {
-		mCurrentTouch = new Vec2d();
-		mDragStart = new Vec2d();
-		mDragEnd = new Vec2d();
-		mDragVelocity = new Vec2d();
-		mDragVelocityStart = new Vec2d();
-//		UserInput.surface = surface;
-		
-		cameraSize = c;
-		surfaceSize = s;
-		
-	}
 
+	private Vec2d cameraSize, surfaceSize;
+	private Vec2d mCurrentTouch  = new Vec2d();;
+	private Vec2d mPress  = new Vec2d();;
+	private Vec2d mDownPress = new Vec2d();
+	
+	
 	public Input uInput = Input.NONE;
-	public Input previousInput;
-	
-	public Vec2d mCurrentTouch;
-	
-	private Vec2d mDragStart;
-	private Vec2d mDragEnd;
-	private Vec2d mCurrentPress;
-	
-	public Vec2d mDragVelocity;
-	public Vec2d mDragVelocityStart;
 	
 	public static enum Input {
+		PRESS_RIGHT_UP,
 		PRESS_RIGHT,
-		PRESS_MIDDLE,
+		PRESS_RIGHT_DOWN,
+		
+		PRESS_LEFT_UP,
 		PRESS_LEFT,
+		PRESS_LEFT_DOWN,
+		
+		PRESS_MIDDLE,
+		
+		PRESS_DOWN,
 		PRESS_DRAGGING,
 		SWIPE_UP,
 		SWIPE_DOWN,
@@ -43,14 +35,14 @@ public class UserInput {
 	
 	}
 	
-	boolean fingerDown = false;
-	boolean fingerDrag = false;
-	boolean userSwipped = false;
-	boolean userDragActive = false;
-	
+	public UserInput(Vec2d c, Vec2d s) {
+		cameraSize = c;
+		surfaceSize = s;
+		
+	}
 
-
-	public Input calcDirection (Vec2d mStart, Vec2d mEnd) {
+	//Takes two points and calculates the Direction
+	private int calcDirection (Vec2d mStart, Vec2d mEnd) { 
 		
 		long xDifference = Math.abs(mStart.x - mEnd.x);
 		long yDifference = Math.abs(mStart.y - mEnd.y);
@@ -58,106 +50,165 @@ public class UserInput {
 		if (xDifference>=yDifference) {
 			if (mEnd.x<=mStart.x) {
 				//LEFT
-				return Input.SWIPE_LEFT;
+				return 2;
 			} else {
 				//RIGHT
-				return Input.SWIPE_RIGHT;
+				return 0;
 			}
 			
 		} else if (xDifference<=yDifference) {
 			if (mEnd.y<=mStart.y) {
 				//UP
-				return Input.SWIPE_UP;
+				return 3;
 			} else {
 				//DOWN
-				return Input.SWIPE_DOWN;
+				return 1;
 			}
 		}
-		return null;
+		return -1;
 	}
 
-	public void Clear() {
-		uInput = Input.NONE;
+	
+	private int slicePiece(Vec2d touch) {
+		int screenWidth = (int) surfaceSize.x;
+		
+		if (touch.x>screenWidth-(screenWidth/3)) { //Right side of screen
+			return 2;
+			
+		} else if (touch.x<screenWidth/3) { //Left side of screen
+			return 0;
+			
+		} else { //middle
+			return 1;
+			
+		}
+
 	}
+	
+	
+
 	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
-		previousInput = uInput;
-		
-		fingerDown = true;
-		
-
-		int screenWidth = (int) surfaceSize.x;
-		mCurrentTouch.set(event.getX(), event.getY());
-		
+		int slice;
 		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		case MotionEvent.ACTION_DOWN:
-			mDragVelocityStart.set(mCurrentTouch.x, mCurrentTouch.y);
-			mDragStart.set(mCurrentTouch.x, mCurrentTouch.y);
-			mCurrentPress = new Vec2d(mCurrentTouch.x, mCurrentTouch.y);
 			
-			if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
-				uInput = Input.PRESS_RIGHT;
-				
-			} else if (mCurrentTouch.x<screenWidth/3) {
-				
+			mDownPress.set(event.getX(),event.getY());
+			mCurrentTouch.set(event.getX(), event.getY());
+			mPress.set(event.getX(),event.getY());
+			
+			slice = slicePiece(mDownPress);
+
+			switch (slice) {
+			case 0:
 				uInput = Input.PRESS_LEFT;
-			} else {
-				
+				break;
+			case 1:
 				uInput = Input.PRESS_MIDDLE;
+				break;
+			case 2:
+				uInput = Input.PRESS_RIGHT;
+				break;
 			}
 			break;
-
 			
 		case MotionEvent.ACTION_UP:
-			fingerDown = false;
-			mDragVelocity.clear();
-				if (uInput.equals(Input.PRESS_DRAGGING)) {
-					mDragEnd.set(mCurrentTouch.x, mCurrentTouch.y);
-					uInput = calcDirection(mDragStart, mDragEnd);
-				} else {
-					uInput = Input.NONE;
-				}
 			
+			if (uInput==Input.PRESS_DRAGGING) {
+				
+				int dir = calcDirection(mDownPress, mCurrentTouch);
+				switch (dir) {
+				case 0:
+					uInput = Input.SWIPE_RIGHT;
+					break;
+					
+				case 1:
+					uInput = Input.SWIPE_DOWN;
+					break;
+					
+				case 2:
+					uInput = Input.SWIPE_LEFT;
+					break;
+					
+				case 3:
+					uInput = Input.SWIPE_UP;
+					break;
+					
+				}
+			} else uInput = Input.NONE;
+			
+				
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
 			
-			mDragVelocity = (mCurrentTouch.subtract(mDragVelocityStart));
-			mDragVelocityStart.set(mCurrentTouch.x, mCurrentTouch.y);
-			float ddd = ((mDragStart.x - mCurrentTouch.x) * (mDragStart.x - mCurrentTouch.x)) + ((mDragStart.y - mCurrentTouch.y) * (mDragStart.y - mCurrentTouch.y));
+			mCurrentTouch.set(event.getX(), event.getY());
+			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + ((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y));
 			
-			if (ddd>35*35) {
-				uInput = Input.PRESS_DRAGGING;
+			int dir = calcDirection(mDownPress, mCurrentTouch);
+			
+			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
+			
+
+			if (slice!=1) { //Outer Slices
 				
-			} else {
-				if (mCurrentTouch.x>screenWidth-(screenWidth/3)) {
-					uInput = Input.PRESS_RIGHT;
-					
-				} else if (mCurrentTouch.x<screenWidth/3) {
-					
-					uInput = Input.PRESS_LEFT;
-				} else {
-					
-					uInput = Input.PRESS_MIDDLE;
+				if (ddd>8*8) {
+					if (dir==1||dir==3) { //UP / DOWN
+						switch (dir) {
+						case 1:  //down
+							if (slice==2)  {
+								uInput=Input.PRESS_RIGHT_DOWN;
+							} else if (slice==0) {
+								uInput=Input.PRESS_LEFT_DOWN;
+							}
+							break;
+						case 3:  //UP
+							if (slice==2) {
+								uInput=Input.PRESS_RIGHT_UP;
+							} else if (slice==0) {
+								uInput=Input.PRESS_LEFT_UP;
+							}
+							break;
+						}
+					} else if ((dir==0||dir==2) && (ddd>35*35)) uInput = Input.PRESS_DRAGGING;
+
+				}  else {
+					switch (slice) {
+					case 0:
+						uInput = Input.PRESS_LEFT;
+						break;
+					case 2:
+						uInput = Input.PRESS_RIGHT;
+					}
 				}
-			}
-			break;
+			} else if (ddd>35*35) uInput = Input.PRESS_DRAGGING; //Middle slice
 			
+
+			break;
 		}
 		
 	}
 	
+	public void Clear() {
+		uInput = Input.NONE;
+	}
+
+	
+	//Converts currentPress to our native camera size and eats it
 	public Vec2d getCurrentPress() {
-		Vec2d tempCurrentPress = mCurrentPress;
-		if (mCurrentPress!=null) {
-			double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * mCurrentPress.x;
-			double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * mCurrentPress.y;
+		Vec2d tempCurrentPress = new Vec2d(mPress);
+
+		if (!tempCurrentPress.isVoid()) {
+			double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * tempCurrentPress.x;
+			double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * tempCurrentPress.y;
 			tempCurrentPress.set(convertX, convertY);
+
 		}
-		mCurrentPress = null;
+		
+		mPress.setVoid();  
 		return tempCurrentPress;
 	}
 	
@@ -166,9 +217,12 @@ public class UserInput {
 		if (uInput==Input.SWIPE_DOWN || uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT || uInput==Input.SWIPE_UP) {
 			uInput = Input.NONE;
 		} 
+		if (oInput!=Input.NONE) Log.d("GSTA", "Input - " + oInput);
+		 
 		return oInput;
 	}
 
 
 
 }
+

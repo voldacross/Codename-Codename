@@ -1,14 +1,19 @@
 package voldaran.com.Upright;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -80,38 +85,10 @@ Notes:
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public GameThread thread;
-	public float fingerX;
-	public float fingerY;
-	public boolean keyDown;
-	public boolean keyDrag;
-	public float fingerDragStartX;
-	public float fingerDragStartY;
-	public float fingerDragEndX;
-	public float fingerDragEndY;
-	public boolean keyActualDrag;
-	public boolean launch;
-	public float mCurrentTouchX;
-	public float mCurrentTouchY;
-    public float mPreviousTouchX;
-    public float mPreviousTouchY;
-    public boolean bolFingerDown = false;
-    public boolean fingerDrag = false;
-    public boolean bolDragActive;
-    public boolean bolDragRelease;
     
 	public int gameTIME = 0;
 	
-	public Context mContext;
-	public static final int USER_TOUCH_NONE = 1000;
-	public static final int USER_SWIPE_LEFT = 1001;
-	public static final int USER_SWIPE_RIGHT = 1002;
-	public static final int USER_SWIPE_UP = 1003;
-	public static final int USER_SWIPE_DOWN = 1004;
-	public static final int USER_PRESS_RIGHT = 1005;
-	public static final int USER_PRESS_MIDDLE = 1006;
-	public static final int USER_PRESS_LEFT = 1007;
-	
-	public int USER_TOUCH = 1000;
+	public static Context mContext;
 	
 	public UserInput _input;
 	private PauseMenu pause;
@@ -211,6 +188,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	@Override public void surfaceDestroyed(SurfaceHolder holder) {
 	}
 	
+	//Static Helper Class
+	public static Bitmap loadBitmapAsset(String asset) {
+		AssetManager assets = mContext.getAssets();
+		InputStream stream = null;
+
+		 
+     	try {
+            stream = assets.open("gfx/" + asset);
+        } catch (IOException e) {
+            Log.d("GSTA", "EXCEPTION!" + e.getMessage());
+        }
+	        
+        Drawable drawable = BitmapDrawable.createFromStream(stream, "src");
+        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+	        
+		return bitmap;
+	}
+	
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
@@ -248,7 +243,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			mapSize = new Vec2d(10000,1000);
 			
 			//Create hero
-			bitHero = BitmapFactory.decodeResource(getResources(),R.drawable.meatwad2);
+			bitHero = Game.loadBitmapAsset("meatwad.png");
 			
 			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
 			
@@ -383,7 +378,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				MovingObject.updateAll();
 				
 
-				
 				Picture picScreen = new Picture();
 				Canvas c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
 				
@@ -396,12 +390,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 				if(hero.dead){
 					death();
-				}else if (currentTime>lastSavedTime+10000){			//Every ten Seconds save checkpoint
+				}else if (currentTime>lastSavedTime+25000){			//Every ten Seconds save checkpoint
 					if(GameObject.saveCheckpointAll())
 						lastSavedTime = currentTime;
 				}
 
-				if(mClicked!=null) //Pause
+				if(!mClicked.isVoid()) //Pause
 					if ((mClicked.x>700)&&(mClicked.y<100)) {
 						pause.createPause(picture, hero.pos, mapSize);
 						gameState = GameState.PAUSED;
@@ -412,6 +406,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public void death(){
 			float alpha = 255;
+			float fade = 0;
 			int height = (int) cameraSize.y;
 			int width = (int) cameraSize.x;
 
@@ -431,7 +426,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					picScreen.endRecording();
 					drawToScreen(picScreen);
 				}
-				alpha -= 20;
+				fade += 0.6;
+				alpha -= fade;
 				
 			}
 		}
@@ -444,8 +440,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			while((gameState == GameState.TITLE) && (mRun)){
 				
 				UserInput.Input currentInput = _input.getInput();
+				
 				Vec2d mClicked = _input.getCurrentPress();
-				titleMenu.processInput(currentInput, mClicked);
+				if (!mClicked.isVoid()) titleMenu.processInput(currentInput, mClicked);
 				titleMenu.update();
 				
 					synchronized (_surfaceHolder) {
@@ -474,7 +471,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			while((gameState == GameState.PAUSED) && (mRun)){
 //				Canvas c = null;
 				Vec2d mClicked = _input.getCurrentPress();
-				if (mClicked!=null) 
+				if (!mClicked.isVoid()) 
 					if ((mClicked.x>750)&&(mClicked.y<50)) {
 						Log.d("GSTA", "you clicked to unpause");
 						pause.exiting = true;
@@ -486,7 +483,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						gameState=GameState.PLAYING; //unPause
 						_input.Clear(); //Clear inputs
 					}
-				pause.Update(_input.mDragVelocity);
+//				pause.Update(_input.mDragVelocity);
 				
 					synchronized (_surfaceHolder) {
 

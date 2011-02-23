@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import voldaran.com.Upright.Game.GameState;
 import voldaran.com.Upright.UserInput.Input;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
@@ -35,19 +34,16 @@ public class MenuTitleScreen {
 		Rect recPlay = new Rect(0, 0, width, height);
 		Rect recAbout = new Rect(0, 0, width, height);
 
+		Bitmap bitPlay = Game.loadBitmapAsset("menu_play.png");
+		Bitmap bitAbout = Game.loadBitmapAsset("menu_about.png");
+		Bitmap bitSetup= Game.loadBitmapAsset("menu_setup.png");
 		
-		Bitmap bitPlay = BitmapFactory.decodeResource(mGame.mContext.getResources(),R.drawable.menu_play);
-		Bitmap bitAbout = BitmapFactory.decodeResource(mGame.mContext.getResources(),R.drawable.menu_about);
-		Bitmap bitSetup= BitmapFactory.decodeResource(mGame.mContext.getResources(),R.drawable.menu_setup);
-		
-
 		//Create Panels - #s - main, active, gone
 		Setup = new MenuTitleScreenPanel(recSetup, bitSetup, 0, 0, 0);
 		About = new MenuTitleScreenPanel(recAbout, bitAbout, width * 2 / 3, 0, width);
 		Play = new MenuTitleScreenPanel(recPlay, bitPlay, -(width * 2 / 3), 0,-width);
 
 		activePanel = null;
-		
 
 		menuTitlePanels.add(Setup);
 		menuTitlePanels.add(About);
@@ -72,9 +68,8 @@ public class MenuTitleScreen {
 	}
 	
 	public void processInput(Input input, Vec2d clicked) {
-		
 //		Log.d("GSTA", "" + inTransition);
-		if ((!inTransition) && (clicked!=null)){
+		if ((!inTransition) && (!clicked.isVoid())){
 			if (activePanel==About) {
 				if (input==UserInput.Input.PRESS_LEFT) {
 					activePanel = null;
