@@ -208,11 +208,13 @@ public class UserInput {
 						Log.d("GSTA", "reseting to left ");
 						uInput = Input.PRESS_LEFT;
 						swipping=false;
+						oldSpot.set(mCurrentTouch); 
 						break;
 					case 2:
 						Log.d("GSTA", "reseting to right ");
 						uInput = Input.PRESS_RIGHT;
 						swipping=false;
+						oldSpot.set(mCurrentTouch); 
 						break;
 					}
 				} else {
