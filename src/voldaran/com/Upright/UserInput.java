@@ -1,5 +1,6 @@
 package voldaran.com.Upright;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class UserInput {
@@ -154,7 +155,7 @@ public class UserInput {
 			
 			
 			
-			if (Math.abs((double) (mCurrentTouch.subtract(oldSpot).x))>20||Math.abs((double) (mCurrentTouch.subtract(oldSpot).y))>20) swipping=true;
+			if (Math.abs((double) (mCurrentTouch.subtract(oldSpot).x))>50||Math.abs((double) (mCurrentTouch.subtract(oldSpot).y))>50) swipping=true;
 			
 			if (!swipping) {
 				if (slice!=1) {
@@ -189,22 +190,33 @@ public class UserInput {
 					}
 				}
 			} else {
+				
+				Log.d("GSTA", "You have started to drag, determining legitimacy");
+				
 				int currentSlice = slicePiece(mCurrentTouch);
+				
+				Log.d("GSTA", "Starting slice = " + slice + " CurrentSlice = " + currentSlice);
+				
 				if ((slice==0&&currentSlice==2)||(slice==2&&currentSlice==0)) { //if you've swipped clearing the middle slice, ignore swipe
+					Log.d("GSTA", "You have been determined to have slide accross the whole screen, reseting input");
+					
 					mDownPress.set(event.getX(),event.getY()); //act like pressing down for the first time
 					//May need mPress set
 					
 					switch (currentSlice) { //Set press
 					case 0:
+						Log.d("GSTA", "reseting to left ");
 						uInput = Input.PRESS_LEFT;
 						swipping=false;
 						break;
 					case 2:
+						Log.d("GSTA", "reseting to right ");
 						uInput = Input.PRESS_RIGHT;
 						swipping=false;
 						break;
 					}
 				} else {
+					Log.d("GSTA", "Legit Swipe, activation PRESS_DRAGGING");
 					uInput = Input.PRESS_DRAGGING;
 				}
 				
