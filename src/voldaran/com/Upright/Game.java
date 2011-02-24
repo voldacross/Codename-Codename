@@ -402,7 +402,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				synchronized (_surfaceHolder) {
 					clearScreen(c, cameraSize);
 					GameObject.drawAll(c);
-					drawPress(c);
+//					drawPress(c);
 					picScreen.endRecording();
 					drawToScreen(picScreen);
 				}

@@ -100,6 +100,7 @@ public class UserInput {
 			mCurrentTouch.set(event.getX(), event.getY());
 			mPress.set(event.getX(),event.getY());
 			
+			
 			slice = slicePiece(mDownPress);
 
 			switch (slice) {
@@ -151,9 +152,9 @@ public class UserInput {
 			int dir = calcDirection(mDownPress, mCurrentTouch);
 			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
 			
-
 			
-			if (Math.abs((double) (mCurrentTouch.subtract(oldSpot).x))>50||Math.abs((double) (mCurrentTouch.subtract(oldSpot).y))>50) swipping=true;
+			
+			if (Math.abs((double) (mCurrentTouch.subtract(oldSpot).x))>20||Math.abs((double) (mCurrentTouch.subtract(oldSpot).y))>20) swipping=true;
 			
 			if (!swipping) {
 				if (slice!=1) {
