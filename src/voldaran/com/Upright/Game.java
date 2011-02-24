@@ -272,7 +272,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addObstacle(372,476,428,4);
 			addObstacle(796,232,4,240);
 			
-			addWall(356,220,4,4);
+//			addWall(356,220,4,4);
+			
+			
 			addWall(160,408,64,4);
 			addWall(248,352,4,64);
 			addWall(184,304,4,48);
@@ -287,14 +289,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addWall(368,80,16,16);
 			addWall(336,112,16,16);
 			addWall(368,112,16,16);
+			
 			addWall(336,176,16,16);
 			addWall(368,176,16,16);
 			addWall(368,208,16,16);
 			addWall(336,208,16,16);
+			
 			addWall(336,272,16,16);
 			addWall(368,272,16,16);
 			addWall(336,304,16,16);
 			addWall(368,304,16,16);
+			
 			addWall(336,368,16,16);
 			addWall(368,368,16,16);
 			addWall(336,400,16,16);
@@ -326,8 +331,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			paint.setColor(Color.RED);
 			paint.setAlpha(150);
 			
-			if (!_input.mDownPress.isVoid())
+			if (!_input.mDownPress.isVoid()) {
 				c.drawCircle(_input.mDownPress.x, _input.mDownPress.y, 13, paint);
+				c.drawCircle(_input.mCurrentTouch.x, _input.mCurrentTouch.y, 7, paint);
+				c.drawLine(_input.mDownPress.x, _input.mDownPress.y, _input.mCurrentTouch.x, _input.mCurrentTouch.y, paint);
+			}
 			
 		}
 		

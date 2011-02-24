@@ -1,13 +1,12 @@
 package voldaran.com.Upright;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class UserInput {
 	
 
 	private Vec2d cameraSize, surfaceSize;
-	private Vec2d mCurrentTouch  = new Vec2d();;
+	public Vec2d mCurrentTouch  = new Vec2d();;
 	private Vec2d mPress  = new Vec2d();;
 	public Vec2d mDownPress = new Vec2d();
 	private Vec2d oldSpot = new Vec2d();
@@ -190,16 +189,18 @@ public class UserInput {
 				}
 			} else {
 				int currentSlice = slicePiece(mCurrentTouch);
-				if ((slice==0&&currentSlice==2)||(slice==2&&currentSlice==0)) { //if you've swipped clearing the middle slice, ignore slice
+				if ((slice==0&&currentSlice==2)||(slice==2&&currentSlice==0)) { //if you've swipped clearing the middle slice, ignore swipe
 					mDownPress.set(event.getX(),event.getY()); //act like pressing down for the first time
 					//May need mPress set
 					
 					switch (currentSlice) { //Set press
 					case 0:
 						uInput = Input.PRESS_LEFT;
+						swipping=false;
 						break;
 					case 2:
 						uInput = Input.PRESS_RIGHT;
+						swipping=false;
 						break;
 					}
 				} else {
