@@ -209,16 +209,16 @@ public class GameHero extends MovingObject{
 					walking = NODIR;
 				}
 				break;
-			case SWIPE_UP:
-				down = UP;
-				ground = null;
-				walking = NODIR;
-				break;
-			case SWIPE_DOWN:
-				down = DOWN;
-				ground = null;
-				walking = NODIR;
-				break;
+//			case SWIPE_UP:
+//				down = UP;
+//				ground = null;
+//				walking = NODIR;
+//				break;
+//			case SWIPE_DOWN:
+//				down = DOWN;
+//				ground = null;
+//				walking = NODIR;
+//				break;
 			}
 		}
 	}

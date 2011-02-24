@@ -9,8 +9,8 @@ public class UserInput {
 	private Vec2d cameraSize, surfaceSize;
 	private Vec2d mCurrentTouch  = new Vec2d();;
 	private Vec2d mPress  = new Vec2d();;
-	private Vec2d mDownPress = new Vec2d();
-	
+	public Vec2d mDownPress = new Vec2d();
+	private Vec2d oldSpot = new Vec2d();
 	
 	public Input uInput = Input.NONE;
 	
@@ -84,13 +84,14 @@ public class UserInput {
 		}
 
 	}
+	private boolean swipping=false;
 	
-	
-
 	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
 		int slice;
+		
+		
 		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
@@ -118,7 +119,7 @@ public class UserInput {
 		case MotionEvent.ACTION_UP:
 			
 			if (uInput==Input.PRESS_DRAGGING) {
-				
+				swipping=false;
 				int dir = calcDirection(mDownPress, mCurrentTouch);
 				switch (dir) {
 				case 0:
@@ -140,53 +141,73 @@ public class UserInput {
 				}
 			} else uInput = Input.NONE;
 			
-				
+			mDownPress.setVoid();
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
 			
+			oldSpot.set(mCurrentTouch);  //Used to measure speed
 			mCurrentTouch.set(event.getX(), event.getY());
 			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + ((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y));
-			
 			int dir = calcDirection(mDownPress, mCurrentTouch);
-			
 			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
 			
 
-			if (slice!=1) { //Outer Slices
-				
-				if (ddd>8*8) {
-					if (dir==1||dir==3) { //UP / DOWN
-						switch (dir) {
-						case 1:  //down
-							if (slice==2)  {
-								uInput=Input.PRESS_RIGHT_DOWN;
-							} else if (slice==0) {
-								uInput=Input.PRESS_LEFT_DOWN;
+			
+			if (Math.abs((double) (mCurrentTouch.subtract(oldSpot).x))>50||Math.abs((double) (mCurrentTouch.subtract(oldSpot).y))>50) swipping=true;
+			
+			if (!swipping) {
+				if (slice!=1) {
+					if (ddd>8*8) {
+						if (dir==1||dir==3) { //UP / DOWN
+							switch (dir) {
+							case 1:  //down
+								if (slice==2)  {
+									uInput=Input.PRESS_RIGHT_DOWN;
+								} else if (slice==0) {
+									uInput=Input.PRESS_LEFT_DOWN;
+								}
+								break;
+							case 3:  //UP
+								if (slice==2) {
+									uInput=Input.PRESS_RIGHT_UP;
+								} else if (slice==0) {
+									uInput=Input.PRESS_LEFT_UP;
+								}
+								break;
 							}
+						} 
+	
+					}  else {
+						switch (slice) {
+						case 0:
+							uInput = Input.PRESS_LEFT;
 							break;
-						case 3:  //UP
-							if (slice==2) {
-								uInput=Input.PRESS_RIGHT_UP;
-							} else if (slice==0) {
-								uInput=Input.PRESS_LEFT_UP;
-							}
-							break;
+						case 2:
+							uInput = Input.PRESS_RIGHT;
 						}
-					} else if ((dir==0||dir==2) && (ddd>35*35)) uInput = Input.PRESS_DRAGGING;
-
-				}  else {
-					switch (slice) {
+					}
+				}
+			} else {
+				int currentSlice = slicePiece(mCurrentTouch);
+				if ((slice==0&&currentSlice==2)||(slice==2&&currentSlice==0)) { //if you've swipped clearing the middle slice, ignore slice
+					mDownPress.set(event.getX(),event.getY()); //act like pressing down for the first time
+					//May need mPress set
+					
+					switch (currentSlice) { //Set press
 					case 0:
 						uInput = Input.PRESS_LEFT;
 						break;
 					case 2:
 						uInput = Input.PRESS_RIGHT;
+						break;
 					}
+				} else {
+					uInput = Input.PRESS_DRAGGING;
 				}
-			} else if (ddd>35*35) uInput = Input.PRESS_DRAGGING; //Middle slice
+				
+			}
 			
-
 			break;
 		}
 		
@@ -197,7 +218,7 @@ public class UserInput {
 	}
 
 	
-	//Converts currentPress to our native camera size and eats it
+	//Converts mPress to our native camera size and eats it
 	public Vec2d getCurrentPress() {
 		Vec2d tempCurrentPress = new Vec2d(mPress);
 
@@ -217,7 +238,7 @@ public class UserInput {
 		if (uInput==Input.SWIPE_DOWN || uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT || uInput==Input.SWIPE_UP) {
 			uInput = Input.NONE;
 		} 
-		if (oInput!=Input.NONE) Log.d("GSTA", "Input - " + oInput);
+//		if (oInput!=Input.NONE) Log.d("GSTA", "Input - " + oInput);
 		 
 		return oInput;
 	}

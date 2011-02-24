@@ -273,15 +273,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addObstacle(796,232,4,240);
 			
 			addWall(356,220,4,4);
-			addWall(160,408,64,8);
-			addWall(248,352,8,64);
-			addWall(184,304,8,48);
-			addWall(232,232,56,8);
-			addWall(552,248,56,8);
-			addWall(488,200,8,56);
-			addWall(568,136,8,56);
-			addWall(552,72,24,8);
-			addWall(464,72,48,8);
+			addWall(160,408,64,4);
+			addWall(248,352,4,64);
+			addWall(184,304,4,48);
+			addWall(232,232,56,4);
+			addWall(552,248,56,4);
+			addWall(488,200,4,56);
+			addWall(568,136,4,56);
+			addWall(552,72,24,4);
+			addWall(464,72,48,4);
 
 			addWall(336,80,16,16);
 			addWall(368,80,16,16);
@@ -319,6 +319,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public void setRunning(boolean run) {
 			mRun = run;
+		}
+		
+		public void drawPress(Canvas c) {
+			Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+			paint.setColor(Color.RED);
+			paint.setAlpha(150);
+			
+			if (!_input.mDownPress.isVoid())
+				c.drawCircle(_input.mDownPress.x, _input.mDownPress.y, 13, paint);
+			
 		}
 		
 		public void drawAd(Canvas c) {
@@ -384,6 +394,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				synchronized (_surfaceHolder) {
 					clearScreen(c, cameraSize);
 					GameObject.drawAll(c);
+					drawPress(c);
 					picScreen.endRecording();
 					drawToScreen(picScreen);
 				}
