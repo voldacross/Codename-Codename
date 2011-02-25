@@ -4,17 +4,21 @@ package voldaran.com.Upright;
 import java.io.IOException;
 import java.io.InputStream;
 
+import voldaran.com.Upright.UserInput.Input;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -95,6 +99,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public Vec2d surfaceSize = new Vec2d();
 	public Vec2d cameraSize;
 	
+	public static DisplayMetrics displayMetrics = new DisplayMetrics();;
+	
+	
 	public enum GameState {
 		TITLE,
 		PLAYING,
@@ -104,11 +111,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public GameState gameState;
 	
-	public Game(Context context) {
+	public Game(Context context, DisplayMetrics d) {
 		super(context);
 		getHolder().addCallback(this);
 		setFocusable(true);
-		mContext = context;
+		Game.mContext = context;
+		Game.displayMetrics = d;
 		
 		//Create Camera Size
 		
@@ -247,7 +255,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
 			
-			hero = new GameHero(new Vec2d(350000,30000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
+			hero = new GameHero(new Vec2d(224000,96000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
 			
 			Log.d("GSTA", "hero : " + hero.pos);
 			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
@@ -267,43 +275,154 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			
 			//Boarders //Obstacles
-			addObstacle(4,240,4,232);
-			addObstacle(392,4,400,4);
-			addObstacle(372,476,428,4);
-			addObstacle(796,232,4,240);
+//			addObstacle(4,240,4,232);
+//			addObstacle(392,4,400,4);
+//			addObstacle(372,476,428,4);
+//			addObstacle(796,232,4,240);
 			
 //			addWall(356,220,4,4);
 			
-			
-			addWall(160,408,64,4);
-			addWall(248,352,4,64);
-			addWall(184,304,4,48);
-			addWall(232,232,56,4);
-			addWall(552,248,56,4);
-			addWall(488,200,4,56);
-			addWall(568,136,4,56);
-			addWall(552,72,24,4);
-			addWall(464,72,48,4);
+			//Level 1
+//			addWall(160,408,64,4);
+//			addWall(248,352,4,64);
+//			addWall(184,304,4,48);
+//			addWall(232,232,56,4);
+//			addWall(552,248,56,4);
+//			addWall(488,200,4,56);
+//			addWall(568,136,4,56);
+//			addWall(552,72,24,4);
+//			addWall(464,72,48,4);
+//
+//			addWall(336,80,16,16);
+//			addWall(368,80,16,16);
+//			addWall(336,112,16,16);
+//			addWall(368,112,16,16);
+//			
+//			addWall(336,176,16,16);
+//			addWall(368,176,16,16);
+//			addWall(368,208,16,16);
+//			addWall(336,208,16,16);
+//			
+//			addWall(336,272,16,16);
+//			addWall(368,272,16,16);
+//			addWall(336,304,16,16);
+//			addWall(368,304,16,16);
+//			
+//			addWall(336,368,16,16);
+//			addWall(368,368,16,16);
+//			addWall(336,400,16,16);
+//			addWall(368,400,16,16);
 
-			addWall(336,80,16,16);
-			addWall(368,80,16,16);
-			addWall(336,112,16,16);
-			addWall(368,112,16,16);
+			//level 2
+//			addWall(136,248,72,8);
+//			addWall(216,304,8,64);
+//			addWall(192,440,80,8);
+//			addWall(120,376,8,56);
+//			
+//			addWall(552,280,72,8);
+//			addWall(472,224,8,64);
+//			addWall(568,152,8,56);
+//			addWall(496,88,80,8);
+//			addWall(344,104,24,24);
+//			addWall(344,424,24,24);
+//			addWall(344,360,24,24);
+//			addWall(344,296,24,24);
+//			addWall(344,232,24,24);
+//			addWall(344,168,24,24);
+
 			
-			addWall(336,176,16,16);
-			addWall(368,176,16,16);
-			addWall(368,208,16,16);
-			addWall(336,208,16,16);
+			//Level 3
+//			addWall(752,376,16,8);
+//			addWall(760,40,24,8);
+//			addWall(592,40,80,8);
+//			addWall(656,264,48,168);
+//			addWall(584,440,24,8);
+//			addWall(416,440,80,8);
+//			addWall(392,296,24,88);
+//			addWall(288,280,32,8);
+//			addWall(208,88,48,8);
+//			addWall(72,88,40,8);
+//			addWall(32,216,16,8);
+//			addWall(112,216,32,8);
+//			addWall(168,256,24,48);
+//			addWall(248,320,8,112);
+//			addWall(216,440,24,8);
+//			addWall(96,440,48,8);
+
 			
-			addWall(336,272,16,16);
-			addWall(368,272,16,16);
-			addWall(336,304,16,16);
-			addWall(368,304,16,16);
+			//Level 4
 			
-			addWall(336,368,16,16);
-			addWall(368,368,16,16);
-			addWall(336,400,16,16);
-			addWall(368,400,16,16);
+//			addWall(208,96,16,64);
+//			addWall(160,112,16,80);
+//			addWall(392,384,8,64);
+//			addWall(272,328,32,8);
+//			addWall(184,312,24,8);
+//			addWall(72,408,24,8);
+//			addWall(104,344,8,72);
+//			addWall(152,280,40,8);
+//			addWall(360,280,104,8);
+//			addWall(472,208,8,80);
+//			addWall(392,88,8,24);
+//			addWall(392,120,88,8);
+//			addWall(296,152,8,40);
+//			addWall(352,200,64,8);
+//			addWall(592,216,48,8);
+			
+			//Level 5
+			
+//			addWall(488,232,8,152);
+//			addWall(408,72,88,8);
+//			addWall(152,336,8,64);
+//			addWall(448,136,48,8);
+//			addWall(408,256,8,64);
+//			addWall(320,328,96,8);
+//			addWall(184,264,104,8);
+//			addWall(72,192,8,80);
+//			addWall(112,104,48,8);
+//			addWall(216,200,88,8);
+//			addWall(312,136,8,72);
+//			addWall(248,56,72,8);
+//			addWall(168,88,8,40);
+//			addWall(208,136,48,8);
+			
+			//Maze 1
+			hero.pos.set(32000,48000);
+			addWall(792,240,8,240);
+			addWall(728,272,8,32);
+			addWall(600,312,40,8);
+			addWall(648,344,8,40);
+			addWall(696,424,8,40);
+			addWall(624,392,64,8);
+			addWall(488,432,8,32);
+			addWall(416,392,80,8);
+			addWall(416,312,80,8);
+			addWall(344,264,8,40);
+			addWall(408,272,8,32);
+			addWall(568,232,168,8);
+			addWall(568,192,8,32);
+			addWall(672,152,112,8);
+			addWall(728,56,8,40);
+			addWall(648,56,8,40);
+			addWall(568,48,8,32);
+			addWall(536,88,40,8);
+			addWall(488,120,8,40);
+			addWall(408,112,8,32);
+			addWall(344,112,8,32);
+			addWall(344,152,72,8);
+			addWall(264,88,8,72);
+			addWall(264,312,8,88);
+			addWall(176,312,80,8);
+			addWall(96,392,80,8);
+			addWall(88,280,8,40);
+			addWall(96,232,80,8);
+			addWall(216,88,40,8);
+			addWall(136,152,40,8);
+			addWall(88,88,8,72);
+			addWall(8,232,8,232);
+			addWall(432,8,352,8);
+			addWall(352,472,352,8);
+
+
 			
 			
 //			Platform p = new Platform(new Vec2d(500000, 100000), new Vec2d(50000, 10000));
@@ -326,15 +445,72 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			mRun = run;
 		}
 		
-		public void drawPress(Canvas c) {
-			Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			paint.setColor(Color.RED);
-			paint.setAlpha(150);
+		public void drawFPS(Canvas c) {
 			
-			if (!_input.mDownPress.isVoid()) {
-				c.drawCircle(_input.mDownPress.x, _input.mDownPress.y, 13, paint);
-				c.drawCircle(_input.mCurrentTouch.x, _input.mCurrentTouch.y, 7, paint);
-				c.drawLine(_input.mDownPress.x, _input.mDownPress.y, _input.mCurrentTouch.x, _input.mCurrentTouch.y, paint);
+			previousTime = currentTime;
+  		    currentTime = System.currentTimeMillis();
+  		    long ft = ((currentTime - previousTime));
+  		    
+  		    sft = (long) (sft * 0.9 + ft * 0.1);
+  		    
+  		    Paint text = new Paint();
+  		    text.setColor(Color.GREEN);
+  		    text.setTextSize(16);
+  		    text.setTypeface(Typeface.MONOSPACE);
+  		    
+  		    c.drawText(String.valueOf(sft), 20, 24, text);
+//  		    Log.d("FPS", "" + String.valueOf(sft));
+  		    c.drawText("" + hero.getToggleCount(), 750, 30, text);
+		}
+		
+		public void drawPress(Canvas c, Input input) {
+			
+			Vec2d down = _input.getDown();
+			
+			if (!down.isVoid()) {
+				Vec2d current = _input.getCurrent();
+				
+				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+				paint.setColor(Color.RED);
+				paint.setAlpha(50);
+				
+				Path triPath = new Path();
+				Paint triPaint = new Paint();
+				triPaint.setColor(Color.WHITE);
+				triPaint.setAlpha(80);
+				triPaint.setStyle(Paint.Style.FILL);
+				
+				if (input==Input.PRESS_LEFT||input==Input.PRESS_LEFT_DOWN||input==Input.PRESS_LEFT_UP) {
+					triPath.moveTo(100, 50);
+					
+					triPath.lineTo(200, 50);
+					triPath.lineTo(200, 83);
+					triPath.lineTo(100, 83);  //Create left Arrow
+					
+					triPath.lineTo(100, 16);
+					triPath.lineTo(50,67);
+					triPath.lineTo(100,113);
+					triPath.close();
+					
+				} else if (input==Input.PRESS_RIGHT||input==Input.PRESS_RIGHT_DOWN||input==Input.PRESS_RIGHT_UP) {
+					
+					triPath.moveTo(700, 50);
+					
+					triPath.lineTo(600, 50);
+					triPath.lineTo(600, 83);
+					triPath.lineTo(700, 83); //Create right Arrow
+					
+					triPath.lineTo(700, 16);
+					triPath.lineTo(750,67);
+					triPath.lineTo(700,113);
+					triPath.close();
+				}
+				
+				c.drawPath(triPath, triPaint);
+				paint.setAlpha(150);
+				c.drawCircle(down.x, down.y, 13, paint);
+				c.drawCircle(current.x, current.y, 7, paint);
+				c.drawLine(down.x, down.y, current.x, current.y, paint);
 			}
 			
 		}
@@ -354,7 +530,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 
 		Long previousTime;
-		Long currentTime;	
+		Long currentTime;
+		long sft = 0;
 		
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
@@ -369,7 +546,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				}
 			}
 		}
-
+		
+		
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
@@ -377,17 +555,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			long startTime = System.currentTimeMillis();
 			long lastSavedTime = startTime; 
-			long sft = 0;
+			
   			currentTime = System.currentTimeMillis();
   			while((gameState == GameState.PLAYING)  && (mRun)){
-	  		    previousTime = currentTime;
-	  		    currentTime = System.currentTimeMillis();
-	  		    long ft = ((currentTime - previousTime));
 	  		    
-	  		    sft = (long) (sft * 0.9 + ft * 0.1);
-	  		    
-	  		    Log.d("FPS", "" + String.valueOf(sft));
-			
 				currentInput = _input.getInput();
 				Vec2d mClicked = _input.getCurrentPress();
 				
@@ -402,7 +573,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				synchronized (_surfaceHolder) {
 					clearScreen(c, cameraSize);
 					GameObject.drawAll(c);
-//					drawPress(c);
+					
+					drawPress(c, currentInput);
+					drawFPS(c);
+					
 					picScreen.endRecording();
 					drawToScreen(picScreen);
 				}

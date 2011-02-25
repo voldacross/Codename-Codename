@@ -87,10 +87,20 @@ public class GameHero extends MovingObject{
         if(ground != null){
         	if(ground != lastToggled){
         		lastToggled = ground;
+        		toggleCount +=1;
         		ground.toggle(this);
         	}
         }
         return ground;
+	}
+	
+	private int toggleCount = 0;
+	private int previousToggleCount = 0;
+	
+	
+	public int getToggleCount () {
+		
+		return toggleCount;
 	}
 	
 	public void processInput(UserInput.Input input){
@@ -274,6 +284,7 @@ public class GameHero extends MovingObject{
 		walkingCheckpoint = walking;
 		downCheckpoint = down;
 		lastToggledCheckpoint = lastToggled;
+		previousToggleCount = toggleCount; 
 	}
 	
 	@Override
@@ -284,5 +295,6 @@ public class GameHero extends MovingObject{
 		down = downCheckpoint;
 		lastToggled = lastToggledCheckpoint;
 		dead = false;
+		toggleCount = previousToggleCount;
 	}
 }

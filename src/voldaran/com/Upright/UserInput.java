@@ -7,10 +7,11 @@ public class UserInput {
 	
 
 	private Vec2d cameraSize, surfaceSize;
-	public Vec2d mCurrentTouch  = new Vec2d();;
+	private Vec2d mCurrentTouch  = new Vec2d();;
 	private Vec2d mPress  = new Vec2d();;
-	public Vec2d mDownPress = new Vec2d();
+	private Vec2d mDownPress = new Vec2d();
 	private Vec2d oldSpot = new Vec2d();
+	private long oldTime, curTime;
 	
 	public Input uInput = Input.NONE;
 	
@@ -101,6 +102,8 @@ public class UserInput {
 			mCurrentTouch.set(event.getX(), event.getY());
 			mPress.set(event.getX(),event.getY());
 			
+			oldTime = System.currentTimeMillis();
+			curTime = System.currentTimeMillis();
 			
 			slice = slicePiece(mDownPress);
 
@@ -149,14 +152,23 @@ public class UserInput {
 			
 			oldSpot.set(mCurrentTouch);  //Used to measure speed
 			mCurrentTouch.set(event.getX(), event.getY());
+			
+			Vec2d distance = mCurrentTouch.subtract(oldSpot);
+			Vec2d speed = new Vec2d((float) ((float) distance.x / (float) (System.currentTimeMillis() - oldTime) * 1000),
+									(float) ((float) distance.y / (float) (System.currentTimeMillis() - oldTime) * 1000));
+			
+			oldTime = System.currentTimeMillis();
 			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + ((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y));
 			int dir = calcDirection(mDownPress, mCurrentTouch);
 			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
+
+			float DPI = (240 / (float) Game.displayMetrics.densityDpi);
 			
-			
-			
-			if (Math.abs((double) (mCurrentTouch.subtract(oldSpot).x))>50||Math.abs((double) (mCurrentTouch.subtract(oldSpot).y))>50) swipping=true;
-			
+			if (((Math.abs(speed.x)>1500 * DPI)||(Math.abs(speed.y)>1500  * DPI))||(swipping)) {
+				dir = calcDirection(oldSpot, mCurrentTouch); 
+				swipping = ddd>8*8; 
+			}
+
 			if (!swipping) {
 				if (slice!=1) {
 					if (ddd>8*8) {
@@ -191,34 +203,23 @@ public class UserInput {
 				}
 			} else {
 				
-				Log.d("GSTA", "You have started to drag, determining legitimacy");
-				
 				int currentSlice = slicePiece(mCurrentTouch);
 				
-				Log.d("GSTA", "Starting slice = " + slice + " CurrentSlice = " + currentSlice);
-				
 				if ((slice==0&&currentSlice==2)||(slice==2&&currentSlice==0)) { //if you've swipped clearing the middle slice, ignore swipe
-					Log.d("GSTA", "You have been determined to have slide accross the whole screen, reseting input");
-					
 					mDownPress.set(event.getX(),event.getY()); //act like pressing down for the first time
 					//May need mPress set
 					
 					switch (currentSlice) { //Set press
 					case 0:
-						Log.d("GSTA", "reseting to left ");
 						uInput = Input.PRESS_LEFT;
 						swipping=false;
-						oldSpot.set(mCurrentTouch); 
 						break;
 					case 2:
-						Log.d("GSTA", "reseting to right ");
 						uInput = Input.PRESS_RIGHT;
 						swipping=false;
-						oldSpot.set(mCurrentTouch); 
 						break;
 					}
 				} else {
-					Log.d("GSTA", "Legit Swipe, activation PRESS_DRAGGING");
 					uInput = Input.PRESS_DRAGGING;
 				}
 				
@@ -231,13 +232,12 @@ public class UserInput {
 	
 	public void Clear() {
 		uInput = Input.NONE;
+		swipping = false;
 	}
 
-	
-	//Converts mPress to our native camera size and eats it
-	public Vec2d getCurrentPress() {
-		Vec2d tempCurrentPress = new Vec2d(mPress);
-
+	private Vec2d convertCoord(Vec2d c) {
+		Vec2d tempCurrentPress = new Vec2d(c);
+		
 		if (!tempCurrentPress.isVoid()) {
 			double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * tempCurrentPress.x;
 			double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * tempCurrentPress.y;
@@ -245,8 +245,22 @@ public class UserInput {
 
 		}
 		
+		return tempCurrentPress;
+	}
+	
+	//Converts mPress to our native camera size and eats it
+	public Vec2d getCurrentPress() {
+		Vec2d tempCurrentPress = new Vec2d(convertCoord(mPress));
 		mPress.setVoid();  
 		return tempCurrentPress;
+	}
+	
+	public Vec2d getCurrent() {
+		return convertCoord(mCurrentTouch);
+	}
+	
+	public Vec2d getDown() {
+		return convertCoord(mDownPress);
 	}
 	
 	public Input getInput() {

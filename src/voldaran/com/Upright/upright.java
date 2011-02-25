@@ -4,6 +4,7 @@ package voldaran.com.Upright;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
@@ -12,6 +13,7 @@ import android.view.Window;
 public class upright extends Activity{
 	private Game game;
 	public String test;
+	DisplayMetrics displayMetrics = new DisplayMetrics();;
 	
 	public static final String PREFS_NAME = "savedGameState";
 	
@@ -20,11 +22,15 @@ public class upright extends Activity{
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        game = new Game(this);
+
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        game = new Game(this, displayMetrics);
         
         setContentView(game);
     	game.setDrawingCacheEnabled(true); 
     	
+    
 
     }
     
