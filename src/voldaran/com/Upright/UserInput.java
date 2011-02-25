@@ -7,11 +7,15 @@ public class UserInput {
 	
 
 	private Vec2d cameraSize, surfaceSize;
-	private Vec2d mCurrentTouch  = new Vec2d();;
-	private Vec2d mPress  = new Vec2d();;
+	private Vec2d mCurrentTouch  = new Vec2d();
+	private Vec2d mCurrentTouchH  = new Vec2d();
+	private Vec2d mPress  = new Vec2d();
 	private Vec2d mDownPress = new Vec2d();
 	private Vec2d oldSpot = new Vec2d();
-	private long oldTime, curTime;
+	private Vec2d oldSpotH = new Vec2d();
+	private long oldTime, swipeTime;
+//	private boolean swipeToggle = false;
+	private final float convert = 1500 / (240 / (float) Game.displayMetrics.densityDpi);
 	
 	public Input uInput = Input.NONE;
 	
@@ -86,6 +90,14 @@ public class UserInput {
 
 	}
 	private boolean swipping=false;
+//	private boolean setSwipe;
+	
+//	private boolean setSwipeTime() { TODO
+//		if (setSwipe) return false;
+//		swipeTime = System.currentTimeMillis();
+//		setSwipe = true;
+//		return true;
+//	}
 	
 	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
@@ -100,10 +112,10 @@ public class UserInput {
 			
 			mDownPress.set(event.getX(),event.getY());
 			mCurrentTouch.set(event.getX(), event.getY());
+			mCurrentTouchH.set(event.getX(), event.getY());
 			mPress.set(event.getX(),event.getY());
 			
 			oldTime = System.currentTimeMillis();
-			curTime = System.currentTimeMillis();
 			
 			slice = slicePiece(mDownPress);
 
@@ -156,26 +168,40 @@ public class UserInput {
 			Vec2d distance = mCurrentTouch.subtract(oldSpot);
 			Vec2d speed = new Vec2d((float) ((float) distance.x / (float) (System.currentTimeMillis() - oldTime) * 1000),
 									(float) ((float) distance.y / (float) (System.currentTimeMillis() - oldTime) * 1000));
-			
 			oldTime = System.currentTimeMillis();
+			
 			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + ((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y));
 			int dir = calcDirection(mDownPress, mCurrentTouch);
 			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
 
-			Log.d("GSTA", "" + Game.displayMetrics.densityDpi);
-			Log.d("GSTA", "speed " + speed.toString());
+//			Log.d("GSTA", "speed " + speed.toString());
 			
-			float DPI = (240 / (float) Game.displayMetrics.densityDpi);
-			float testX = 1500 * (float) ( (float) cameraSize.x / (float) surfaceSize.x) / DPI;
-			float testY = 1500 * (float) ( (float) cameraSize.y / (float) surfaceSize.y) / DPI;
-			
-			
-			Log.d("GSTA", "camera " + cameraSize.toString() + " surface " + surfaceSize.toString() + "testX " + testX + " testY " + testY + " DPI " + DPI);
-			
-			if (((Math.abs(speed.x)>testX)||(Math.abs(speed.y)>testY))||(swipping)) {
-				dir = calcDirection(oldSpot, mCurrentTouch); 
-				swipping = ddd>8*8; 
+			for (int hs = 0; hs < event.getHistorySize();hs++) {
+				oldSpotH.set(mCurrentTouchH);
+				mCurrentTouchH.set(event.getHistoricalX(hs), event.getHistoricalY(hs));
+				Vec2d distanceH = mCurrentTouchH.subtract(oldSpotH);
+				Vec2d speedH = new Vec2d((float) ((float) distanceH.x / (float) (event.getHistoricalEventTime(hs) / 1000000) * 1000),
+										 (float) ((float) distanceH.y / (float) (event.getHistoricalEventTime(hs) / 1000000) * 1000));
+//				Log.d("GSTA", "speedH " + speedH.toString());
+				
+				if (((Math.abs(speedH.x)>convert)||(Math.abs(speedH.y)>convert))||(swipping)){
+					swipping = ddd>8*8;
+				}
 			}
+			
+			if (((Math.abs(speed.x)>convert)||(Math.abs(speed.y)>convert))||(swipping)) {
+//				setSwipeTime(); TODO
+				dir = calcDirection(oldSpot, mCurrentTouch);
+				Log.d("GSTA", "" + ((System.currentTimeMillis()-swipeTime)));
+				swipping = ddd>8*8;//&&((System.currentTimeMillis()-swipeTime)<100); TODO
+	
+			}
+			
+//			Log.d("GSTA", "" + swipping);
+			
+			
+			
+
 
 			if (!swipping) {
 				if (slice!=1) {

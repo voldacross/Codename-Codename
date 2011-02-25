@@ -86,6 +86,7 @@ public class GameHero extends MovingObject{
         }
         if(ground != null){
         	if(ground != lastToggled){
+        		if (lastToggled!=null) lastToggled.destroyWall();
         		lastToggled = ground;
         		toggleCount +=1;
         		ground.toggle(this);
