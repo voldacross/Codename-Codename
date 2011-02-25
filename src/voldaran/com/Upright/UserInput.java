@@ -162,9 +162,17 @@ public class UserInput {
 			int dir = calcDirection(mDownPress, mCurrentTouch);
 			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
 
-			float DPI = (240 / (float) Game.displayMetrics.densityDpi);
+			Log.d("GSTA", "" + Game.displayMetrics.densityDpi);
+			Log.d("GSTA", "speed " + speed.toString());
 			
-			if (((Math.abs(speed.x)>1500 * DPI)||(Math.abs(speed.y)>1500  * DPI))||(swipping)) {
+			float DPI = (240 / (float) Game.displayMetrics.densityDpi);
+			float testX = 1500 * (float) ( (float) cameraSize.x / (float) surfaceSize.x) / DPI;
+			float testY = 1500 * (float) ( (float) cameraSize.y / (float) surfaceSize.y) / DPI;
+			
+			
+			Log.d("GSTA", "camera " + cameraSize.toString() + " surface " + surfaceSize.toString() + "testX " + testX + " testY " + testY + " DPI " + DPI);
+			
+			if (((Math.abs(speed.x)>testX)||(Math.abs(speed.y)>testY))||(swipping)) {
 				dir = calcDirection(oldSpot, mCurrentTouch); 
 				swipping = ddd>8*8; 
 			}
