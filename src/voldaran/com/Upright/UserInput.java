@@ -14,6 +14,8 @@ public class UserInput {
 	private Vec2d oldSpot = new Vec2d();
 	private Vec2d oldSpotH = new Vec2d();
 	private long oldTime, swipeTime;
+	private int dir = 0;
+	
 //	private boolean swipeToggle = false;
 	private final float convert = 1500 / (240 / (float) Game.displayMetrics.densityDpi);
 	
@@ -136,24 +138,15 @@ public class UserInput {
 			
 			if (uInput==Input.PRESS_DRAGGING) {
 				swipping=false;
-				int dir = calcDirection(mDownPress, mCurrentTouch);
+//				int dir = calcDirection(mDownPress, mCurrentTouch);
 				switch (dir) {
 				case 0:
 					uInput = Input.SWIPE_RIGHT;
 					break;
 					
-				case 1:
-					uInput = Input.SWIPE_DOWN;
-					break;
-					
 				case 2:
 					uInput = Input.SWIPE_LEFT;
 					break;
-					
-				case 3:
-					uInput = Input.SWIPE_UP;
-					break;
-					
 				}
 			} else uInput = Input.NONE;
 			
@@ -162,48 +155,31 @@ public class UserInput {
 			
 		case MotionEvent.ACTION_MOVE:
 			
-			oldSpot.set(mCurrentTouch);  //Used to measure speed
-			mCurrentTouch.set(event.getX(), event.getY());
+			oldSpot.set(mCurrentTouch);  //Old Spot
+			mCurrentTouch.set(event.getX(), event.getY());  //New Spot
+			
+			dir = calcDirection(mDownPress, mCurrentTouch);  //Direction between first press and new. Used to determine WALL direction
+			int curDir = calcDirection(oldSpot, mCurrentTouch); //Direction between old press and new press. Used to determine SWIPE direction
+			
+			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + 
+						((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y)); //Distance between first press and new
 			
 			Vec2d distance = mCurrentTouch.subtract(oldSpot);
+			
 			Vec2d speed = new Vec2d((float) ((float) distance.x / (float) (System.currentTimeMillis() - oldTime) * 1000),
 									(float) ((float) distance.y / (float) (System.currentTimeMillis() - oldTime) * 1000));
+			
 			oldTime = System.currentTimeMillis();
 			
-			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + ((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y));
-			int dir = calcDirection(mDownPress, mCurrentTouch);
 			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
-
-//			Log.d("GSTA", "speed " + speed.toString());
 			
-			for (int hs = 0; hs < event.getHistorySize();hs++) {
-				oldSpotH.set(mCurrentTouchH);
-				mCurrentTouchH.set(event.getHistoricalX(hs), event.getHistoricalY(hs));
-				Vec2d distanceH = mCurrentTouchH.subtract(oldSpotH);
-				Vec2d speedH = new Vec2d((float) ((float) distanceH.x / (float) (event.getHistoricalEventTime(hs) / 1000000) * 1000),
-										 (float) ((float) distanceH.y / (float) (event.getHistoricalEventTime(hs) / 1000000) * 1000));
-//				Log.d("GSTA", "speedH " + speedH.toString());
-				
-				if (((Math.abs(speedH.x)>convert)||(Math.abs(speedH.y)>convert))||(swipping)){
-					swipping = ddd>8*8;
-				}
+			//speed is fast, direction is left/right, or you already are swipping
+			if (((((Math.abs(speed.x)>convert)||(Math.abs(speed.y)>convert)))&&(curDir==0||curDir==2))||(swipping)) {
+				swipping = ddd>8*8;
 			}
 			
-			if (((Math.abs(speed.x)>convert)||(Math.abs(speed.y)>convert))||(swipping)) {
-//				setSwipeTime(); TODO
-				dir = calcDirection(oldSpot, mCurrentTouch);
-				Log.d("GSTA", "" + ((System.currentTimeMillis()-swipeTime)));
-				swipping = ddd>8*8;//&&((System.currentTimeMillis()-swipeTime)<100); TODO
-	
-			}
-			
-//			Log.d("GSTA", "" + swipping);
-			
-			
-			
-
-
 			if (!swipping) {
+				
 				if (slice!=1) {
 					if (ddd>8*8) {
 						if (dir==1||dir==3) { //UP / DOWN
@@ -235,6 +211,7 @@ public class UserInput {
 						}
 					}
 				}
+				
 			} else {
 				
 				int currentSlice = slicePiece(mCurrentTouch);
@@ -254,10 +231,15 @@ public class UserInput {
 						break;
 					}
 				} else {
-					uInput = Input.PRESS_DRAGGING;
+					if (dir==0||dir==2) { 
+						uInput = Input.PRESS_DRAGGING;
+					} else swipping=false;
 				}
+	
 				
 			}
+			
+			
 			
 			break;
 		}
@@ -299,7 +281,7 @@ public class UserInput {
 	
 	public Input getInput() {
 		Input oInput = uInput;
-		if (uInput==Input.SWIPE_DOWN || uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT || uInput==Input.SWIPE_UP) {
+		if (uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT) {
 			uInput = Input.NONE;
 		} 
 //		if (oInput!=Input.NONE) Log.d("GSTA", "Input - " + oInput);

@@ -386,41 +386,55 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //			addWall(208,136,48,8);
 			
 			//Maze 1
+//			hero.pos.set(32000,48000);
+//			addWall(792,240,8,240);
+//			addWall(728,272,8,32);
+//			addWall(600,312,40,8);
+//			addWall(648,344,8,40);
+//			addWall(696,424,8,40);
+//			addWall(624,392,64,8);
+//			addWall(488,432,8,32);
+//			addWall(416,392,80,8);
+//			addWall(416,312,80,8);
+//			addWall(344,264,8,40);
+//			addWall(408,272,8,32);
+//			addWall(568,232,168,8);
+//			addWall(568,192,8,32);
+//			addWall(672,152,112,8);
+//			addWall(728,56,8,40);
+//			addWall(648,56,8,40);
+//			addWall(568,48,8,32);
+//			addWall(536,88,40,8);
+//			addWall(488,120,8,40);
+//			addWall(408,112,8,32);
+//			addWall(344,112,8,32);
+//			addWall(344,152,72,8);
+//			addWall(264,88,8,72);
+//			addWall(264,312,8,88);
+//			addWall(176,312,80,8);
+//			addWall(96,392,80,8);
+//			addWall(88,280,8,40);
+//			addWall(96,232,80,8);
+//			addWall(216,88,40,8);
+//			addWall(136,152,40,8);
+//			addWall(88,88,8,72);
+//			addWall(8,232,8,232);
+//			addWall(432,8,352,8);
+//			addWall(352,472,352,8);
+			
+			
+			//New Game Level 2
 			hero.pos.set(32000,48000);
-			addWall(792,240,8,240);
-			addWall(728,272,8,32);
-			addWall(600,312,40,8);
-			addWall(648,344,8,40);
-			addWall(696,424,8,40);
-			addWall(624,392,64,8);
-			addWall(488,432,8,32);
-			addWall(416,392,80,8);
-			addWall(416,312,80,8);
-			addWall(344,264,8,40);
-			addWall(408,272,8,32);
-			addWall(568,232,168,8);
-			addWall(568,192,8,32);
-			addWall(672,152,112,8);
-			addWall(728,56,8,40);
-			addWall(648,56,8,40);
-			addWall(568,48,8,32);
-			addWall(536,88,40,8);
-			addWall(488,120,8,40);
-			addWall(408,112,8,32);
-			addWall(344,112,8,32);
-			addWall(344,152,72,8);
-			addWall(264,88,8,72);
-			addWall(264,312,8,88);
-			addWall(176,312,80,8);
-			addWall(96,392,80,8);
-			addWall(88,280,8,40);
-			addWall(96,232,80,8);
-			addWall(216,88,40,8);
-			addWall(136,152,40,8);
-			addWall(88,88,8,72);
+			addWall(320,392,64,8);
+			addWall(600,80,8,64);
+			addWall(504,192,8,32);
+			addWall(456,152,56,8);
+			addWall(392,240,8,224);
+			addWall(392,232,376,8);
+			addWall(392,8,376,8);
 			addWall(8,232,8,232);
-			addWall(432,8,352,8);
-			addWall(352,472,352,8);
+			addWall(392,472,392,8);
+			addWall(776,232,8,232);
 
 
 			
