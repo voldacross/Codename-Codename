@@ -160,10 +160,6 @@ public class GameObject {
 		c.drawRect(recObject, paintObject);
 	}
 	
-	public void destroyWall() {
-		if (gameObjects.contains(this)) gameObjects.remove(this);
-	}
-	
 	protected boolean allowCheckpoint(){
 		return true;
 	}

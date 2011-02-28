@@ -14,13 +14,7 @@ public class GameHero extends MovingObject{
 	private final static Vec2d DOWNVELOCITY = new Vec2d(0, WALKSPEED);
 	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-7500, -4625);
 	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(7500, -4625);
-	private final static Vec2d[] gravity = {
-		new Vec2d(0, 300),
-		new Vec2d(300, 0),
-		new Vec2d(0, -300),
-		new Vec2d(-300, 0),
-		new Vec2d(0, 300)
-	};
+	private final static Vec2d gravity = new Vec2d(0, 300);
 	
 	//Gravity moved to GameObject for testing
 	
@@ -30,7 +24,6 @@ public class GameHero extends MovingObject{
 	protected GameObject lastToggledCheckpoint = null; 
 	protected int walking = NODIR;
 	protected int walkingCheckpoint = NODIR;
-	protected int down = DOWN;
 	protected int downCheckpoint = DOWN;
 	public boolean dead = false;
 
@@ -71,11 +64,11 @@ public class GameHero extends MovingObject{
                 ground = findGround(LEFT, ground);
                 if(ground != null) walking = LEFT;
             }
-            if(velocity.y > 0 && down == DOWN){
+            if(velocity.y > 0){
                 ground = findGround(BOTTOM, ground);
                 if(ground != null) walking = DOWN;
             }
-            if(velocity.y < 0 && down == UP){
+            if(velocity.y < 0){
                 ground = findGround(TOP, ground);
                 if(ground != null) walking = UP;
             }
@@ -86,10 +79,27 @@ public class GameHero extends MovingObject{
         }
         if(ground != null){
         	if(ground != lastToggled){
-        		if (lastToggled!=null) lastToggled.destroyWall();
         		lastToggled = ground;
         		toggleCount +=1;
         		ground.toggle(this);
+        		switch(walking){
+        		case RIGHT:
+        			pos.x = ground.right + extent.x;
+        			walking = LEFT;
+        			break;
+        		case UP:
+        			pos.y = ground.top - extent.y;
+        			walking = DOWN;
+        			break;
+        		case LEFT:
+        			pos.x = ground.left - extent.x;
+        			walking = RIGHT;
+        			break;
+        		case DOWN:
+        			pos.y = ground.bottom + extent.y;
+        			walking = UP;
+        			break;
+        		}
         	}
         }
         return ground;
@@ -111,43 +121,39 @@ public class GameHero extends MovingObject{
 				applyForce(LEFTVELOCITY);
 				break;
 			case PRESS_LEFT_DOWN: 
-				applyForce(LEFTVELOCITY);//Rick added	TODO
+				applyForce(LEFTVELOCITY);
 				break;
 			case PRESS_LEFT_UP: 
-				applyForce(LEFTVELOCITY);//Rick added	TODO
+				applyForce(LEFTVELOCITY);
 				break;
 			case PRESS_RIGHT: 
 				applyForce(RIGHTVELOCITY);
 				break;
 			case PRESS_RIGHT_DOWN: 
-				applyForce(RIGHTVELOCITY); //Rick added.	TODO
+				applyForce(RIGHTVELOCITY);
 				break;
 			case PRESS_RIGHT_UP: 
-				applyForce(RIGHTVELOCITY);//Rick added	TODO
+				applyForce(RIGHTVELOCITY);
 				break;				
 			
 			case SWIPE_LEFT: 
-				if(walking == UP) applyForce(JUMPRIGHTVELOCITY.negative()); 
-				else applyForce(JUMPLEFTVELOCITY);
+				applyForce(JUMPLEFTVELOCITY);
 				ground = null;
 				walking = NODIR;
 				break;
 			case SWIPE_RIGHT:
-				if(walking == UP) applyForce(JUMPLEFTVELOCITY.negative()); 
-				else applyForce(JUMPRIGHTVELOCITY);
+				applyForce(JUMPRIGHTVELOCITY);
 				ground = null;
 				walking = NODIR;
 				break;
 			case SWIPE_UP:
 				if(walking == DOWN){
-					down = UP;
 					ground = null;
 					walking = NODIR;
 				}
 				break;
 			case SWIPE_DOWN:
 				if(walking == UP){
-					down = DOWN;
 					ground = null;
 					walking = NODIR;
 				}
@@ -155,81 +161,35 @@ public class GameHero extends MovingObject{
 				
 
 			}
-			
-				
 		}
 		else if(walking == LEFT || walking == RIGHT){
 			switch(input){
-//			case PRESS_LEFT:
-//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-//					applyForce(UPVELOCITY);
-//				else
-//					applyForce(DOWNVELOCITY);
-//				break;
-
-				//Rick added	TODO	
 			case PRESS_LEFT_DOWN: 
-//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-//					applyForce(UPVELOCITY);
-//				else
-					applyForce(DOWNVELOCITY);
+				applyForce(DOWNVELOCITY);
 				break;
 			case PRESS_LEFT_UP: 
-//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-					applyForce(UPVELOCITY);
-//				else
-//					applyForce(DOWNVELOCITY);
+				applyForce(UPVELOCITY);
 				break;
-				//Rick end	TODO
-				
-//			case PRESS_RIGHT: 
-//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-//					applyForce(DOWNVELOCITY);
-//				else
-//					applyForce(UPVELOCITY);
-//				break;
-				
-				//Rick added	TODO
 			case PRESS_RIGHT_DOWN:
-//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-					applyForce(DOWNVELOCITY);
-//				else
-//					applyForce(UPVELOCITY);
+				applyForce(DOWNVELOCITY);
 				break;
-				
 			case PRESS_RIGHT_UP:
-//				if((walking == LEFT && down == DOWN) || (walking == RIGHT && down == UP))
-//					applyForce(DOWNVELOCITY);
-//				else
-					applyForce(UPVELOCITY);
+				applyForce(UPVELOCITY);
 				break;
-				//Rick end	TODO
 			case SWIPE_LEFT: 
 				if(walking == RIGHT){
-					if(down == UP) applyForce(JUMPRIGHTVELOCITY.negative());
-					else applyForce(JUMPLEFTVELOCITY);
+					applyForce(JUMPLEFTVELOCITY);
 					ground = null;
 					walking = NODIR;
 				}
 				break;
 			case SWIPE_RIGHT:
 				if(walking == LEFT){
-					if(down == UP) applyForce(JUMPLEFTVELOCITY.negative());
-					else applyForce(JUMPRIGHTVELOCITY);
+					applyForce(JUMPRIGHTVELOCITY);
 					ground = null;
 					walking = NODIR;
 				}
 				break;
-//			case SWIPE_UP:
-//				down = UP;
-//				ground = null;
-//				walking = NODIR;
-//				break;
-//			case SWIPE_DOWN:
-//				down = DOWN;
-//				ground = null;
-//				walking = NODIR;
-//				break;
 			}
 		}
 	}
@@ -243,12 +203,10 @@ public class GameHero extends MovingObject{
 			velocity.x -= ground.velocity.x;
 			velocity.mul(0.25);
 		}
-		else velocity.mul(0.95); 
+		else{
+			velocity.mul(0.95).add(gravity);
+		}
 		
-		if(walking == NODIR)
-			velocity.add(gravity[down]);
-		else
-			velocity.add(gravity[walking]); 
 	}
 	
 	@Override
@@ -283,7 +241,6 @@ public class GameHero extends MovingObject{
 		super.saveCheckpoint();
 		groundCheckpoint = ground;
 		walkingCheckpoint = walking;
-		downCheckpoint = down;
 		lastToggledCheckpoint = lastToggled;
 		previousToggleCount = toggleCount; 
 	}
@@ -293,7 +250,6 @@ public class GameHero extends MovingObject{
 		super.restoreCheckpoint();
 		ground = groundCheckpoint;
 		walking = walkingCheckpoint;
-		down = downCheckpoint;
 		lastToggled = lastToggledCheckpoint;
 		dead = false;
 		toggleCount = previousToggleCount;

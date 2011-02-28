@@ -427,7 +427,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			hero.pos.set(32000,48000);
 			addWall(320,392,64,8);
 			addWall(600,80,8,64);
-			addWall(504,192,8,32);
+			addWall(504,188,8,36);
 			addWall(456,152,56,8);
 			addWall(392,240,8,224);
 			addWall(392,232,376,8);
