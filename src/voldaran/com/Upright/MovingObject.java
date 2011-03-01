@@ -16,6 +16,7 @@ public class MovingObject extends GameObject{
 	
 	protected Vec2d posCheckpoint = new Vec2d();
 	protected Vec2d velocityCheckpoint = new Vec2d();
+	protected GameObject newGround = null;
 	
 	public MovingObject(Vec2d pos, Vec2d extent, Vec2d velocity){
 		super(pos, extent, velocity);
@@ -59,23 +60,20 @@ public class MovingObject extends GameObject{
 	public void collisionAvoid(){
 		Collision collision = null;
 		Collision firstcollision;
-		int i = 0;
 		
-		while(i < 10){
-			firstcollision = null;
-			for(GameObject o : GameObject.gameObjects){
-				if(o != this) 
-					collision = sweepOverlaps(o);
-					if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
-						firstcollision = collision;
-					}
-			}
-			if(firstcollision != null){
-				this.velocity = firstcollision.correctedVelocity;
-				this.touch(firstcollision.collider);
-				firstcollision.collider.touch(this);
-			}else break;
-			i++;
+		firstcollision = null;
+		for(GameObject o : GameObject.gameObjects){
+			if(o != this) 
+				collision = sweepOverlaps(o);
+				if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
+					firstcollision = collision;
+				}
+		}
+		if(firstcollision != null){
+			this.velocity = firstcollision.correctedVelocity;
+			this.touch(firstcollision.collider);
+			firstcollision.collider.touch(this);
+			newGround = firstcollision.collider;
 		}
 	}
 	
