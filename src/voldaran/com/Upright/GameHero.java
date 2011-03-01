@@ -8,13 +8,11 @@ import android.graphics.Rect;
 import android.util.Log;
 
 public class GameHero extends MovingObject{
-	private final static int WALKSPEED = 1000;
+	private final static int WALKSPEED = 4000;
 	private final static Vec2d LEFTVELOCITY = new Vec2d(-WALKSPEED, 0);
 	private final static Vec2d RIGHTVELOCITY = new Vec2d(WALKSPEED, 0);
 	private final static Vec2d UPVELOCITY = new Vec2d(0, -WALKSPEED);
 	private final static Vec2d DOWNVELOCITY = new Vec2d(0, WALKSPEED);
-	private final static Vec2d gravity = new Vec2d(0, 300);
-	private final static Vec2d curVelocity = new Vec2d(DOWNVELOCITY);
 	
 	
 	//Gravity moved to GameObject for testing
@@ -23,9 +21,6 @@ public class GameHero extends MovingObject{
 	protected GameObject groundCheckpoint = null;
 	protected GameObject lastToggled = null; 
 	protected GameObject lastToggledCheckpoint = null; 
-	protected int walking = NODIR;
-	protected int walkingCheckpoint = NODIR;
-	protected int downCheckpoint = DOWN;
 	public boolean dead = false;
 
 	public GameHero(Vec2d pos,Vec2d extent, Bitmap bitmap) {
@@ -35,70 +30,43 @@ public class GameHero extends MovingObject{
 	public GameHero(Vec2d pos, Vec2d extent, Vec2d vel, Bitmap bitmap) {
 		super(pos, extent, vel);
 		this.bitmap = bitmap;
+		applyForce(DOWNVELOCITY);
 	}
 	
-	// findGround - check for ground on side on this object, preferring the supplied object
-	// 	in: side - right = 1, top = 2, left = 3, bottom = 4
-	//      prefer - the object given preference
-	//  returns: null - no ground found
-	//           GameObject - the found ground
-	//  calls: touching
-	protected GameObject findGround(int side, GameObject prefer){
-		GameObject theground = null;
-		ArrayList<GameObject> grounds = new ArrayList<GameObject>();
-		for(GameObject o : GameObject.gameObjects){
-			if(touching(side, o)) grounds.add(o);
-		}
-		if(grounds.contains(prefer)) theground = prefer;
-		else if(!grounds.isEmpty())	theground = grounds.get(0);
-		return theground;
+	protected int findGround(){
+		if(touching(RIGHT, ground))
+			return RIGHT;
+		else if(touching(UP, ground))
+			return UP;
+		else if(touching(LEFT, ground))
+			return LEFT;
+		else if(touching(DOWN, ground))
+			return DOWN;
+		else
+			return NODIR;
 	}
 	
 	@Override
 	protected GameObject grounding(){
-        if(walking == NODIR){
-            if(velocity.x > 0){
-                ground = findGround(RIGHT, ground);
-                if(ground != null) walking = RIGHT;
-            }
-            if(velocity.x < 0){
-                ground = findGround(LEFT, ground);
-                if(ground != null) walking = LEFT;
-            }
-            if(velocity.y > 0){
-                ground = findGround(BOTTOM, ground);
-                if(ground != null) walking = DOWN;
-            }
-            if(velocity.y < 0){
-                ground = findGround(TOP, ground);
-                if(ground != null) walking = UP;
-            }
-        }
-        else{
-            ground = findGround(walking, ground);
-            if(ground == null) walking = NODIR;
-        }
+		if(newGround != null && newGround != ground)
+			ground = newGround;
         if(ground != null){
         	if(ground != lastToggled){
         		lastToggled = ground;
         		toggleCount +=1;
         		ground.toggle(this);
-        		switch(walking){
+        		switch(findGround()){
         		case RIGHT:
         			pos.x = ground.right + extent.x;
-        			walking = LEFT;
         			break;
         		case UP:
         			pos.y = ground.top - extent.y;
-        			walking = DOWN;
         			break;
         		case LEFT:
         			pos.x = ground.left - extent.x;
-        			walking = RIGHT;
         			break;
         		case DOWN:
         			pos.y = ground.bottom + extent.y;
-        			walking = UP;
         			break;
         		}
         	}
@@ -120,42 +88,24 @@ public class GameHero extends MovingObject{
 		if (ground!=null) {
 			switch(input){
 			case PRESS_RIGHT:
-				if (!curVelocity.equals(LEFTVELOCITY)) {
-					curVelocity.set(RIGHTVELOCITY);
-					ground = null;
-					walking = NODIR;
-				}
-				
+				applyForce(RIGHTVELOCITY);
+				ground = null;
 				break;
 			case PRESS_LEFT:
-				if (!curVelocity.equals(RIGHTVELOCITY)){
-					curVelocity.set(LEFTVELOCITY);
-					ground = null;
-					walking = NODIR;
-				}
-				
+				applyForce(LEFTVELOCITY);
+				ground = null;
 				break;
 			case PRESS_UP:
-				if (!curVelocity.equals(DOWNVELOCITY)){
-					curVelocity.set(UPVELOCITY);
-					ground = null;
-					walking = NODIR;
-				}
+				applyForce(UPVELOCITY);
+				ground = null;
 				break;
 			case PRESS_DOWN:
-				Log.d("GSTA", "pressed down " + curVelocity.toString());
-				if (!curVelocity.equals(UPVELOCITY)) {
-					curVelocity.set(DOWNVELOCITY);
-					ground = null;
-					walking = NODIR;
-				}
+				Log.d("GSTA", "pressed down " + velocity.toString());
+				applyForce(DOWNVELOCITY);
+				ground = null;
 				break;
 			}
-		} else {
-			applyForce(curVelocity);
 		}
-		
-
 	}
 	
 
@@ -190,7 +140,6 @@ public class GameHero extends MovingObject{
 	protected void saveCheckpoint(){
 		super.saveCheckpoint();
 		groundCheckpoint = ground;
-		walkingCheckpoint = walking;
 		lastToggledCheckpoint = lastToggled;
 		previousToggleCount = toggleCount; 
 	}
@@ -199,7 +148,6 @@ public class GameHero extends MovingObject{
 	protected void restoreCheckpoint(){
 		super.restoreCheckpoint();
 		ground = groundCheckpoint;
-		walking = walkingCheckpoint;
 		lastToggled = lastToggledCheckpoint;
 		dead = false;
 		toggleCount = previousToggleCount;
