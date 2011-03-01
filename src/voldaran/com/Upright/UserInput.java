@@ -42,12 +42,14 @@ public class UserInput {
 
 	//Takes two points and calculates the Direction
 	private int calcDirection (Vec2d mEnd) { 
-//		int screenWidth = (int) surfaceSize.x;
-//		int screenHeight = (int) surfaceSize.y;
-		int screenWidth = 800;
-		int screenHeight = 800;
+		
+		
+		int screenWidth = (int) surfaceSize.x;
+		int screenHeight = (int) surfaceSize.x;
 		
 		mStart.set(screenWidth/2,screenHeight/2);
+		
+		mEnd.set(mEnd.x,(double) mEnd.y*(double) ((double) ((double) surfaceSize.x/ (double) surfaceSize.y)));
 		
 		long xDifference = Math.abs(mStart.x - mEnd.x);
 		long yDifference = Math.abs(mStart.y - mEnd.y);
@@ -74,36 +76,6 @@ public class UserInput {
 	}
 
 	
-	private int slicePiece(Vec2d touch) {
-		int screenWidth = (int) surfaceSize.x;
-		int screenHeight = (int) surfaceSize.y;
-		
-		if (touch.x>screenWidth-(screenWidth/3)) { //Right side of screen
-			return 0;
-			
-		} else if (touch.x<screenWidth/3) { //Left side of screen
-			return 2;
-			
-		} else if ((touch.x>screenWidth/3)&&(touch.x<screenWidth-(screenWidth/3))) { //middle
-			if (touch.y>screenHeight/2) {
-				return 1; //DOWN
-			} else
-				return 3; //UP
-		}
-			
-		return 6;
-
-	}
-	private boolean swipping=false;
-//	private boolean setSwipe;
-	
-//	private boolean setSwipeTime() { TODO
-//		if (setSwipe) return false;
-//		swipeTime = System.currentTimeMillis();
-//		setSwipe = true;
-//		return true;
-//	}
-	
 	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
@@ -113,7 +85,6 @@ public class UserInput {
 			mCurrentTouch.set(event.getX(),event.getY());
 			
 			mPress.setVoid();
-			
 			
 			switch (calcDirection(mCurrentTouch)) {
 			case 0:
@@ -160,6 +131,7 @@ public class UserInput {
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
+			mCurrentTouch.set(event.getX(),event.getY());
 			Log.d("GSTA", "" + calcDirection(mCurrentTouch));
 			break;
 		}
@@ -168,7 +140,6 @@ public class UserInput {
 	
 	public void Clear() {
 		uInput = Input.NONE;
-		swipping = false;
 	}
 
 	private Vec2d convertCoord(Vec2d c) {
