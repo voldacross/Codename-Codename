@@ -12,8 +12,7 @@ public class UserInput {
 	private Vec2d mPress  = new Vec2d();
 	private Vec2d mDownPress = new Vec2d();
 	private Vec2d oldSpot = new Vec2d();
-	private Vec2d oldSpotH = new Vec2d();
-	private long oldTime, swipeTime;
+	private long oldTime;
 	private int dir = 0;
 	
 //	private boolean swipeToggle = false;
@@ -22,22 +21,10 @@ public class UserInput {
 	public Input uInput = Input.NONE;
 	
 	public static enum Input {
-		PRESS_RIGHT_UP,
 		PRESS_RIGHT,
-		PRESS_RIGHT_DOWN,
-		
-		PRESS_LEFT_UP,
 		PRESS_LEFT,
-		PRESS_LEFT_DOWN,
-		
-		PRESS_MIDDLE,
-		
+		PRESS_UP,
 		PRESS_DOWN,
-		PRESS_DRAGGING,
-		SWIPE_UP,
-		SWIPE_DOWN,
-		SWIPE_RIGHT,
-		SWIPE_LEFT,
 		NONE
 	
 	}
@@ -78,17 +65,22 @@ public class UserInput {
 	
 	private int slicePiece(Vec2d touch) {
 		int screenWidth = (int) surfaceSize.x;
+		int screenHeight = (int) surfaceSize.y;
 		
 		if (touch.x>screenWidth-(screenWidth/3)) { //Right side of screen
-			return 2;
-			
-		} else if (touch.x<screenWidth/3) { //Left side of screen
 			return 0;
 			
-		} else { //middle
-			return 1;
+		} else if (touch.x<screenWidth/3) { //Left side of screen
+			return 2;
 			
+		} else if ((touch.x>screenWidth/3)&&(touch.x<screenWidth-(screenWidth/3))) { //middle
+			if (touch.y>screenHeight/2) {
+				return 1; //DOWN
+			} else
+				return 3; //UP
 		}
+			
+		return 6;
 
 	}
 	private boolean swipping=false;
@@ -104,141 +96,40 @@ public class UserInput {
 	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
-		int slice;
-		
-		
-		
 		switch (action & MotionEvent.ACTION_MASK) {
 		
 		case MotionEvent.ACTION_DOWN:
+			mCurrentTouch.set(event.getX(),event.getY());
+			mPress.set(event.getX(), event.getY());
 			
-			mDownPress.set(event.getX(),event.getY());
-			mCurrentTouch.set(event.getX(), event.getY());
-			mCurrentTouchH.set(event.getX(), event.getY());
-			mPress.set(event.getX(),event.getY());
-			
-			oldTime = System.currentTimeMillis();
-			
-			slice = slicePiece(mDownPress);
-
-			switch (slice) {
+			Log.d("GSTA", "" + slicePiece(mCurrentTouch));
+			switch (slicePiece(mCurrentTouch)) {
 			case 0:
-				uInput = Input.PRESS_LEFT;
-				break;
-			case 1:
-				uInput = Input.PRESS_MIDDLE;
-				break;
-			case 2:
 				uInput = Input.PRESS_RIGHT;
 				break;
+				
+			case 1:
+				uInput = Input.PRESS_DOWN;
+				break;
+				
+			case 2:
+				uInput = Input.PRESS_LEFT;
+				break;
+			
+			case 3:
+				uInput = Input.PRESS_UP;
+				break;
 			}
+			
 			break;
 			
 		case MotionEvent.ACTION_UP:
-			
-			if (uInput==Input.PRESS_DRAGGING) {
-				swipping=false;
-//				int dir = calcDirection(mDownPress, mCurrentTouch);
-				switch (dir) {
-				case 0:
-					uInput = Input.SWIPE_RIGHT;
-					break;
-					
-				case 2:
-					uInput = Input.SWIPE_LEFT;
-					break;
-				}
-			} else uInput = Input.NONE;
-			
-			mDownPress.setVoid();
+			mCurrentTouch.set(event.getX(),event.getY());
+			mPress.setVoid();
+
 			break;
 			
 		case MotionEvent.ACTION_MOVE:
-			
-			oldSpot.set(mCurrentTouch);  //Old Spot
-			mCurrentTouch.set(event.getX(), event.getY());  //New Spot
-			
-			dir = calcDirection(mDownPress, mCurrentTouch);  //Direction between first press and new. Used to determine WALL direction
-			int curDir = calcDirection(oldSpot, mCurrentTouch); //Direction between old press and new press. Used to determine SWIPE direction
-			
-			float ddd = ((mDownPress.x - mCurrentTouch.x) * (mDownPress.x - mCurrentTouch.x)) + 
-						((mDownPress.y - mCurrentTouch.y) * (mDownPress.y - mCurrentTouch.y)); //Distance between first press and new
-			
-			Vec2d distance = mCurrentTouch.subtract(oldSpot);
-			
-			Vec2d speed = new Vec2d((float) ((float) distance.x / (float) (System.currentTimeMillis() - oldTime) * 1000),
-									(float) ((float) distance.y / (float) (System.currentTimeMillis() - oldTime) * 1000));
-			
-			oldTime = System.currentTimeMillis();
-			
-			slice = slicePiece(mDownPress);  //Slice the original press was in, doesn't matter where it currently is
-			
-			//speed is fast, direction is left/right, or you already are swipping
-			if (((((Math.abs(speed.x)>convert)||(Math.abs(speed.y)>convert)))&&(curDir==0||curDir==2))||(swipping)) {
-				swipping = ddd>8*8;
-			}
-			
-			if (!swipping) {
-				
-				if (slice!=1) {
-					if (ddd>8*8) {
-						if (dir==1||dir==3) { //UP / DOWN
-							switch (dir) {
-							case 1:  //down
-								if (slice==2)  {
-									uInput=Input.PRESS_RIGHT_DOWN;
-								} else if (slice==0) {
-									uInput=Input.PRESS_LEFT_DOWN;
-								}
-								break;
-							case 3:  //UP
-								if (slice==2) {
-									uInput=Input.PRESS_RIGHT_UP;
-								} else if (slice==0) {
-									uInput=Input.PRESS_LEFT_UP;
-								}
-								break;
-							}
-						} 
-	
-					}  else {
-						switch (slice) {
-						case 0:
-							uInput = Input.PRESS_LEFT;
-							break;
-						case 2:
-							uInput = Input.PRESS_RIGHT;
-						}
-					}
-				}
-				
-			} else {
-				
-				int currentSlice = slicePiece(mCurrentTouch);
-				
-				if ((slice==0&&currentSlice==2)||(slice==2&&currentSlice==0)) { //if you've swipped clearing the middle slice, ignore swipe
-					mDownPress.set(event.getX(),event.getY()); //act like pressing down for the first time
-					//May need mPress set
-					
-					switch (currentSlice) { //Set press
-					case 0:
-						uInput = Input.PRESS_LEFT;
-						swipping=false;
-						break;
-					case 2:
-						uInput = Input.PRESS_RIGHT;
-						swipping=false;
-						break;
-					}
-				} else {
-					if (dir==0||dir==2) { 
-						uInput = Input.PRESS_DRAGGING;
-					} else swipping=false;
-				}
-	
-				
-			}
-			
 			
 			
 			break;
@@ -281,10 +172,7 @@ public class UserInput {
 	
 	public Input getInput() {
 		Input oInput = uInput;
-		if (uInput==Input.SWIPE_LEFT || uInput==Input.SWIPE_RIGHT) {
-			uInput = Input.NONE;
-		} 
-//		if (oInput!=Input.NONE) Log.d("GSTA", "Input - " + oInput);
+		uInput = Input.NONE;
 		 
 		return oInput;
 	}

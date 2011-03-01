@@ -68,7 +68,8 @@ public class MenuTitleScreen {
 	}
 	
 	public void processInput(Input input, Vec2d clicked) {
-//		Log.d("GSTA", "" + inTransition);
+		Log.d("GSTA", "processInput " + input);
+		
 		if ((!inTransition) && (!clicked.isVoid())){
 			if (activePanel==About) {
 				if (input==UserInput.Input.PRESS_LEFT) {
@@ -99,14 +100,14 @@ public class MenuTitleScreen {
 				}
 				
 			} else if (activePanel==Setup) {
-				if (input==UserInput.Input.PRESS_MIDDLE){
+				if (input==UserInput.Input.PRESS_UP){
 					activePanel = null;
 					inTransition = true;
 				}
 				
 			} else {
 				if (!inTransition) {
-					if (input==UserInput.Input.PRESS_MIDDLE) activePanel = Setup;
+					if (input==UserInput.Input.PRESS_UP) activePanel = Setup;
 					if (input==UserInput.Input.PRESS_LEFT) activePanel = Play;
 					if (input==UserInput.Input.PRESS_RIGHT) activePanel = About;
 				}

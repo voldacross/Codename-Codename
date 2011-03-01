@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class GameHero extends MovingObject{
 	private final static int WALKSPEED = 1000;
@@ -12,9 +13,9 @@ public class GameHero extends MovingObject{
 	private final static Vec2d RIGHTVELOCITY = new Vec2d(WALKSPEED, 0);
 	private final static Vec2d UPVELOCITY = new Vec2d(0, -WALKSPEED);
 	private final static Vec2d DOWNVELOCITY = new Vec2d(0, WALKSPEED);
-	private final static Vec2d JUMPLEFTVELOCITY = new Vec2d(-7500, -4625);
-	private final static Vec2d JUMPRIGHTVELOCITY = new Vec2d(7500, -4625);
 	private final static Vec2d gravity = new Vec2d(0, 300);
+	private final static Vec2d curVelocity = new Vec2d(DOWNVELOCITY);
+	
 	
 	//Gravity moved to GameObject for testing
 	
@@ -115,100 +116,49 @@ public class GameHero extends MovingObject{
 	}
 	
 	public void processInput(UserInput.Input input){
-		if(walking == DOWN || walking == UP){
+		
+		if (ground!=null) {
 			switch(input){
-			case PRESS_LEFT: 
-				applyForce(LEFTVELOCITY);
-				break;
-			case PRESS_LEFT_DOWN: 
-				applyForce(LEFTVELOCITY);
-				break;
-			case PRESS_LEFT_UP: 
-				applyForce(LEFTVELOCITY);
-				break;
-			case PRESS_RIGHT: 
-				applyForce(RIGHTVELOCITY);
-				break;
-			case PRESS_RIGHT_DOWN: 
-				applyForce(RIGHTVELOCITY);
-				break;
-			case PRESS_RIGHT_UP: 
-				applyForce(RIGHTVELOCITY);
-				break;				
-			
-			case SWIPE_LEFT: 
-				applyForce(JUMPLEFTVELOCITY);
-				ground = null;
-				walking = NODIR;
-				break;
-			case SWIPE_RIGHT:
-				applyForce(JUMPRIGHTVELOCITY);
-				ground = null;
-				walking = NODIR;
-				break;
-			case SWIPE_UP:
-				if(walking == DOWN){
+			case PRESS_RIGHT:
+				if (!curVelocity.equals(LEFTVELOCITY)) {
+					curVelocity.set(RIGHTVELOCITY);
 					ground = null;
 					walking = NODIR;
 				}
-				break;
-			case SWIPE_DOWN:
-				if(walking == UP){
-					ground = null;
-					walking = NODIR;
-				}
-				break;
 				
-
-			}
-		}
-		else if(walking == LEFT || walking == RIGHT){
-			switch(input){
-			case PRESS_LEFT_DOWN: 
-				applyForce(DOWNVELOCITY);
 				break;
-			case PRESS_LEFT_UP: 
-				applyForce(UPVELOCITY);
+			case PRESS_LEFT:
+				if (!curVelocity.equals(RIGHTVELOCITY)){
+					curVelocity.set(LEFTVELOCITY);
+					ground = null;
+					walking = NODIR;
+				}
+				
 				break;
-			case PRESS_RIGHT_DOWN:
-				applyForce(DOWNVELOCITY);
-				break;
-			case PRESS_RIGHT_UP:
-				applyForce(UPVELOCITY);
-				break;
-			case SWIPE_LEFT: 
-				if(walking == RIGHT){
-					applyForce(JUMPLEFTVELOCITY);
+			case PRESS_UP:
+				if (!curVelocity.equals(DOWNVELOCITY)){
+					curVelocity.set(UPVELOCITY);
 					ground = null;
 					walking = NODIR;
 				}
 				break;
-			case SWIPE_RIGHT:
-				if(walking == LEFT){
-					applyForce(JUMPRIGHTVELOCITY);
+			case PRESS_DOWN:
+				Log.d("GSTA", "pressed down " + curVelocity.toString());
+				if (!curVelocity.equals(UPVELOCITY)) {
+					curVelocity.set(DOWNVELOCITY);
 					ground = null;
 					walking = NODIR;
 				}
 				break;
 			}
-		}
-	}
-	
-	@Override
-	public void update() {
-		if(ground != null)
-			velocity.x += ground.velocity.x;
-		super.update();
-		if(ground != null){
-			velocity.x -= ground.velocity.x;
-			velocity.mul(0.25);
-		}
-		else{
-			velocity.mul(0.95).add(gravity);
+		} else {
+			applyForce(curVelocity);
 		}
 		
+
 	}
 	
+
 	@Override
 	public void touch(GameObject o){
 		dead = o instanceof GameObstacle;

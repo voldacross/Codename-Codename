@@ -275,10 +275,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			
 			//Boarders //Obstacles
-//			addObstacle(4,240,4,232);
-//			addObstacle(392,4,400,4);
-//			addObstacle(372,476,428,4);
-//			addObstacle(796,232,4,240);
+			addObstacle(4,240,4,232);
+			addObstacle(392,4,400,4);
+			addObstacle(372,476,428,4);
+			addObstacle(796,232,4,240);
 			
 //			addWall(356,220,4,4);
 			
@@ -424,17 +424,32 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			
 			
 			//New Game Level 2
+//			hero.pos.set(32000,48000);
+//			addWall(320,392,64,8);
+//			addWall(600,80,8,64);
+//			addWall(504,188,8,36);
+//			addWall(456,152,56,8);
+//			addWall(392,240,8,224);
+//			addWall(392,232,376,8);
+//			addWall(392,8,376,8);
+//			addWall(8,232,8,232);
+//			addWall(392,472,392,8);
+//			addWall(776,232,8,232);
+			
+			
+			//New Game Level 3
 			hero.pos.set(32000,48000);
-			addWall(320,392,64,8);
-			addWall(600,80,8,64);
-			addWall(504,188,8,36);
-			addWall(456,152,56,8);
-			addWall(392,240,8,224);
-			addWall(392,232,376,8);
-			addWall(392,8,376,8);
-			addWall(8,232,8,232);
-			addWall(392,472,392,8);
-			addWall(776,232,8,232);
+			addWall(592,200,80,8);
+			addWall(424,248,8,104);
+			addWall(352,360,80,8);
+			addWall(144,424,48,8);
+			addWall(200,424,8,56);
+			addWall(104,360,104,8);
+			addWall(136,56,56,8);
+			addWall(184,96,8,32);
+			addWall(72,64,8,80);
+			addWall(328,64,8,64);
+			addWall(208,136,128,8);
 
 
 			
@@ -477,57 +492,57 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   		    c.drawText("" + hero.getToggleCount(), 750, 30, text);
 		}
 		
-		public void drawPress(Canvas c, Input input) {
-			
-			Vec2d down = _input.getDown();
-			
-			if (!down.isVoid()) {
-				Vec2d current = _input.getCurrent();
-				
-				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-				paint.setColor(Color.RED);
-				paint.setAlpha(50);
-				
-				Path triPath = new Path();
-				Paint triPaint = new Paint();
-				triPaint.setColor(Color.WHITE);
-				triPaint.setAlpha(80);
-				triPaint.setStyle(Paint.Style.FILL);
-				
-				if (input==Input.PRESS_LEFT||input==Input.PRESS_LEFT_DOWN||input==Input.PRESS_LEFT_UP) {
-					triPath.moveTo(100, 50);
-					
-					triPath.lineTo(200, 50);
-					triPath.lineTo(200, 83);
-					triPath.lineTo(100, 83);  //Create left Arrow
-					
-					triPath.lineTo(100, 16);
-					triPath.lineTo(50,67);
-					triPath.lineTo(100,113);
-					triPath.close();
-					
-				} else if (input==Input.PRESS_RIGHT||input==Input.PRESS_RIGHT_DOWN||input==Input.PRESS_RIGHT_UP) {
-					
-					triPath.moveTo(700, 50);
-					
-					triPath.lineTo(600, 50);
-					triPath.lineTo(600, 83);
-					triPath.lineTo(700, 83); //Create right Arrow
-					
-					triPath.lineTo(700, 16);
-					triPath.lineTo(750,67);
-					triPath.lineTo(700,113);
-					triPath.close();
-				}
-				
-				c.drawPath(triPath, triPaint);
-				paint.setAlpha(150);
-				c.drawCircle(down.x, down.y, 13, paint);
-				c.drawCircle(current.x, current.y, 7, paint);
-				c.drawLine(down.x, down.y, current.x, current.y, paint);
-			}
-			
-		}
+//		public void drawPress(Canvas c, Input input) {
+//			
+//			Vec2d down = _input.getDown();
+//			
+//			if (!down.isVoid()) {
+//				Vec2d current = _input.getCurrent();
+//				
+//				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+//				paint.setColor(Color.RED);
+//				paint.setAlpha(50);
+//				
+//				Path triPath = new Path();
+//				Paint triPaint = new Paint();
+//				triPaint.setColor(Color.WHITE);
+//				triPaint.setAlpha(80);
+//				triPaint.setStyle(Paint.Style.FILL);
+//				
+//				if (input==Input.PRESS_LEFT||input==Input.PRESS_LEFT_DOWN||input==Input.PRESS_LEFT_UP) {
+//					triPath.moveTo(100, 50);
+//					
+//					triPath.lineTo(200, 50);
+//					triPath.lineTo(200, 83);
+//					triPath.lineTo(100, 83);  //Create left Arrow
+//					
+//					triPath.lineTo(100, 16);
+//					triPath.lineTo(50,67);
+//					triPath.lineTo(100,113);
+//					triPath.close();
+//					
+//				} else if (input==Input.PRESS_RIGHT||input==Input.PRESS_RIGHT_DOWN||input==Input.PRESS_RIGHT_UP) {
+//					
+//					triPath.moveTo(700, 50);
+//					
+//					triPath.lineTo(600, 50);
+//					triPath.lineTo(600, 83);
+//					triPath.lineTo(700, 83); //Create right Arrow
+//					
+//					triPath.lineTo(700, 16);
+//					triPath.lineTo(750,67);
+//					triPath.lineTo(700,113);
+//					triPath.close();
+//				}
+//				
+//				c.drawPath(triPath, triPaint);
+//				paint.setAlpha(150);
+//				c.drawCircle(down.x, down.y, 13, paint);
+//				c.drawCircle(current.x, current.y, 7, paint);
+//				c.drawLine(down.x, down.y, current.x, current.y, paint);
+//			}
+//			
+//		}
 		
 		public void drawAd(Canvas c) {
 			
@@ -574,6 +589,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   			while((gameState == GameState.PLAYING)  && (mRun)){
 	  		    
 				currentInput = _input.getInput();
+				
 				Vec2d mClicked = _input.getCurrentPress();
 				
 				hero.processInput(currentInput);
@@ -588,7 +604,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					clearScreen(c, cameraSize);
 					GameObject.drawAll(c);
 					
-					drawPress(c, currentInput);
+//					drawPress(c, currentInput);
 					drawFPS(c);
 					
 					picScreen.endRecording();
@@ -647,6 +663,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			while((gameState == GameState.TITLE) && (mRun)){
 				
 				UserInput.Input currentInput = _input.getInput();
+//				Log.d("GSTA", "INPUT + " + currentInput);
 				
 				Vec2d mClicked = _input.getCurrentPress();
 				if (!mClicked.isVoid()) titleMenu.processInput(currentInput, mClicked);
