@@ -14,7 +14,7 @@ public class UserInput {
 	private Vec2d oldSpot = new Vec2d();
 	private long oldTime;
 	private int dir = 0;
-	
+	private Vec2d mStart = new Vec2d();
 //	private boolean swipeToggle = false;
 	private final float convert = 1500 / (240 / (float) Game.displayMetrics.densityDpi);
 	
@@ -25,6 +25,11 @@ public class UserInput {
 		PRESS_LEFT,
 		PRESS_UP,
 		PRESS_DOWN,
+		
+		DOWN_RIGHT,
+		DOWN_LEFT,
+		DOWN_UP,
+		DOWN_DOWN,
 		NONE
 	
 	}
@@ -36,7 +41,13 @@ public class UserInput {
 	}
 
 	//Takes two points and calculates the Direction
-	private int calcDirection (Vec2d mStart, Vec2d mEnd) { 
+	private int calcDirection (Vec2d mEnd) { 
+//		int screenWidth = (int) surfaceSize.x;
+//		int screenHeight = (int) surfaceSize.y;
+		int screenWidth = 800;
+		int screenHeight = 800;
+		
+		mStart.set(screenWidth/2,screenHeight/2);
 		
 		long xDifference = Math.abs(mStart.x - mEnd.x);
 		long yDifference = Math.abs(mStart.y - mEnd.y);
@@ -100,10 +111,35 @@ public class UserInput {
 		
 		case MotionEvent.ACTION_DOWN:
 			mCurrentTouch.set(event.getX(),event.getY());
-			mPress.set(event.getX(), event.getY());
 			
-			Log.d("GSTA", "" + slicePiece(mCurrentTouch));
-			switch (slicePiece(mCurrentTouch)) {
+			mPress.setVoid();
+			
+			
+			switch (calcDirection(mCurrentTouch)) {
+			case 0:
+				uInput = Input.DOWN_RIGHT;
+				break;
+				
+			case 1:
+				uInput = Input.DOWN_DOWN;
+				break;
+				
+			case 2:
+				uInput = Input.DOWN_LEFT;
+				break;
+			
+			case 3:
+				uInput = Input.DOWN_UP;
+				break;
+			}
+			
+			break;
+			
+		case MotionEvent.ACTION_UP:
+			mCurrentTouch.set(event.getX(),event.getY());
+			
+			mPress.set(event.getX(), event.getY());
+			switch (calcDirection(mCurrentTouch)) {
 			case 0:
 				uInput = Input.PRESS_RIGHT;
 				break;
@@ -123,15 +159,8 @@ public class UserInput {
 			
 			break;
 			
-		case MotionEvent.ACTION_UP:
-			mCurrentTouch.set(event.getX(),event.getY());
-			mPress.setVoid();
-
-			break;
-			
 		case MotionEvent.ACTION_MOVE:
-			
-			
+			Log.d("GSTA", "" + calcDirection(mCurrentTouch));
 			break;
 		}
 		
