@@ -431,26 +431,54 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //			addWall(456,152,56,8);
 //			addWall(392,240,8,224);
 //			addWall(392,232,376,8);
-//			addWall(392,8,376,8);
-//			addWall(8,232,8,232);
-//			addWall(392,472,392,8);
-//			addWall(776,232,8,232);
 			
 			
 			//New Game Level 3
-			hero.pos.set(32000,48000);
-			addWall(592,200,80,8);
-			addWall(424,248,8,104);
-			addWall(352,360,80,8);
-			addWall(144,424,48,8);
-			addWall(200,424,8,56);
-			addWall(104,360,104,8);
-			addWall(136,56,56,8);
-			addWall(184,96,8,32);
-			addWall(72,64,8,80);
-			addWall(328,64,8,64);
-			addWall(208,136,128,8);
+//			hero.pos.set(32000,48000);
+//			addWall(592,200,80,8);
+//			addWall(424,248,8,104);
+//			addWall(352,360,80,8);
+//			addWall(144,424,48,8);
+//			addWall(200,424,8,56);
+//			addWall(104,360,104,8);
+//			addWall(136,56,56,8);
+//			addWall(184,96,8,32);
+//			addWall(72,64,8,80);
+//			addWall(328,64,8,64);
+//			addWall(208,136,128,8);
 
+			//New Game Level 4
+			addWall(380,240,8,120);
+			addWall(200,240,100,8);
+			addWall(200,360,8,80);
+			addWall(200,100,8,80);
+			addWall(380,60,100,8);
+			addWall(380,400,100,8);
+			addWall(560,140,100,8);
+			addWall(560,320,100,8);
+			addWall(560,230,8,50);
+			addWall(560,400,8,30);
+			addWall(560,60,8,30);
+			
+			
+//			New Game Level 5 Currently Testing, not sure if beatable yet
+//			hero.pos.set(384000,256000);
+//			addWall(600,440,72,8);
+//			addWall(568,248,8,72);
+//			addWall(616,248,8,168);
+//			addWall(600,56,72,8);
+//			addWall(152,248,8,72);
+//			addWall(184,440,72,8);
+//			addWall(184,56,72,8);
+//			addWall(392,56,8,24);
+//			addWall(392,440,8,24);
+//			addWall(200,248,8,168);
+//			addWall(392,376,104,8);
+//			addWall(392,312,104,8);
+//			addWall(392,184,104,8);
+//			addWall(392,120,104,8);
+
+			
 
 			
 			
@@ -492,57 +520,71 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   		    c.drawText("" + hero.getToggleCount(), 750, 30, text);
 		}
 		
-//		public void drawPress(Canvas c, Input input) {
-//			
-//			Vec2d down = _input.getDown();
-//			
-//			if (!down.isVoid()) {
-//				Vec2d current = _input.getCurrent();
-//				
-//				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-//				paint.setColor(Color.RED);
-//				paint.setAlpha(50);
-//				
-//				Path triPath = new Path();
-//				Paint triPaint = new Paint();
-//				triPaint.setColor(Color.WHITE);
-//				triPaint.setAlpha(80);
-//				triPaint.setStyle(Paint.Style.FILL);
-//				
-//				if (input==Input.PRESS_LEFT||input==Input.PRESS_LEFT_DOWN||input==Input.PRESS_LEFT_UP) {
-//					triPath.moveTo(100, 50);
-//					
-//					triPath.lineTo(200, 50);
-//					triPath.lineTo(200, 83);
-//					triPath.lineTo(100, 83);  //Create left Arrow
-//					
-//					triPath.lineTo(100, 16);
-//					triPath.lineTo(50,67);
-//					triPath.lineTo(100,113);
-//					triPath.close();
-//					
-//				} else if (input==Input.PRESS_RIGHT||input==Input.PRESS_RIGHT_DOWN||input==Input.PRESS_RIGHT_UP) {
-//					
-//					triPath.moveTo(700, 50);
-//					
-//					triPath.lineTo(600, 50);
-//					triPath.lineTo(600, 83);
-//					triPath.lineTo(700, 83); //Create right Arrow
-//					
-//					triPath.lineTo(700, 16);
-//					triPath.lineTo(750,67);
-//					triPath.lineTo(700,113);
-//					triPath.close();
-//				}
-//				
-//				c.drawPath(triPath, triPaint);
-//				paint.setAlpha(150);
+		public void drawPress(Canvas c, Input input) {
+			
+			Vec2d down = _input.getDown();
+			
+			if (!down.isVoid()) {
+				
+				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+				paint.setColor(Color.RED);
+				paint.setAlpha(50);
+				
+				Path triPath = new Path();
+				Paint triPaint = new Paint();
+				triPaint.setColor(Color.WHITE);
+				triPaint.setAlpha(80);
+				triPaint.setStyle(Paint.Style.FILL);
+				
+				if (input==Input.DOWN_LEFT) {
+					if (hero.ground!=null) {
+						if (hero.findGround()==3) triPaint.setColor(Color.RED);
+					} else triPaint.setColor(Color.RED);
+					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.lineTo(0, 0);
+					triPath.lineTo(0, cameraSize.y);
+					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.close();
+					
+				} else if (input==Input.DOWN_RIGHT) {
+					if (hero.ground!=null) {
+						if (hero.findGround()==1) triPaint.setColor(Color.RED);
+					} else triPaint.setColor(Color.RED);
+					
+					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.lineTo(cameraSize.x, 0);
+					triPath.lineTo(cameraSize.x, cameraSize.y);
+					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.close();
+				} else if (input==Input.DOWN_UP) {
+					if (hero.ground!=null) {
+						if (hero.findGround()==2) triPaint.setColor(Color.RED);
+					} else triPaint.setColor(Color.RED);
+					
+					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.lineTo(0,0);
+					triPath.lineTo(cameraSize.x,0);
+					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.close();
+				} else if (input==Input.DOWN_DOWN) {
+					if (hero.ground!=null) {
+						if (hero.findGround()==4) triPaint.setColor(Color.RED);
+					} else triPaint.setColor(Color.RED);
+					
+					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.lineTo(0,cameraSize.y);
+					triPath.lineTo(cameraSize.x,cameraSize.y);
+					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.close();
+				}
+				triPaint.setAlpha(80);				
+				c.drawPath(triPath, triPaint);
 //				c.drawCircle(down.x, down.y, 13, paint);
 //				c.drawCircle(current.x, current.y, 7, paint);
 //				c.drawLine(down.x, down.y, current.x, current.y, paint);
-//			}
-//			
-//		}
+			}
+			
+		}
 		
 		public void drawAd(Canvas c) {
 			
@@ -582,9 +624,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			
-			long startTime = System.currentTimeMillis();
-			long lastSavedTime = startTime; 
-			
   			currentTime = System.currentTimeMillis();
   			while((gameState == GameState.PLAYING)  && (mRun)){
 	  		    
@@ -604,7 +643,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					clearScreen(c, cameraSize);
 					GameObject.drawAll(c);
 					
-//					drawPress(c, currentInput);
+					drawPress(c, currentInput);
 					drawFPS(c);
 					
 					picScreen.endRecording();
@@ -613,9 +652,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 				if(hero.dead){
 					death();
-				}else if (currentTime>lastSavedTime+25000){			//Every ten Seconds save checkpoint
-					if(GameObject.saveCheckpointAll())
-						lastSavedTime = currentTime;
+//				}else if (currentTime>lastSavedTime+25000){			//Every ten Seconds save checkpoint
+//					if(GameObject.saveCheckpointAll())
+//						lastSavedTime = currentTime;
+					
 				}
 
 				if(!mClicked.isVoid()) //Pause

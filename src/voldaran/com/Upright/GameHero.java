@@ -1,7 +1,5 @@
 package voldaran.com.Upright;
 
-import java.util.ArrayList;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -50,7 +48,7 @@ public class GameHero extends MovingObject{
 	protected GameObject grounding(){
 		if(newGround != null && newGround != ground)
 			ground = newGround;
-        if(ground != null){
+        if((ground != null)&&!(ground instanceof GameObstacle)){
         	if(ground != lastToggled){
         		lastToggled = ground;
         		toggleCount +=1;
@@ -69,6 +67,7 @@ public class GameHero extends MovingObject{
         			pos.y = ground.bottom + extent.y;
         			break;
         		}
+        		GameObject.saveCheckpointAll();
         	}
         }
         return ground;
@@ -139,6 +138,7 @@ public class GameHero extends MovingObject{
 	@Override
 	protected void saveCheckpoint(){
 		super.saveCheckpoint();
+		Log.d("GSTA", "" + pos.toString());
 		groundCheckpoint = ground;
 		lastToggledCheckpoint = lastToggled;
 		previousToggleCount = toggleCount; 

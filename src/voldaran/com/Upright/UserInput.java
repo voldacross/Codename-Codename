@@ -4,19 +4,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 public class UserInput {
-	
-
 	private Vec2d cameraSize, surfaceSize;
 	private Vec2d mCurrentTouch  = new Vec2d();
-	private Vec2d mCurrentTouchH  = new Vec2d();
 	private Vec2d mPress  = new Vec2d();
 	private Vec2d mDownPress = new Vec2d();
-	private Vec2d oldSpot = new Vec2d();
-	private long oldTime;
-	private int dir = 0;
-	private Vec2d mStart = new Vec2d();
-//	private boolean swipeToggle = false;
-	private final float convert = 1500 / (240 / (float) Game.displayMetrics.densityDpi);
 	
 	public Input uInput = Input.NONE;
 	
@@ -40,39 +31,38 @@ public class UserInput {
 		
 	}
 
-	//Takes two points and calculates the Direction
-	private int calcDirection (Vec2d mEnd) { 
+	
+	private int calcQuad (Vec2d point) {
+		float x1, x2, x3, y1, y2, y3, a0, a1, a2, a3;
+		x1 = surfaceSize.x / 2; y1 = surfaceSize.y / 2;
+		x2 = surfaceSize.x; y2 = 0;
+		x3 = surfaceSize.x; y3 = surfaceSize.y;
 		
-		
-		int screenWidth = (int) surfaceSize.x;
-		int screenHeight = (int) surfaceSize.x;
-		
-		mStart.set(screenWidth/2,screenHeight/2);
-		
-		mEnd.set(mEnd.x,(double) mEnd.y*(double) ((double) ((double) surfaceSize.x/ (double) surfaceSize.y)));
-		
-		long xDifference = Math.abs(mStart.x - mEnd.x);
-		long yDifference = Math.abs(mStart.y - mEnd.y);
-		
-		if (xDifference>=yDifference) {
-			if (mEnd.x<=mStart.x) {
-				//LEFT
-				return 2;
-			} else {
-				//RIGHT
-				return 0;
-			}
+		for (int i = 0; i<4; i++) {
+			a0 = Math.abs((x2-x1)*(y3-y1)-(x3-x1)*(y2-y1));
+			a1 = Math.abs((x1-point.x)*(y2-point.y)-(x2-point.x)*(y1-point.y));
+			a2 = Math.abs((x2-point.x)*(y3-point.y)-(x3-point.x)*(y2-point.y));
+			a3 = Math.abs((x3-point.x)*(y1-point.y)-(x1-point.x)*(y3-point.y));
 			
-		} else if (xDifference<=yDifference) {
-			if (mEnd.y<=mStart.y) {
-				//UP
-				return 3;
-			} else {
-				//DOWN
-				return 1;
+			if (Math.abs(a1+a2+a3-a0) <= 1/256) return i;
+			
+			switch (i) {
+			case 0: //1
+				x2 = 0; y2 = surfaceSize.y;
+				x3 = surfaceSize.x; y3 = surfaceSize.y;				
+				break;
+			case 1: //2
+				x2 = 0; y2 = 0;
+				x3 = 0; y3 = surfaceSize.y;
+				break;
+			case 2: //3
+				x2 = 0; y2 = 0;
+				x3 = surfaceSize.x; y3 = 0;
+				break;
 			}
+
 		}
-		return -1;
+		return 6;
 	}
 
 	
@@ -86,7 +76,9 @@ public class UserInput {
 			
 			mPress.setVoid();
 			
-			switch (calcDirection(mCurrentTouch)) {
+			Log.d("GSTA", "" + calcQuad(mCurrentTouch));
+			
+			switch (calcQuad(mCurrentTouch)) {
 			case 0:
 				uInput = Input.DOWN_RIGHT;
 				break;
@@ -110,7 +102,7 @@ public class UserInput {
 			mCurrentTouch.set(event.getX(),event.getY());
 			
 			mPress.set(event.getX(), event.getY());
-			switch (calcDirection(mCurrentTouch)) {
+			switch (calcQuad(mCurrentTouch)) {
 			case 0:
 				uInput = Input.PRESS_RIGHT;
 				break;
@@ -132,7 +124,24 @@ public class UserInput {
 			
 		case MotionEvent.ACTION_MOVE:
 			mCurrentTouch.set(event.getX(),event.getY());
-			Log.d("GSTA", "" + calcDirection(mCurrentTouch));
+			
+			switch (calcQuad(mCurrentTouch)) {
+			case 0:
+				uInput = Input.DOWN_RIGHT;
+				break;
+				
+			case 1:
+				uInput = Input.DOWN_DOWN;
+				break;
+				
+			case 2:
+				uInput = Input.DOWN_LEFT;
+				break;
+			
+			case 3:
+				uInput = Input.DOWN_UP;
+				break;
+			}
 			break;
 		}
 		
@@ -149,7 +158,6 @@ public class UserInput {
 			double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * tempCurrentPress.x;
 			double convertY = (double) ((double) cameraSize.y / (double) surfaceSize.y) * tempCurrentPress.y;
 			tempCurrentPress.set(convertX, convertY);
-
 		}
 		
 		return tempCurrentPress;
@@ -172,7 +180,10 @@ public class UserInput {
 	
 	public Input getInput() {
 		Input oInput = uInput;
-		uInput = Input.NONE;
+		
+		if ((uInput==Input.PRESS_LEFT)||(uInput==Input.PRESS_RIGHT)||(uInput==Input.PRESS_UP)||(uInput==Input.PRESS_DOWN)) {
+			uInput = Input.NONE;
+		}
 		 
 		return oInput;
 	}
