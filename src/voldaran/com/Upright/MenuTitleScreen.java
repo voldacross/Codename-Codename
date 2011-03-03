@@ -31,8 +31,11 @@ public class MenuTitleScreen {
 
 		
 		Rect recSetup = new Rect(0, 0, width, height);
+		
 		Rect recPlay = new Rect(0, 0, width, height);
+		recPlay.offsetTo(-(width * 2 / 3), 0);
 		Rect recAbout = new Rect(0, 0, width, height);
+		recAbout.offsetTo(width * 2 / 3, 0);
 
 		Bitmap bitPlay = Game.loadBitmapAsset("menu_play2.png");
 		Bitmap bitAbout = Game.loadBitmapAsset("menu_about.png");
