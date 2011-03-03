@@ -52,22 +52,6 @@ public class MenuTitleScreen {
 		MenuTitleScreen.menuTitlePanels.add(About);
 		MenuTitleScreen.menuTitlePanels.add(Play);
 		
-		
-		//Button Location
-		Rect butContinue = new Rect(50, 52, 250, 115);
-		//Create Button with onClick Function
-		MenuButton continueButton = new MenuButton(butContinue, "CONTINUE", mGame) {
-			public void onClick() {
-				Log.d("GSTA", "You clicked CONTINUE --- OVVVVVERRIDE");
-				game.thread.loadLevel();
-				game.gameState = GameState.PLAYING;
-			}
-		};
-		
-		//Add button to Correct Panel
-//		Play.addButton(continueButton);
-		
-		
 		Rect levelButton1 = new Rect(50, 50, 122, 122);
 		levelButton1.offsetTo(36, 30);
 		//Create Button with onClick Function
@@ -98,6 +82,17 @@ public class MenuTitleScreen {
 		};
 
 		Play.addButton(level3);
+		
+		Rect levelButton4 = new Rect(50, 50, 122, 122);
+		levelButton4.offsetTo(302, 30);
+		MenuButton level4 = new MenuButton(levelButton4, "levelThree", mGame) {
+			public void onClick() {
+				game.thread.loadLevel("level4.txt");
+				game.gameState = GameState.PLAYING;
+			}
+		};
+
+		Play.addButton(level4);
 		
 		
 		

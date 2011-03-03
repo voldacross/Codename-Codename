@@ -288,7 +288,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		public void loadLevel() {
-			//Called without a level, load current level.
+			//Called without a level, load current level. TODO 
 			loadLevel("level3.txt");
 		}
 		
