@@ -1,8 +1,14 @@
 package voldaran.com.Upright;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
 import voldaran.com.Upright.UserInput.Input;
 import android.content.Context;
@@ -214,6 +220,51 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		return bitmap;
 	}
 	
+	//Static Helper Class
+	public static String loadLevelAsset(String asset) {
+		AssetManager assets = mContext.getAssets();
+		InputStream stream = null;
+
+		 
+     	try {
+            stream = assets.open("level/" + asset);
+        } catch (IOException e) {
+            Log.d("GSTA", "EXCEPTION!" + e.getMessage());
+        }
+	        
+        if (stream != null) {
+        	Writer writer = new StringWriter();
+        	
+        	char[] buffer = new char[1024];
+        	try {
+        		Reader reader = null;
+				try {
+					reader = new BufferedReader( new InputStreamReader(stream, "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace(); Log.d("loadLevel", "error - " + e);
+				}
+	        	int n;
+	        	try {
+					while ((n = reader.read(buffer)) != -1) {
+							writer.write(buffer, 0, n);
+					}
+				} catch (IOException e) {
+					e.printStackTrace(); Log.d("loadLevel", "error - " + e);
+				}
+        	} finally {
+        		try {
+					stream.close();
+				} catch (IOException e) {
+					e.printStackTrace(); Log.d("loadLevel", "error - " + e);
+				}
+        	}
+        	
+        	return writer.toString();
+        	
+        }
+		return "";
+	}
+	
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
@@ -236,43 +287,25 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			new GameObstacle(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
 		}
 		
-		//Loads a level, still needs a function to parse level file and load correct level
 		public void loadLevel() {
-			
+			//Called without a level, load current level.
+			loadLevel("level3.txt");
+		}
+		
+		//Loads a level
+		public void loadLevel(String levelAsset) {
 			//loading new level
 			
 			//Clear out old level if present
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
 			
-			
 			//Set map size
-			
 			mapSize = new Vec2d(10000,1000);
 			
 			//Create hero
 			bitHero = Game.loadBitmapAsset("meatwad.png");
-			
-			Log.d("GSTA", "" + bitHero.getHeight() + "," + bitHero.getWidth());
-			
 			hero = new GameHero(new Vec2d(224000,96000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
-			
-			Log.d("GSTA", "hero : " + hero.pos);
-			Log.d("GSTA", "hero top, left, bottom, right : " + (hero.pos.x - hero.extent.x) + "," 
-					                                         + (hero.pos.y - hero.extent.y) + ","
-					                                         + (hero.pos.x + hero.extent.x) + ","
-					                                         + (hero.pos.y + hero.extent.y));
-
-			//Top
-			
-			//x,y, extentx, extenty
-
-			//Borders
-//			addWall(4,240,4,232);
-//			addWall(392,4,400,4);
-//			addWall(372,476,428,4);
-//			addWall(796,232,4,240);
-			
 			
 			//Boarders //Obstacles
 			addObstacle(4,240,4,232);
@@ -280,214 +313,25 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			addObstacle(372,476,428,4);
 			addObstacle(796,232,4,240);
 			
-//			addWall(356,220,4,4);
+			//Parse Level file
+			String testLevel = Game.loadLevelAsset(levelAsset);
+			String lines[] = testLevel.split("\\r?\\n");
 			
-			//Level 1
-//			addWall(160,408,64,4);
-//			addWall(248,352,4,64);
-//			addWall(184,304,4,48);
-//			addWall(232,232,56,4);
-//			addWall(552,248,56,4);
-//			addWall(488,200,4,56);
-//			addWall(568,136,4,56);
-//			addWall(552,72,24,4);
-//			addWall(464,72,48,4);
-//
-//			addWall(336,80,16,16);
-//			addWall(368,80,16,16);
-//			addWall(336,112,16,16);
-//			addWall(368,112,16,16);
-//			
-//			addWall(336,176,16,16);
-//			addWall(368,176,16,16);
-//			addWall(368,208,16,16);
-//			addWall(336,208,16,16);
-//			
-//			addWall(336,272,16,16);
-//			addWall(368,272,16,16);
-//			addWall(336,304,16,16);
-//			addWall(368,304,16,16);
-//			
-//			addWall(336,368,16,16);
-//			addWall(368,368,16,16);
-//			addWall(336,400,16,16);
-//			addWall(368,400,16,16);
-
-			//level 2
-//			addWall(136,248,72,8);
-//			addWall(216,304,8,64);
-//			addWall(192,440,80,8);
-//			addWall(120,376,8,56);
-//			
-//			addWall(552,280,72,8);
-//			addWall(472,224,8,64);
-//			addWall(568,152,8,56);
-//			addWall(496,88,80,8);
-//			addWall(344,104,24,24);
-//			addWall(344,424,24,24);
-//			addWall(344,360,24,24);
-//			addWall(344,296,24,24);
-//			addWall(344,232,24,24);
-//			addWall(344,168,24,24);
-
-			
-			//Level 3
-//			addWall(752,376,16,8);
-//			addWall(760,40,24,8);
-//			addWall(592,40,80,8);
-//			addWall(656,264,48,168);
-//			addWall(584,440,24,8);
-//			addWall(416,440,80,8);
-//			addWall(392,296,24,88);
-//			addWall(288,280,32,8);
-//			addWall(208,88,48,8);
-//			addWall(72,88,40,8);
-//			addWall(32,216,16,8);
-//			addWall(112,216,32,8);
-//			addWall(168,256,24,48);
-//			addWall(248,320,8,112);
-//			addWall(216,440,24,8);
-//			addWall(96,440,48,8);
-
-			
-			//Level 4
-			
-//			addWall(208,96,16,64);
-//			addWall(160,112,16,80);
-//			addWall(392,384,8,64);
-//			addWall(272,328,32,8);
-//			addWall(184,312,24,8);
-//			addWall(72,408,24,8);
-//			addWall(104,344,8,72);
-//			addWall(152,280,40,8);
-//			addWall(360,280,104,8);
-//			addWall(472,208,8,80);
-//			addWall(392,88,8,24);
-//			addWall(392,120,88,8);
-//			addWall(296,152,8,40);
-//			addWall(352,200,64,8);
-//			addWall(592,216,48,8);
-			
-			//Level 5
-			
-//			addWall(488,232,8,152);
-//			addWall(408,72,88,8);
-//			addWall(152,336,8,64);
-//			addWall(448,136,48,8);
-//			addWall(408,256,8,64);
-//			addWall(320,328,96,8);
-//			addWall(184,264,104,8);
-//			addWall(72,192,8,80);
-//			addWall(112,104,48,8);
-//			addWall(216,200,88,8);
-//			addWall(312,136,8,72);
-//			addWall(248,56,72,8);
-//			addWall(168,88,8,40);
-//			addWall(208,136,48,8);
-			
-			//Maze 1
-//			hero.pos.set(32000,48000);
-//			addWall(792,240,8,240);
-//			addWall(728,272,8,32);
-//			addWall(600,312,40,8);
-//			addWall(648,344,8,40);
-//			addWall(696,424,8,40);
-//			addWall(624,392,64,8);
-//			addWall(488,432,8,32);
-//			addWall(416,392,80,8);
-//			addWall(416,312,80,8);
-//			addWall(344,264,8,40);
-//			addWall(408,272,8,32);
-//			addWall(568,232,168,8);
-//			addWall(568,192,8,32);
-//			addWall(672,152,112,8);
-//			addWall(728,56,8,40);
-//			addWall(648,56,8,40);
-//			addWall(568,48,8,32);
-//			addWall(536,88,40,8);
-//			addWall(488,120,8,40);
-//			addWall(408,112,8,32);
-//			addWall(344,112,8,32);
-//			addWall(344,152,72,8);
-//			addWall(264,88,8,72);
-//			addWall(264,312,8,88);
-//			addWall(176,312,80,8);
-//			addWall(96,392,80,8);
-//			addWall(88,280,8,40);
-//			addWall(96,232,80,8);
-//			addWall(216,88,40,8);
-//			addWall(136,152,40,8);
-//			addWall(88,88,8,72);
-//			addWall(8,232,8,232);
-//			addWall(432,8,352,8);
-//			addWall(352,472,352,8);
-			
-			
-			//New Game Level 2
-//			hero.pos.set(32000,48000);
-//			addWall(320,392,64,8);
-//			addWall(600,80,8,64);
-//			addWall(504,188,8,36);
-//			addWall(456,152,56,8);
-//			addWall(392,240,8,224);
-//			addWall(392,232,376,8);
-			
-			
-			//New Game Level 3
-//			hero.pos.set(32000,48000);
-//			addWall(592,200,80,8);
-//			addWall(424,248,8,104);
-//			addWall(352,360,80,8);
-//			addWall(144,424,48,8);
-//			addWall(200,424,8,56);
-//			addWall(104,360,104,8);
-//			addWall(136,56,56,8);
-//			addWall(184,96,8,32);
-//			addWall(72,64,8,80);
-//			addWall(328,64,8,64);
-//			addWall(208,136,128,8);
-
-			//New Game Level 4
-			addWall(380,240,8,120);
-			addWall(200,240,100,8);
-			addWall(200,360,8,80);
-			addWall(200,100,8,80);
-			addWall(380,60,100,8);
-			addWall(380,400,100,8);
-			addWall(560,140,100,8);
-			addWall(560,320,100,8);
-			addWall(560,230,8,50);
-			addWall(560,400,8,30);
-			addWall(560,60,8,30);
-			
-			
-//			New Game Level 5 Currently Testing, not sure if beatable yet
-//			hero.pos.set(384000,256000);
-//			addWall(600,440,72,8);
-//			addWall(568,248,8,72);
-//			addWall(616,248,8,168);
-//			addWall(600,56,72,8);
-//			addWall(152,248,8,72);
-//			addWall(184,440,72,8);
-//			addWall(184,56,72,8);
-//			addWall(392,56,8,24);
-//			addWall(392,440,8,24);
-//			addWall(200,248,8,168);
-//			addWall(392,376,104,8);
-//			addWall(392,312,104,8);
-//			addWall(392,184,104,8);
-//			addWall(392,120,104,8);
-
-			
-
-			
-			
-//			Platform p = new Platform(new Vec2d(500000, 100000), new Vec2d(50000, 10000));
-//			p.addStep(-250000, 0);
-//			
-//			Platform p2 = new Platform(new Vec2d(740000, 100000), new Vec2d(50000, 10000));
-//			p2.addStep(0, 400000);
-
+			for (String line : lines) {
+				if (line.indexOf("LEVEL")>=0) Log.d("GSTA", "Level = " + line);
+				if (line.indexOf("addWall")>=0){
+					//add wall
+					String test = line.substring(8, line.length() - 2);
+					String test2[] = test.split(",");
+					addWall(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]), Integer.valueOf(test2[2]), Integer.valueOf(test2[3]));
+				}
+				if (line.indexOf("hero.pos.set")>=0) {
+					//Set hero pos
+					String test = line.substring(13, line.length() - 2);
+					String test2[] = test.split(",");
+					hero.pos.set(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]));
+				}
+			}
 		}
 		
 		public Game mGame;

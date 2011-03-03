@@ -19,7 +19,7 @@ public class MenuTitleScreen {
 	private boolean inTransition;
 	private Game mGame;
 	
-	public ArrayList<MenuTitleScreenPanel> menuTitlePanels = new ArrayList<MenuTitleScreenPanel>();
+	public static ArrayList<MenuTitleScreenPanel> menuTitlePanels = new ArrayList<MenuTitleScreenPanel>();
 
 	public MenuTitleScreen(Game game) {
 		//Create the 3 panels
@@ -34,9 +34,9 @@ public class MenuTitleScreen {
 		Rect recPlay = new Rect(0, 0, width, height);
 		Rect recAbout = new Rect(0, 0, width, height);
 
-		Bitmap bitPlay = Game.loadBitmapAsset("menu_play.png");
+		Bitmap bitPlay = Game.loadBitmapAsset("menu_play2.png");
 		Bitmap bitAbout = Game.loadBitmapAsset("menu_about.png");
-		Bitmap bitSetup= Game.loadBitmapAsset("menu_setup.png");
+		Bitmap bitSetup= Game.loadBitmapAsset("menu_setup2.png");
 		
 		//Create Panels - #s - main, active, gone
 		Setup = new MenuTitleScreenPanel(recSetup, bitSetup, 0, 0, 0);
@@ -45,16 +45,15 @@ public class MenuTitleScreen {
 
 		activePanel = null;
 
-		menuTitlePanels.add(Setup);
-		menuTitlePanels.add(About);
-		menuTitlePanels.add(Play);
+		MenuTitleScreen.menuTitlePanels.add(Setup);
+		MenuTitleScreen.menuTitlePanels.add(About);
+		MenuTitleScreen.menuTitlePanels.add(Play);
 		
 		
 		//Button Location
 		Rect butContinue = new Rect(50, 52, 250, 115);
-		
 		//Create Button with onClick Function
-		MenuButton button = new MenuButton(butContinue, "CONTINUE", mGame) {
+		MenuButton continueButton = new MenuButton(butContinue, "CONTINUE", mGame) {
 			public void onClick() {
 				Log.d("GSTA", "You clicked CONTINUE --- OVVVVVERRIDE");
 				game.thread.loadLevel();
@@ -63,7 +62,44 @@ public class MenuTitleScreen {
 		};
 		
 		//Add button to Correct Panel
-		Play.addButton(button);
+//		Play.addButton(continueButton);
+		
+		
+		Rect levelButton1 = new Rect(50, 50, 122, 122);
+		levelButton1.offsetTo(36, 30);
+		//Create Button with onClick Function
+		MenuButton level1 = new MenuButton(levelButton1, "levelOne", mGame) {
+			public void onClick() {
+				game.thread.loadLevel("level1.txt");
+				game.gameState = GameState.PLAYING;
+			}
+		};
+		Play.addButton(level1);
+		Rect levelButton2 = new Rect(50, 50, 122, 122);
+		levelButton2.offsetTo(126, 30);
+		MenuButton level2 = new MenuButton(levelButton2, "levelTwo", mGame) {
+			public void onClick() {
+				game.thread.loadLevel("level2.txt");
+				game.gameState = GameState.PLAYING;
+			}
+		};
+		Play.addButton(level2);
+		
+		Rect levelButton3 = new Rect(50, 50, 122, 122);
+		levelButton3.offsetTo(212, 30);
+		MenuButton level3 = new MenuButton(levelButton3, "levelThree", mGame) {
+			public void onClick() {
+				game.thread.loadLevel("level3.txt");
+				game.gameState = GameState.PLAYING;
+			}
+		};
+
+		Play.addButton(level3);
+		
+		
+		
+		
+		
 		
 	}
 	
@@ -89,9 +125,6 @@ public class MenuTitleScreen {
 //					Log.d("GSTA", "setting releasePanel to Play");
 					inTransition = true;
 				} else {
-					
-					
-					
 //					Log.d("GSTA", "You clicked!!!" + Play.returnButton(clicked).name);
 					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)){
 						Log.d("GSTA", "You clicked " + Play.returnButton(clicked).name);
@@ -100,14 +133,23 @@ public class MenuTitleScreen {
 				}
 				
 			} else if (activePanel==Setup) {
-				if (input==UserInput.Input.PRESS_UP){
-					activePanel = null;
-					inTransition = true;
-				}
+//				if (input==UserInput.Input.PRESS_UP){
+//					activePanel = null;
+//					inTransition = true;
+//				} else {
+//					if ((clicked!=null)&&(Setup.returnButton(clicked)!= null)&&(!inTransition)){
+//						Log.d("GSTA", "You clicked " + Setup.returnButton(clicked).name);
+//						Setup.returnButton(clicked).onClick();
+//					}
+//				}
 				
 			} else {
 				if (!inTransition) {
-					if (input==UserInput.Input.PRESS_UP) activePanel = Setup;
+					if (input==UserInput.Input.PRESS_UP) {
+						mGame.thread.loadLevel();
+						mGame.gameState = GameState.PLAYING;
+//						activePanel = Setup;
+					}
 					if (input==UserInput.Input.PRESS_LEFT) activePanel = Play;
 					if (input==UserInput.Input.PRESS_RIGHT) activePanel = About;
 				}
