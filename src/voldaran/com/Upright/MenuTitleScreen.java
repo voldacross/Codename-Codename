@@ -85,7 +85,7 @@ public class MenuTitleScreen {
 		
 		Rect levelButton4 = new Rect(50, 50, 122, 122);
 		levelButton4.offsetTo(302, 30);
-		MenuButton level4 = new MenuButton(levelButton4, "levelThree", mGame) {
+		MenuButton level4 = new MenuButton(levelButton4, "levelFour", mGame) {
 			public void onClick() {
 				game.thread.loadLevel("level4.txt");
 				game.gameState = GameState.PLAYING;
@@ -93,6 +93,17 @@ public class MenuTitleScreen {
 		};
 
 		Play.addButton(level4);
+		
+		Rect levelButton5 = new Rect(50, 50, 122, 122);
+		levelButton5.offsetTo(392, 30);
+		MenuButton level5 = new MenuButton(levelButton5, "levelFive", mGame) {
+			public void onClick() {
+				game.thread.loadLevel("level5.txt");
+				game.gameState = GameState.PLAYING;
+			}
+		};
+
+		Play.addButton(level5);
 		
 		
 		
