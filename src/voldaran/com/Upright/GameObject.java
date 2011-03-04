@@ -86,8 +86,8 @@ public class GameObject {
 		GameObject.gameObjects.add(this);
 	}
 	
-	protected GameObject grounding(){
-		return ground;
+	protected void grounding(GameObject ground){
+		this.ground = ground;
 	}
 	
 	public void setSides(){

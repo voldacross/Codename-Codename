@@ -45,32 +45,28 @@ public class GameHero extends MovingObject{
 	}
 	
 	@Override
-	protected GameObject grounding(){
-		if(newGround != null && newGround != ground)
-			ground = newGround;
-        if((ground != null)&&!(ground instanceof GameObstacle)){
-        	if(ground != lastToggled){
-        		lastToggled = ground;
-        		toggleCount +=1;
-        		ground.toggle(this);
-        		switch(findGround()){
-        		case RIGHT:
-        			pos.x = ground.right + extent.x;
-        			break;
-        		case UP:
-        			pos.y = ground.top - extent.y;
-        			break;
-        		case LEFT:
-        			pos.x = ground.left - extent.x;
-        			break;
-        		case DOWN:
-        			pos.y = ground.bottom + extent.y;
-        			break;
-        		}
-        		GameObject.saveCheckpointAll();
-        	}
-        }
-        return ground;
+	protected void grounding(GameObject newGround){
+		ground = newGround;
+    	if(ground != lastToggled){
+    		lastToggled = ground;
+    		toggleCount +=1;
+    		ground.toggle(this);
+    		switch(findGround()){
+    		case RIGHT:
+    			pos.x = ground.right + extent.x;
+    			break;
+    		case UP:
+    			pos.y = ground.top - extent.y;
+    			break;
+    		case LEFT:
+    			pos.x = ground.left - extent.x;
+    			break;
+    		case DOWN:
+    			pos.y = ground.bottom + extent.y;
+    			break;
+    		}
+    		GameObject.saveCheckpointAll();
+    	}
 	}
 	
 	private int toggleCount = 0;
@@ -99,7 +95,6 @@ public class GameHero extends MovingObject{
 				ground = null;
 				break;
 			case PRESS_DOWN:
-				Log.d("GSTA", "pressed down " + velocity.toString());
 				applyForce(DOWNVELOCITY);
 				ground = null;
 				break;
@@ -111,6 +106,9 @@ public class GameHero extends MovingObject{
 	@Override
 	public void touch(GameObject o){
 		dead = o instanceof GameObstacle;
+		if(!dead){
+			grounding(o);
+		}
 	}
 	
 	@Override
