@@ -49,11 +49,11 @@ public class MenuButton {
 					int left = 10 + rowCount * 130;
 					int top = 10 + colCount * 86;
 					
-					Bitmap preview;
+//					Bitmap preview;
 					
-					preview = g.thread.loadLeveltoBitmap("level" + String.valueOf(lvlID) + ".txt");
+//					preview = g.thread.loadLeveltoBitmap("level" + String.valueOf(lvlID) + ".txt");
 					
-					menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), lvlID, b, preview));
+					menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), lvlID, b, null));
 					
 					
 					if (rowCount>=3) {
@@ -104,7 +104,8 @@ public class MenuButton {
 		    
 		    text.setTypeface(Typeface.DEFAULT_BOLD);
 		    
-		c.drawBitmap(previewMap, null, clickableArea, null);
+		c.drawBitmap(bitmap, null, clickableArea, null);
+		    
 		c.drawText(String.valueOf(id), clickableArea.left + 50 - (String.valueOf(id).length()*8), clickableArea.top + 45, text);
 	}
 	
