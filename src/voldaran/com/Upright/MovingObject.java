@@ -9,9 +9,6 @@ public class MovingObject extends GameObject{
 		for(MovingObject o : MovingObject.movingObjects){
 			o.update();
 		}
-		for(MovingObject o: MovingObject.movingObjects){
-			o.grounding();
-		}
 	}
 	
 	protected Vec2d posCheckpoint = new Vec2d();
@@ -73,7 +70,6 @@ public class MovingObject extends GameObject{
 			this.velocity = firstcollision.correctedVelocity;
 			this.touch(firstcollision.collider);
 			firstcollision.collider.touch(this);
-			newGround = firstcollision.collider;
 		}
 	}
 	

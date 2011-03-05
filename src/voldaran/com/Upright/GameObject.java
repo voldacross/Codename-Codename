@@ -24,6 +24,12 @@ public class GameObject {
 		}
 	}
 
+	public static void drawAllPreview(Canvas c){  //TODO Not entirely needed anymore
+		for(GameObject o : GameObject.gameObjects){
+				o.drawPreview(c);
+		}
+	}
+	
 	public static void drawAll(Canvas c){  //TODO Not entirely needed anymore
 		for(GameObject o : GameObject.gameObjects){
 			if(o.onScreen(c))
@@ -84,8 +90,8 @@ public class GameObject {
 		GameObject.gameObjects.add(this);
 	}
 	
-	protected GameObject grounding(){
-		return ground;
+	protected void grounding(GameObject ground){
+		this.ground = ground;
 	}
 	
 	public void setSides(){
@@ -141,6 +147,10 @@ public class GameObject {
 	}
 	
 	public void drawP(Canvas c){
+
+	}
+	
+	public void drawPreview(Canvas c){
 
 	}
 	

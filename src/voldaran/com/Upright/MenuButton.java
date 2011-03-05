@@ -1,6 +1,7 @@
 package voldaran.com.Upright;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import voldaran.com.Upright.Game.GameState;
 import android.content.res.AssetManager;
@@ -13,40 +14,49 @@ import android.graphics.Typeface;
 import android.util.Log;
 
 public class MenuButton {
+	
+
 
 	public int id;
 	public Rect clickableArea;
 	private Bitmap bitmap;
 	
 	public static Game mGame;
+	private Bitmap previewMap;
+	
+	public static ArrayList<MenuButton> menuButton = new ArrayList<MenuButton>();
 	
 	public static void loadLevelButtons(MenuTitleScreenPanel menu, Bitmap b, Game g) {
 		AssetManager assets = Game.mContext.getAssets();
-		String[] happy = null;
+		String[] levelList = null;
 		mGame = g;
 		try {
-			happy = assets.list("level");
+			levelList = assets.list("level");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (happy!=null) {
+		if (levelList!=null) {
 			
 			int colCount = 0;
 			int rowCount = 0;
 		
-			for (String fun : happy) {
+			for (String level : levelList) {
 			
-//				level25.txt
-				if (fun.indexOf("level")>=0) {
+				if (level.indexOf("level")>=0) {
 					//Load Level button
+					int lvlID = Integer.valueOf(level.substring(5, level.indexOf(".txt")));
+					int left = 10 + rowCount * 130;
+					int top = 10 + colCount * 86;
+					
+					Bitmap preview;
+					
+					preview = g.thread.loadLeveltoBitmap("level" + String.valueOf(lvlID) + ".txt");
+					
+					menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), lvlID, b, preview));
 					
 					
-					int lvlID = Integer.valueOf(fun.substring(5, fun.indexOf(".txt")));
-					int left = 10 + rowCount * 110;
-					int top = 10 + colCount * 110;
-					menu.addButton(new MenuButton(new Rect(left, top, left + 90, top + 90), lvlID, b));
-					if (rowCount>=4) {
+					if (rowCount>=3) {
 						rowCount = 0;
 						colCount++;
 					} else rowCount++;
@@ -60,26 +70,23 @@ public class MenuButton {
 		
 	}
 	
-//	MenuButton level2 = new MenuButton(levelButton2, "levelTwo", mGame, menuButton) {
-//	public void onClick() {
-//		game.thread.loadLevel("level2.txt");
-//		game.gameState = GameState.PLAYING;
-//	}
-//};
-	
 	public MenuButton(Rect r, String Name) {
 		clickableArea = r;
 	}
 	
-	public MenuButton(Rect r, int l, Bitmap b) {
+	public MenuButton(Rect r, int l, Bitmap b, Bitmap p) {
 		Log.d("GSTA", "creating button " + l);
 		clickableArea = r;
 		id = l;
-		bitmap = b;
+		if (bitmap==null) bitmap = b;
+		if (previewMap==null) previewMap = p;
+		MenuButton.menuButton.add(this);
 	}
 	
 	public void onClick() {
 		String level = "level" + String.valueOf(id) + ".txt";
+		
+		
 		mGame.thread.loadLevel(level);
 		
 		mGame.gameState = GameState.PLAYING;
@@ -97,8 +104,8 @@ public class MenuButton {
 		    
 		    text.setTypeface(Typeface.DEFAULT_BOLD);
 		    
-		c.drawBitmap(bitmap, null, clickableArea, null);
-		c.drawText(String.valueOf(id), clickableArea.left + 45 - (String.valueOf(id).length()*8), clickableArea.top + 60, text);
+		c.drawBitmap(previewMap, null, clickableArea, null);
+		c.drawText(String.valueOf(id), clickableArea.left + 50 - (String.valueOf(id).length()*8), clickableArea.top + 45, text);
 	}
 	
 }

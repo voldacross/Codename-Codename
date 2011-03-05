@@ -55,4 +55,16 @@ public class Wall extends GameObject {
 		c.drawRect(recObject, paintObject);
 	}
 	
+	@Override
+	public void drawPreview(Canvas c){
+		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000 / 4), 
+				                  (int)((top - GameObject.offset.y) / 1000 / 4), 
+				                  (int)((right - GameObject.offset.x)/ 1000 / 4), 
+		 		                 (int)((bottom - GameObject.offset.y) / 1000 / 4));
+
+		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+		paintObject.setColor(color);
+		c.drawRect(recObject, paintObject);
+	}
+	
 }
