@@ -54,8 +54,8 @@ public class MenuTitleScreen {
 		
 		Play.menuButtons.clear();
 		Log.d("GSTA", "Clearing menuButtons");
-//		Bitmap menuButton = Game.loadBitmapAsset("menublock.png");
-		MenuButton.loadLevelButtons(Play, null, mGame);
+		Bitmap menuButton = Game.loadBitmapAsset("menublock.png");
+		MenuButton.loadLevelButtons(Play, menuButton, mGame);
 		
 		
 		

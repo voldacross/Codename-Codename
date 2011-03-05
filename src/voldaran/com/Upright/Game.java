@@ -298,7 +298,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		
-		public Bitmap loadLeveltoBitmap2(String levelAsset) {
+		public Bitmap loadLeveltoBitmap(String levelAsset) {
 			//loading new level
 			
 			//Clear out old level if present
