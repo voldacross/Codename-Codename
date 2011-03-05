@@ -1,0 +1,16 @@
+LEVEL:Level 6
+DIFICULTY:MEDIUM
+hero.pos.set(400000,224000);
+addWall(200,88,8,24);
+addWall(136,56,104,8);
+addWall(120,64,8,48);
+addWall(448,56,16,8);
+addWall(472,240,8,192);
+addWall(424,256,8,208);
+addWall(576,200,144,8);
+addWall(376,344,8,88);
+addWall(72,272,8,16);
+addWall(424,424,40,8);
+addWall(712,248,8,40);
+addWall(408,248,344,8);
+addWall(392,296,328,8);

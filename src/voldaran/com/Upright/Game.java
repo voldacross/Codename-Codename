@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -201,6 +202,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override public void surfaceDestroyed(SurfaceHolder holder) {
 	}
+	
+
 	
 	//Static Helper Class
 	public static Bitmap loadBitmapAsset(String asset) {

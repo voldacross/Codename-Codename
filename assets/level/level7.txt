@@ -1,4 +1,4 @@
-LEVEL:Level 5
+LEVEL:Level 7
 DIFICULTY:MEDIUM
 hero.pos.set(64000,192000);
 addWall(376,56,8,40);
