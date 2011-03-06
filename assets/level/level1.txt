@@ -1,9 +1,9 @@
 LEVEL:Level 1
 DIFICULTY:TUTORIAL
-hero.pos.set(32000,48000);
-addWall(320,392,64,8);
-addWall(600,80,8,64);
-addWall(504,188,8,36);
-addWall(456,152,56,8);
-addWall(392,240,8,224);
-addWall(392,232,376,8);
+hero (32,48)
+Wall (320,392), (64,8)
+Wall (600,80), (8,64)
+Wall (504,188), (8,36)
+Wall (456,152), (56,8)
+Wall (392,240), (8,224)
+Wall (392,232), (376,8)

@@ -86,6 +86,11 @@ public class GameObject {
 		GameObject.gameObjects.add(this);
 	}
 	
+	public String toString(){
+		return "GameObject: pos: " + pos + " extent: " + extent;
+	}
+	
+	
 	protected void grounding(GameObject ground){
 		this.ground = ground;
 	}

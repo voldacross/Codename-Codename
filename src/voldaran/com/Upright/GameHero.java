@@ -6,31 +6,36 @@ import android.graphics.Rect;
 import android.util.Log;
 
 public class GameHero extends MovingObject{
+	public final static Bitmap bitmap = Game.loadBitmapAsset("meatwad.png");
 	private final static int WALKSPEED = 4000;
 	private final static Vec2d LEFTVELOCITY = new Vec2d(-WALKSPEED, 0);
 	private final static Vec2d RIGHTVELOCITY = new Vec2d(WALKSPEED, 0);
 	private final static Vec2d UPVELOCITY = new Vec2d(0, -WALKSPEED);
 	private final static Vec2d DOWNVELOCITY = new Vec2d(0, WALKSPEED);
-	
+
+	public static GameHero fromString(String objectData){
+		String data[] = objectData.split(",");
+		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
+		return new GameHero(pos);
+	}
 	
 	//Gravity moved to GameObject for testing
 	
-	public Bitmap bitmap;
 	protected GameObject groundCheckpoint = null;
 	protected GameObject lastToggled = null; 
 	protected GameObject lastToggledCheckpoint = null; 
 	public boolean dead = false;
 
-	public GameHero(Vec2d pos,Vec2d extent, Bitmap bitmap) {
-		this(pos, extent, new Vec2d(0,0), bitmap);
-	}
-	
-	public GameHero(Vec2d pos, Vec2d extent, Vec2d vel, Bitmap bitmap) {
-		super(pos, extent, vel);
-		this.bitmap = bitmap;
+	public GameHero(Vec2d pos) {
+		super(pos, new Vec2d(bitmap.getWidth() / 6 * 1000,bitmap.getHeight() / 6 * 1000), new Vec2d(0,0));
 		applyForce(DOWNVELOCITY);
 	}
 	
+	@Override
+	public String toString(){
+		return "Hero: pos: " + pos;
+	}
+
 	protected int findGround(){
 		if(touching(RIGHT, ground))
 			return RIGHT;
