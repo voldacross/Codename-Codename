@@ -17,8 +17,10 @@ import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.Bitmap.Config;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -190,6 +192,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d("GSTA", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
+		thread.createTitleScreen();
 		thread.setRunning(true);
 		thread.start();
 		
@@ -197,6 +200,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override public void surfaceDestroyed(SurfaceHolder holder) {
 	}
+	
+
 	
 	//Static Helper Class
 	public static Bitmap loadBitmapAsset(String asset) {
@@ -232,6 +237,58 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			//Called without a level, load current level. TODO 
 			loadLevel("level3.txt");
 		}
+		
+		
+		public Bitmap loadLeveltoBitmap(String levelAsset) {
+			//loading new level
+			
+			//Clear out old level if present
+			GameObject.gameObjects.clear();
+			MovingObject.movingObjects.clear();
+			
+			//Set map size
+			mapSize = new Vec2d(10000,1000);
+			
+			//Create hero
+			bitHero = Game.loadBitmapAsset("meatwad.png");
+			hero = new GameHero(new Vec2d(224000,96000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
+			
+			//Boarders //Obstacles
+			addObstacle(4,240,4,232);
+			addObstacle(392,4,400,4);
+			addObstacle(372,476,428,4);
+			addObstacle(796,232,4,240);
+			
+			//Parse Level file
+			String testLevel = Game.loadLevelAsset(levelAsset);
+			String lines[] = testLevel.split("\\r?\\n");
+			
+			for (String line : lines) {
+				if (line.indexOf("LEVEL")>=0) Log.d("GSTA", "Level = " + line);
+				if (line.indexOf("addWall")>=0){
+					//add wall
+					String test = line.substring(8, line.length() - 2);
+					String test2[] = test.split(",");
+					addWall(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]), Integer.valueOf(test2[2]), Integer.valueOf(test2[3]));
+				}
+				if (line.indexOf("hero.pos.set")>=0) {
+					//Set hero pos
+					String test = line.substring(13, line.length() - 2);
+					String test2[] = test.split(",");
+					hero.pos.set(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]));
+				}
+			}
+			Vec2d offset = new Vec2d(0,0);
+			GameObject.offset = offset;
+			Bitmap previewLevel = Bitmap.createBitmap((int) cameraSize.x / 4, (int) cameraSize.y / 4, Bitmap.Config.ARGB_8888);
+			
+			Canvas c = new Canvas(previewLevel);
+			
+			GameObject.drawAllPreview(c);
+			
+			return previewLevel;
+		}
+		
 		
 		//Loads a level
 		public void loadLevel(String levelAsset) {
@@ -494,7 +551,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		public GameState titleScreen() {
-			createTitleScreen();
+//			createTitleScreen();
 			
 			Picture picScreen = new Picture();
 			
