@@ -28,7 +28,7 @@ public class UserInput {
 	public UserInput(Vec2d c, Vec2d s) {
 		cameraSize = c;
 		surfaceSize = s;
-		
+		mPress.setVoid();
 	}
 
 	
@@ -102,6 +102,7 @@ public class UserInput {
 			mCurrentTouch.set(event.getX(),event.getY());
 			
 			mPress.set(event.getX(), event.getY());
+			Log.d("GSTA", "UP! " + mPress.x);
 			switch (calcQuad(mCurrentTouch)) {
 			case 0:
 				uInput = Input.PRESS_RIGHT;
@@ -149,6 +150,7 @@ public class UserInput {
 	
 	public void Clear() {
 		uInput = Input.NONE;
+		mPress.setVoid();
 	}
 
 	private Vec2d convertCoord(Vec2d c) {

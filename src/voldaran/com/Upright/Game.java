@@ -233,9 +233,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public void loadLevel() {
 			//Called without a level, load current level. TODO 
-			loadLevel("level3.txt");
+			if (currentLevel=="") {
+				loadLevel("level3.txt"); 
+			} else {
+				loadLevel(currentLevel);
+			}
+					
 		}
 		
+		public String currentLevel = "";
 		
 		public Bitmap loadLeveltoBitmap(String levelAsset) {
 			//loading new level
@@ -244,6 +250,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
 			
+			
+				
 			GameObstacle.addObstacle(4,240,4,232);
 			GameObstacle.addObstacle(392,4,400,4);
 			GameObstacle.addObstacle(372,476,428,4);
@@ -300,6 +308,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		//Loads a level
 		public void loadLevel(String levelAsset) {
 			//loading new level
+			currentLevel = levelAsset;
 			
 			//Clear out old level if present
 			GameObject.gameObjects.clear();
@@ -353,10 +362,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		public Game mGame;
+		private Bitmap pauseButton;
 		
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
 			_surfaceHolder = surfaceHolder;
 			mGame = game;
+			pauseButton = Game.loadBitmapAsset("pause_button.png");
 			
 		}
 		
@@ -379,14 +390,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   		    
   		    c.drawText(String.valueOf(sft), 20, 24, text);
 //  		    Log.d("FPS", "" + String.valueOf(sft));
-  		    c.drawText("" + hero.getToggleCount(), 750, 30, text);
+  		    c.drawText("" + hero.getToggleCount(), 700, 30, text);
+		}
+		
+		private void drawPause(Canvas c) {
+			c.drawBitmap(pauseButton, cameraSize.x - pauseButton.getWidth() - 15, 15, null);
 		}
 		
 		public void drawPress(Canvas c, Input input) {
 			
 			Vec2d down = _input.getDown();
-			
-			if (!down.isVoid()) {
+			Vec2d mClicked = new Vec2d(_input.getCurrent());
+			if ((!down.isVoid()) && !((mClicked.x>700)&&(mClicked.y<100))){
 				
 				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 				paint.setColor(Color.RED);
@@ -489,9 +504,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   			currentTime = System.currentTimeMillis();
   			while((gameState == GameState.PLAYING)  && (mRun)){
 	  		    
-				currentInput = _input.getInput();
+				
 				
 				Vec2d mClicked = _input.getCurrentPress();
+				if(!mClicked.isVoid()) //Pause
+					if ((mClicked.x>700)&&(mClicked.y<100)) {
+						gameState = GameState.PAUSED;
+						_input.Clear();
+					}
+				
+				
+				currentInput = _input.getInput();
 				
 				hero.processInput(currentInput);
 				hero.collisionAvoid();
@@ -507,6 +530,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					
 					drawPress(c, currentInput);
 					drawFPS(c);
+					drawPause(c);
 					
 					picScreen.endRecording();
 					drawToScreen(picScreen);
@@ -520,15 +544,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					
 				}
 
-				if(!mClicked.isVoid()) //Pause
-					if ((mClicked.x>700)&&(mClicked.y<100)) {
-						pause.createPause(picture, hero.pos, mapSize);
-						gameState = GameState.PAUSED;
-					}
+
 			}
 			return gameState;
 		}
 		
+
+
 		public void death(){
 			float alpha = 255;
 			float fade = 0;
@@ -565,7 +587,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			while((gameState == GameState.TITLE) && (mRun)){
 				
 				UserInput.Input currentInput = _input.getInput();
-//				Log.d("GSTA", "INPUT + " + currentInput);
 				
 				Vec2d mClicked = _input.getCurrentPress();
 				if (!mClicked.isVoid()) titleMenu.processInput(currentInput, mClicked);
@@ -591,48 +612,36 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		//			Maybe Level Select
 		
 		public GameState pause(){
-			
-			Picture picScreen = new Picture();
-			
+			Picture picScreen = null;
+			Canvas c = null;
+			_input.Clear();
 			while((gameState == GameState.PAUSED) && (mRun)){
-//				Canvas c = null;
-				Vec2d mClicked = _input.getCurrentPress();
-				if (!mClicked.isVoid()) 
-					if ((mClicked.x>750)&&(mClicked.y<50)) {
-						Log.d("GSTA", "you clicked to unpause");
-						pause.exiting = true;
-					}
 				
-				if (pause.exiting) 
-					if (pause.zoomOut()) {
-						
-						gameState=GameState.PLAYING; //unPause
-						_input.Clear(); //Clear inputs
-					}
-//				pause.Update(_input.mDragVelocity);
+				picScreen = new Picture();
+				c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
+				Vec2d mClicked = _input.getCurrentPress();
+				if (!mClicked.isVoid())
+					gameState = pause.onClick(mClicked, mGame);
 				
 					synchronized (_surfaceHolder) {
-
-						pause.Draw(picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y));
-						
+						GameObject.drawPause(c, cameraSize);
+						drawFPS(c);
+						pause.Draw(c);
 						picScreen.endRecording();
 						drawToScreen(picScreen);
-						
 					}
 				
-				
-				if (mClicked!=null) //Return to titleScreen
-					if ((mClicked.x<50)&&(mClicked.y<50)) {
-						Log.d("GSTA", "you clicked to return to title");
-						gameState = GameState.TITLE;
-					}
-				
+				if (gameState!=GameState.PAUSED) _input.Clear();
 			}
 			
 			return gameState;
 		}
 		
 		public void drawToScreen(Picture pic){
+			drawToScreen(pic, 0);
+		}
+		
+		public void drawToScreen(Picture pic, float fade){
 			Canvas actual = null;
 			
 			try {

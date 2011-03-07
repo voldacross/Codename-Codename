@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 
 public class GameObject {
@@ -18,10 +19,15 @@ public class GameObject {
 	public final static int DOWN = 4; 
 	public final static int BOTTOM = 4; 
 	
-	public static void drawPause(Canvas c) {
+	public static void drawPause(Canvas c, Vec2d cameraSize) {
 		for (GameObject o : GameObject.gameObjects){
 			o.drawP(c);
 		}
+		
+		Paint whitePaint = new Paint();
+		whitePaint.setColor(Color.BLACK);
+		whitePaint.setAlpha((int) 185);
+		c.drawRect(0, 0, cameraSize.x, cameraSize.y, whitePaint);
 	}
 
 	public static void drawAllPreview(Canvas c){  //TODO Not entirely needed anymore
@@ -152,15 +158,12 @@ public class GameObject {
 	}
 	
 	public void drawP(Canvas c){
-
 	}
 	
 	public void drawPreview(Canvas c){
-
 	}
 	
 	public void draw(Canvas c){
-
 	}
 	
 	protected boolean allowCheckpoint(){

@@ -14,13 +14,17 @@ public class MenuTitleScreen {
 	private MenuTitleScreenPanel Setup;
 	private MenuTitleScreenPanel About;
 	private MenuTitleScreenPanel Play;
-	private MenuTitleScreenPanel activePanel;
+	private static MenuTitleScreenPanel activePanel;
 	private MenuTitleScreenPanel releasePanel;
 	private boolean inTransition;
 	private Game mGame;
 	
 	public static ArrayList<MenuTitleScreenPanel> menuTitlePanels = new ArrayList<MenuTitleScreenPanel>();
 
+	public static void Reset() {
+		
+		MenuTitleScreen.activePanel = null;
+	}
 	public MenuTitleScreen(Game game) {
 		//Create the 3 panels
 		
@@ -46,7 +50,7 @@ public class MenuTitleScreen {
 		About = new MenuTitleScreenPanel(recAbout, bitAbout, width * 2 / 3, 0, width);
 		Play = new MenuTitleScreenPanel(recPlay, bitPlay, -(width * 2 / 3), 0,-width);
 
-		activePanel = null;
+		MenuTitleScreen.activePanel = null;
 
 		MenuTitleScreen.menuTitlePanels.add(Setup);
 		MenuTitleScreen.menuTitlePanels.add(About);
@@ -68,9 +72,9 @@ public class MenuTitleScreen {
 		Log.d("GSTA", "processInput " + input);
 		
 		if ((!inTransition) && (!clicked.isVoid())){
-			if (activePanel==About) {
+			if (MenuTitleScreen.activePanel==About) {
 				if (input==UserInput.Input.PRESS_LEFT) {
-					activePanel = null;
+					MenuTitleScreen.activePanel = null;
 //					Log.d("GSTA", "setting releasePanel to About");
 					releasePanel = About;
 					inTransition = true;
@@ -79,9 +83,9 @@ public class MenuTitleScreen {
 					
 				}
 				
-			} else if (activePanel==Play) {
+			} else if (MenuTitleScreen.activePanel==Play) {
 				if (input==UserInput.Input.PRESS_RIGHT) {
-					activePanel = null;
+					MenuTitleScreen.activePanel = null;
 					releasePanel = Play;
 //					Log.d("GSTA", "setting releasePanel to Play");
 					inTransition = true;
@@ -91,9 +95,9 @@ public class MenuTitleScreen {
 					}
 				}
 				
-			} else if (activePanel==Setup) {
+			} else if (MenuTitleScreen.activePanel==Setup) {
 //				if (input==UserInput.Input.PRESS_UP){
-//					activePanel = null;
+//					MenuTitleScreen.activePanel = null;
 //					inTransition = true;
 //				} else {
 //					if ((clicked!=null)&&(Setup.returnButton(clicked)!= null)&&(!inTransition)){
@@ -107,10 +111,10 @@ public class MenuTitleScreen {
 					if (input==UserInput.Input.PRESS_UP) {
 						mGame.thread.loadLevel();
 						mGame.gameState = GameState.PLAYING;
-//						activePanel = Setup;
+//						MenuTitleScreen.activePanel = Setup;
 					}
-					if (input==UserInput.Input.PRESS_LEFT) activePanel = Play;
-					if (input==UserInput.Input.PRESS_RIGHT) activePanel = About;
+					if (input==UserInput.Input.PRESS_LEFT) MenuTitleScreen.activePanel = Play;
+					if (input==UserInput.Input.PRESS_RIGHT) MenuTitleScreen.activePanel = About;
 				}
 			}
 			
@@ -131,7 +135,7 @@ public class MenuTitleScreen {
 			
 				m.currentLeft = m.rec.left;
 				
-				if (activePanel==m) {
+				if (MenuTitleScreen.activePanel==m) {
 					if (m.currentLeft!=m.activeLeft) {
 						inTransition = true;
 						//not in the correct position
@@ -144,7 +148,7 @@ public class MenuTitleScreen {
 							if (m.currentLeft > m.activeLeft) m.currentLeft = m.activeLeft;
 						}
 					}
-				} else if (activePanel==null) {
+				} else if (MenuTitleScreen.activePanel==null) {
 					//Main Menu, return to main position
 					if (m.currentLeft!=m.mainLeft) {
 						inTransition = true;
@@ -157,7 +161,7 @@ public class MenuTitleScreen {
 						}
 					}
 				} else {
-					if (activePanel==Setup) {
+					if (MenuTitleScreen.activePanel==Setup) {
 						//Not main menu, Not Self, return to offScreen Position
 						if (m.currentLeft!=m.goneLeft) {
 							inTransition = true;
@@ -187,14 +191,14 @@ public class MenuTitleScreen {
 		
 		c.drawBitmap(Setup.bit, null, Setup.rec, null);
 
-		if ((activePanel==About)||(releasePanel==About)) {
+		if ((MenuTitleScreen.activePanel==About)||(releasePanel==About)) {
 			c.drawBitmap(Play.bit, null, Play.rec, null);
 			c.drawBitmap(About.bit, null, About.rec, null);
-		} else if ((activePanel==Play)||(releasePanel==Play)) {
+		} else if ((MenuTitleScreen.activePanel==Play)||(releasePanel==Play)) {
 			c.drawBitmap(About.bit, null, About.rec, null);
 			c.drawBitmap(Play.bit, null, Play.rec, null);
 			
-			if ((!inTransition)&&(activePanel==Play)) Play.drawButtons(c);
+			if ((!inTransition)&&(MenuTitleScreen.activePanel==Play)) Play.drawButtons(c);
 			
 		} else {
 			
