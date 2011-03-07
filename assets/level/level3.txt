@@ -1,14 +1,13 @@
-LEVEL:Level 3
-DIFICULTY:TUTORIAL
-hero.pos.set(32000,48000);
-addWall(380,240,8,120);
-addWall(200,240,100,8);
-addWall(200,360,8,80);
-addWall(200,100,8,80);
-addWall(380,60,100,8);
-addWall(380,400,100,8);
-addWall(560,140,100,8);
-addWall(560,320,100,8);
-addWall(560,230,8,50);
-addWall(560,400,8,30);
-addWall(560,60,8,30);
+LEVEL: level3
+Hero252,124
+Wall380,240,8,120
+Wall200,240,100,8
+Wall200,360,8,80
+Wall200,100,8,80
+Wall380,60,100,8
+Wall380,400,100,8
+Wall560,140,100,8
+Wall560,320,100,8
+Wall560,230,8,50
+Wall560,400,8,30
+Wall560,60,8,30

@@ -1,21 +1,16 @@
-LEVEL:Level 5
-DIFICULTY:TUTORIAL
-hero.pos.set(364000,20000);
-addWall(140,368,4,72);
-addWall(232,404,96,4);
-addWall(544,404,72,4);
-addWall(476,300,4,76);
-addWall(516,372,44,4);
-addWall(680,212,72,4);
-addWall(76,372,68,4);
-addWall(324,224,4,216);
-addWall(168,44,160,4);
-addWall(60,152,4,56);
-addWall(236,100,180,4);
-addWall(100,204,44,4);
-addWall(236,200,4,96);
-addWall(412,220,4,76);
-addWall(232,300,96,4);
-addWall(564,100,52,4);
-addWall(612,212,4,116);
-addWall(516,148,4,52);
+LEVEL: level5
+Wall408,288,8,80
+Wall608,248,48,8
+Wall208,248,48,8
+Wall200,360,8,24
+Wall616,352,8,16
+Wall408,376,216,8
+Wall120,280,8,120
+Wall248,328,120,8
+Wall296,200,8,120
+Wall168,152,120,8
+Wall696,280,8,120
+Wall648,152,120,8
+Wall568,328,120,8
+Hero204,76
+Wall520,200,8,120
