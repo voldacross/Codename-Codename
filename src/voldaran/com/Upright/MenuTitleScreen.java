@@ -52,55 +52,11 @@ public class MenuTitleScreen {
 		MenuTitleScreen.menuTitlePanels.add(About);
 		MenuTitleScreen.menuTitlePanels.add(Play);
 		
-		Rect levelButton1 = new Rect(50, 50, 122, 122);
-		levelButton1.offsetTo(36, 30);
-		//Create Button with onClick Function
-		MenuButton level1 = new MenuButton(levelButton1, "levelOne", mGame) {
-			public void onClick() {
-				game.thread.loadLevel("level1.txt");
-				game.gameState = GameState.PLAYING;
-			}
-		};
-		Play.addButton(level1);
-		Rect levelButton2 = new Rect(50, 50, 122, 122);
-		levelButton2.offsetTo(126, 30);
-		MenuButton level2 = new MenuButton(levelButton2, "levelTwo", mGame) {
-			public void onClick() {
-				game.thread.loadLevel("level2.txt");
-				game.gameState = GameState.PLAYING;
-			}
-		};
-		Play.addButton(level2);
+		Play.menuButtons.clear();
+		Log.d("GSTA", "Clearing menuButtons");
+		Bitmap menuButton = Game.loadBitmapAsset("menublock.png");
+		MenuButton.loadLevelButtons(Play, menuButton, mGame);
 		
-		Rect levelButton3 = new Rect(50, 50, 122, 122);
-		levelButton3.offsetTo(216, 30);
-		MenuButton level3 = new MenuButton(levelButton3, "levelThree", mGame) {
-			public void onClick() {
-				game.thread.loadLevel("level3.txt");
-				game.gameState = GameState.PLAYING;
-			}
-		};
-		Play.addButton(level3);
-		
-		Rect levelButton4 = new Rect(50, 50, 122, 122);
-		levelButton4.offsetTo(306, 30);
-		MenuButton level4 = new MenuButton(levelButton4, "levelFour", mGame) {
-			public void onClick() {
-				game.thread.loadLevel("level4.txt");
-				game.gameState = GameState.PLAYING;
-			}
-		};
-		Play.addButton(level4);
-		
-		Rect levelButton5 = new Rect(50, 50, 122, 122);
-		levelButton5.offsetTo(396, 30);
-		MenuButton level5 = new MenuButton(levelButton5, "levelFive", mGame) {
-			public void onClick() {
-				game.thread.loadLevel("level5.txt");
-				game.gameState = GameState.PLAYING;
-			}
-		};
-		Play.addButton(level5);
 		
 		
 		
@@ -130,9 +86,7 @@ public class MenuTitleScreen {
 //					Log.d("GSTA", "setting releasePanel to Play");
 					inTransition = true;
 				} else {
-//					Log.d("GSTA", "You clicked!!!" + Play.returnButton(clicked).name);
 					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)){
-						Log.d("GSTA", "You clicked " + Play.returnButton(clicked).name);
 						Play.returnButton(clicked).onClick();
 					}
 				}
@@ -239,11 +193,16 @@ public class MenuTitleScreen {
 		} else if ((activePanel==Play)||(releasePanel==Play)) {
 			c.drawBitmap(About.bit, null, About.rec, null);
 			c.drawBitmap(Play.bit, null, Play.rec, null);
+			
+			if ((!inTransition)&&(activePanel==Play)) Play.drawButtons(c);
+			
 		} else {
 			
 			c.drawBitmap(About.bit, null, About.rec, null);
 			c.drawBitmap(Play.bit, null, Play.rec, null);
 		}
+		
+		
 		
 		
 	}

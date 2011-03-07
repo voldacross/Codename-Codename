@@ -1,20 +1,17 @@
-LEVEL: level7
-Wall296,88,88,8
-Wall208,136,192,8
-Wall392,72,8,56
-Hero172,268
-Wall200,104,8,24
-Wall600,88,72,8
-Wall200,304,8,112
-Wall600,160,8,112
-Wall744,248,8,216
-Wall456,168,8,120
-Wall592,40,144,8
-Wall344,296,8,120
-Wall600,232,56,8
-Wall200,360,56,8
-Wall200,232,72,8
-Wall416,424,368,8
-Wall56,296,8,120
-Wall200,184,136,8
-Wall600,280,136,8
+LEVEL:Level 7
+DIFICULTY:MEDIUM
+hero.pos.set(64000,192000);
+addWall(376,56,8,40);
+addWall(744,88,8,56);
+addWall(104,128,8,48);
+addWall(376,424,8,40);
+addWall(56,352,8,48);
+addWall(112,392,48,8);
+addWall(88,232,72,8);
+addWall(712,232,72,8);
+addWall(368,136,64,8);
+addWall(368,344,64,8);
+addWall(376,232,8,56);
+addWall(688,40,48,8);
+addWall(696,384,8,48);
+addWall(712,400,48,8);

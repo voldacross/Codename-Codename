@@ -3,6 +3,7 @@ package voldaran.com.Upright;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class MenuTitleScreenPanel {
@@ -25,6 +26,13 @@ public class MenuTitleScreenPanel {
 	
 	int left, right, top, bottom;
 
+	public void drawButtons(Canvas c) {
+		for(MenuButton b : menuButtons){
+			b.drawButton(c);
+		}
+		
+	}
+	
 	public void addButton(Rect b, String name) {
 		MenuButton button = new MenuButton(b, name);
 		menuButtons.add(button);

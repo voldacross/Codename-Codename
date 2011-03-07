@@ -37,8 +37,9 @@ public class Vec2d {
 		return (x == that.x) && (y == that.y);
 	}
 	
-	@Override public String toString(){
-		return x + "," + y;
+	@Override 
+	public String toString(){
+		return "(" + x / 1000 + "," + y / 1000 + ")";
 	}
 	
 	public Vec2d set(Vec2d vector){

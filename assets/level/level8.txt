@@ -1,12 +1,10 @@
-LEVEL: level8
-Hero204,20
-Wall540,144,4,128
-Wall172,28,4,20
-Wall284,80,4,24
-Wall236,52,132,4
-Wall436,300,148,4
-Wall228,244,108,4
-Wall228,244,4,92
-Wall224,196,152,4
-Wall284,248,4,120
-Wall172,248,4,120
+LEVEL:Level 8
+DIFICULTY:MEDIUM
+hero.pos.set(620000,124000);
+addWall(648,196,56,4);
+addWall(232,76,192,4);
+addWall(240,420,184,4);
+addWall(84,256,4,216);
+addWall(380,256,4,216);
+addWall(652,372,52,4);
+addWall(596,284,4,92);

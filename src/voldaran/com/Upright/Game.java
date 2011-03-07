@@ -5,10 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 
 import voldaran.com.Upright.UserInput.Input;
 import android.content.Context;
@@ -194,6 +190,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d("GSTA", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
+		thread.createTitleScreen();
 		thread.setRunning(true);
 		thread.start();
 		
@@ -201,6 +198,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override public void surfaceDestroyed(SurfaceHolder holder) {
 	}
+	
+
 	
 	//Static Helper Class
 	public static Bitmap loadBitmapAsset(String asset) {
@@ -220,51 +219,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		return bitmap;
 	}
 	
-	//Static Helper Class
-	public static String loadLevelAsset(String asset) {
-		AssetManager assets = mContext.getAssets();
-		InputStream stream = null;
-
-		 
-     	try {
-            stream = assets.open("level/" + asset);
-        } catch (IOException e) {
-            Log.d("GSTA", "EXCEPTION!" + e.getMessage());
-        }
-	        
-        if (stream != null) {
-        	Writer writer = new StringWriter();
-        	
-        	char[] buffer = new char[1024];
-        	try {
-        		Reader reader = null;
-				try {
-					reader = new BufferedReader( new InputStreamReader(stream, "UTF-8"));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace(); Log.d("loadLevel", "error - " + e);
-				}
-	        	int n;
-	        	try {
-					while ((n = reader.read(buffer)) != -1) {
-							writer.write(buffer, 0, n);
-					}
-				} catch (IOException e) {
-					e.printStackTrace(); Log.d("loadLevel", "error - " + e);
-				}
-        	} finally {
-        		try {
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace(); Log.d("loadLevel", "error - " + e);
-				}
-        	}
-        	
-        	return writer.toString();
-        	
-        }
-		return "";
-	}
-	
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
@@ -275,22 +229,73 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		Vec2d mapSize;
 		//public MapClass.TileClass[][] aTile;
 		
-		public Bitmap bitHero, bitArrow;
-		
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
-		
-		public void addWall(int posx, int posy, int extentx, int extenty){
-			new Wall(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
-		}
-		
-		public void addObstacle(int posx, int posy, int extentx, int extenty){
-			new GameObstacle(new Vec2d(posx, posy).mul(1000), new Vec2d(extentx, extenty).mul(1000));
-		}
 		
 		public void loadLevel() {
 			//Called without a level, load current level. TODO 
 			loadLevel("level3.txt");
 		}
+		
+		
+		public Bitmap loadLeveltoBitmap(String levelAsset) {
+			//loading new level
+			
+			//Clear out old level if present
+			GameObject.gameObjects.clear();
+			MovingObject.movingObjects.clear();
+			
+			GameObstacle.addObstacle(4,240,4,232);
+			GameObstacle.addObstacle(392,4,400,4);
+			GameObstacle.addObstacle(372,476,428,4);
+			GameObstacle.addObstacle(796,232,4,240);
+			
+			InputStream stream = null;
+			//Parse Level file
+			try{
+				AssetManager assets = mContext.getAssets();
+	            stream = assets.open("level/" + levelAsset);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
+				String rline, line;
+				GameObject o;
+				while((rline = reader.readLine()) != null){
+					line = rline.replaceAll("\\) *extent", ",")
+						   	    .replaceAll(" |\\(|\\)|:|pos|extent", "")
+						        .toLowerCase();
+					if (line.startsWith("wall")){
+						o = (GameObject) Wall.fromString(line.substring(4));
+						Log.d("LoadLevel", o.toString());
+					}
+					else if (line.startsWith("hero")) {
+						hero = GameHero.fromString(line.substring(4));
+						Log.d("LoadLevel", hero.toString());
+					}
+					else Log.d("Load", rline);
+				}
+			}
+			catch (Exception e){
+				e.printStackTrace();
+				Log.d("LoadLevel", "error - " + e);
+			}
+			finally{
+				if(stream != null)
+					try {
+						stream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+						Log.d("LoadLevel", "error - " + e);
+					}
+			}
+			Vec2d offset = new Vec2d(0,0);
+			GameObject.offset = offset;
+			Bitmap previewLevel = Bitmap.createBitmap((int) cameraSize.x / 4, (int) cameraSize.y / 4, Bitmap.Config.ARGB_8888);
+			
+			Canvas c = new Canvas(previewLevel);
+			
+			GameObject.drawAllPreview(c);
+			
+			return previewLevel;
+		}
+		
 		
 		//Loads a level
 		public void loadLevel(String levelAsset) {
@@ -303,34 +308,47 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			//Set map size
 			mapSize = new Vec2d(10000,1000);
 			
-			//Create hero
-			bitHero = Game.loadBitmapAsset("meatwad.png");
-			hero = new GameHero(new Vec2d(224000,96000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
-			
 			//Boarders //Obstacles
-			addObstacle(4,240,4,232);
-			addObstacle(392,4,400,4);
-			addObstacle(372,476,428,4);
-			addObstacle(796,232,4,240);
+			GameObstacle.addObstacle(4,240,4,232);
+			GameObstacle.addObstacle(392,4,400,4);
+			GameObstacle.addObstacle(372,476,428,4);
+			GameObstacle.addObstacle(796,232,4,240);
 			
+			InputStream stream = null;
 			//Parse Level file
-			String testLevel = Game.loadLevelAsset(levelAsset);
-			String lines[] = testLevel.split("\\r?\\n");
-			
-			for (String line : lines) {
-				if (line.indexOf("LEVEL")>=0) Log.d("GSTA", "Level = " + line);
-				if (line.indexOf("addWall")>=0){
-					//add wall
-					String test = line.substring(8, line.length() - 2);
-					String test2[] = test.split(",");
-					addWall(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]), Integer.valueOf(test2[2]), Integer.valueOf(test2[3]));
+			try{
+				AssetManager assets = mContext.getAssets();
+	            stream = assets.open("level/" + levelAsset);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
+				String rline, line;
+				GameObject o;
+				while((rline = reader.readLine()) != null){
+					line = rline.replaceAll("\\) *extent", ",")
+						   	    .replaceAll(" |\\(|\\)|:|pos|extent", "")
+						        .toLowerCase();
+					if (line.startsWith("wall")){
+						o = (GameObject) Wall.fromString(line.substring(4));
+						Log.d("LoadLevel", o.toString());
+					}
+					else if (line.startsWith("hero")) {
+						hero = GameHero.fromString(line.substring(4));
+						Log.d("LoadLevel", hero.toString());
+					}
+					else Log.d("Load", rline);
 				}
-				if (line.indexOf("hero.pos.set")>=0) {
-					//Set hero pos
-					String test = line.substring(13, line.length() - 2);
-					String test2[] = test.split(",");
-					hero.pos.set(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]));
-				}
+			}
+			catch (Exception e){
+				e.printStackTrace();
+				Log.d("LoadLevel", "error - " + e);
+			}
+			finally{
+				if(stream != null)
+					try {
+						stream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+						Log.d("LoadLevel", "error - " + e);
+					}
 			}
 		}
 		
@@ -540,7 +558,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		public GameState titleScreen() {
-			createTitleScreen();
+//			createTitleScreen();
 			
 			Picture picScreen = new Picture();
 			
