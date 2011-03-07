@@ -19,7 +19,6 @@ public class MenuButton {
 
 	public int id;
 	public Rect clickableArea;
-	private Bitmap bitmap;
 	
 	public static Game mGame;
 	private Bitmap previewMap;
@@ -78,7 +77,6 @@ public class MenuButton {
 		Log.d("GSTA", "creating button " + l);
 		clickableArea = r;
 		id = l;
-		bitmap = b;
 		previewMap = p;
 		MenuButton.menuButton.add(this);
 	}

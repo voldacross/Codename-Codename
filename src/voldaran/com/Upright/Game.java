@@ -17,10 +17,8 @@ import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.Bitmap.Config;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -246,37 +244,46 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
 			
-			//Set map size
-			mapSize = new Vec2d(10000,1000);
+			GameObstacle.addObstacle(4,240,4,232);
+			GameObstacle.addObstacle(392,4,400,4);
+			GameObstacle.addObstacle(372,476,428,4);
+			GameObstacle.addObstacle(796,232,4,240);
 			
-			//Create hero
-			bitHero = Game.loadBitmapAsset("meatwad.png");
-			hero = new GameHero(new Vec2d(224000,96000), new Vec2d(bitHero.getWidth() / 6 * 1000,bitHero.getHeight() / 6 * 1000), bitHero);
-			
-			//Boarders //Obstacles
-			addObstacle(4,240,4,232);
-			addObstacle(392,4,400,4);
-			addObstacle(372,476,428,4);
-			addObstacle(796,232,4,240);
-			
+			InputStream stream = null;
 			//Parse Level file
-			String testLevel = Game.loadLevelAsset(levelAsset);
-			String lines[] = testLevel.split("\\r?\\n");
-			
-			for (String line : lines) {
-				if (line.indexOf("LEVEL")>=0) Log.d("GSTA", "Level = " + line);
-				if (line.indexOf("addWall")>=0){
-					//add wall
-					String test = line.substring(8, line.length() - 2);
-					String test2[] = test.split(",");
-					addWall(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]), Integer.valueOf(test2[2]), Integer.valueOf(test2[3]));
+			try{
+				AssetManager assets = mContext.getAssets();
+	            stream = assets.open("level/" + levelAsset);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
+				String rline, line;
+				GameObject o;
+				while((rline = reader.readLine()) != null){
+					line = rline.replaceAll("\\) *extent", ",")
+						   	    .replaceAll(" |\\(|\\)|:|pos|extent", "")
+						        .toLowerCase();
+					if (line.startsWith("wall")){
+						o = (GameObject) Wall.fromString(line.substring(4));
+						Log.d("LoadLevel", o.toString());
+					}
+					else if (line.startsWith("hero")) {
+						hero = GameHero.fromString(line.substring(4));
+						Log.d("LoadLevel", hero.toString());
+					}
+					else Log.d("Load", rline);
 				}
-				if (line.indexOf("hero.pos.set")>=0) {
-					//Set hero pos
-					String test = line.substring(13, line.length() - 2);
-					String test2[] = test.split(",");
-					hero.pos.set(Integer.valueOf(test2[0]), Integer.valueOf(test2[1]));
-				}
+			}
+			catch (Exception e){
+				e.printStackTrace();
+				Log.d("LoadLevel", "error - " + e);
+			}
+			finally{
+				if(stream != null)
+					try {
+						stream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+						Log.d("LoadLevel", "error - " + e);
+					}
 			}
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
