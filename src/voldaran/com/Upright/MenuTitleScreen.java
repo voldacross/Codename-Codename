@@ -67,6 +67,11 @@ public class MenuTitleScreen {
 		
 		
 	}
+	private MenuButton activeButton = null;
+	int distanceLeft;
+	int distanceRight;
+	int distanceUp;
+	int distanceDown;
 	
 	public void processInput(Input input, Vec2d clicked) {
 		Log.d("GSTA", "processInput " + input);
@@ -91,7 +96,15 @@ public class MenuTitleScreen {
 					inTransition = true;
 				} else {
 					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)){
-						Play.returnButton(clicked).onClick();
+						activeButton = Play.returnButton(clicked);
+						
+						 distanceLeft = activeButton.clickableArea.left;
+						 distanceRight = (int) Game.getCameraSize().x - activeButton.clickableArea.right;
+						 distanceUp = activeButton.clickableArea.top;
+						 distanceDown = (int) Game.getCameraSize().y - activeButton.clickableArea.bottom;
+						
+						
+//						Play.returnButton(clicked).onClick();
 					}
 				}
 				
@@ -198,12 +211,44 @@ public class MenuTitleScreen {
 			c.drawBitmap(About.bit, null, About.rec, null);
 			c.drawBitmap(Play.bit, null, Play.rec, null);
 			
-			if ((!inTransition)&&(MenuTitleScreen.activePanel==Play)) Play.drawButtons(c);
+			if ((!inTransition)&&(MenuTitleScreen.activePanel==Play)) Play.drawButtons(c, activeButton);
 			
 		} else {
 			
 			c.drawBitmap(About.bit, null, About.rec, null);
 			c.drawBitmap(Play.bit, null, Play.rec, null);
+		}
+		
+		if(activeButton!=null) {
+			
+//			activeButton.clickableArea.offsetTo(0, 0);
+//			activeButton.clickableArea.left = 0;
+
+
+
+//			activeButton.clickableArea.right = activeButton.clickableArea.right + (distanceRight / 15);
+//			activeButton.clickableArea.left = activeButton.clickableArea.left - (distanceLeft / 15);
+//			activeButton.clickableArea.bottom = activeButton.clickableArea.bottom + (distanceDown / 15);
+//			activeButton.clickableArea.top = activeButton.clickableArea.top - (distanceUp / 15);
+			
+			if (activeButton.clickableArea.right<=Game.getCameraSize().x) activeButton.clickableArea.right = activeButton.clickableArea.right + ((distanceRight / 15) + 1);
+			if (activeButton.clickableArea.left>=0) activeButton.clickableArea.left = activeButton.clickableArea.left - ((distanceLeft / 15) + 1);
+			if (activeButton.clickableArea.bottom<=Game.getCameraSize().y) activeButton.clickableArea.bottom = activeButton.clickableArea.bottom + ((distanceDown / 15) + 1);
+			if (activeButton.clickableArea.top>=0) activeButton.clickableArea.top = activeButton.clickableArea.top - ((distanceUp / 15) + 1);
+			
+			if ((activeButton.clickableArea.right>=Game.getCameraSize().x) 
+					&& (activeButton.clickableArea.bottom>=Game.getCameraSize().y) 
+					&& ((activeButton.clickableArea.top<=0)) 
+					&& ((activeButton.clickableArea.left<=0))) {
+				
+				activeButton.onClick();
+				activeButton.clickableArea.right = (int) (Game.getCameraSize().x - distanceRight);
+				activeButton.clickableArea.left = distanceLeft;
+				activeButton.clickableArea.bottom = (int) (Game.getCameraSize().y - distanceDown);
+				activeButton.clickableArea.top = distanceUp;
+				activeButton = null;
+				
+			}
 		}
 		
 		

@@ -82,6 +82,8 @@ public class MenuButton {
 	}
 	
 	public void onClick() {
+		
+		//Start zoom animation
 		String level = "level" + String.valueOf(id) + ".txt";
 		mGame.thread.loadLevel(level);
 		mGame.gameState = GameState.PLAYING;

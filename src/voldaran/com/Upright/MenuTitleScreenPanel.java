@@ -26,10 +26,12 @@ public class MenuTitleScreenPanel {
 	
 	int left, right, top, bottom;
 
-	public void drawButtons(Canvas c) {
+	public void drawButtons(Canvas c, MenuButton activeButton) {
 		for(MenuButton b : menuButtons){
-			b.drawButton(c);
+			if (b!=activeButton) b.drawButton(c);
 		}
+		
+		if (activeButton!=null) activeButton.drawButton(c);
 		
 	}
 	

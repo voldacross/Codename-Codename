@@ -99,10 +99,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public UserInput _input;
 	private PauseMenu pause;
 	public Vec2d surfaceSize = new Vec2d();
-	public Vec2d cameraSize;
+	public static Vec2d cameraSize;
 	
 	public static DisplayMetrics displayMetrics = new DisplayMetrics();;
 	
+	
+	public static Vec2d getCameraSize() {
+		return cameraSize;
+	}
 	
 	public enum GameState {
 		TITLE,
@@ -250,8 +254,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
 			
-			
-				
 			GameObstacle.addObstacle(4,240,4,232);
 			GameObstacle.addObstacle(392,4,400,4);
 			GameObstacle.addObstacle(372,476,428,4);
@@ -298,6 +300,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			Bitmap previewLevel = Bitmap.createBitmap((int) cameraSize.x / 4, (int) cameraSize.y / 4, Bitmap.Config.ARGB_8888);
 			
 			Canvas c = new Canvas(previewLevel);
+			
+			Rect rec = new Rect (0,0, (int) cameraSize.x / 4, (int) cameraSize.y / 4);
+			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+			backgroundPaint.setColor(Color.BLACK);
+			c.drawRect(rec, backgroundPaint);
 			
 			GameObject.drawAllPreview(c);
 			
