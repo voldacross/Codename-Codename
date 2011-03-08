@@ -43,6 +43,16 @@ public class GameObject {
 		}
 	}
 	
+	public static boolean returnWin() {
+		boolean exit=true;
+		for(GameObject o : GameObject.gameObjects){
+			exit = o.checkWin();
+			if (exit==false) break;
+		}
+		
+		return exit;
+	}
+	
 	public static boolean saveCheckpointAll() {
 		boolean checkpointOK = true;
 		
@@ -155,6 +165,10 @@ public class GameObject {
 			&& (left - GameObject.offset.x) <= c.getWidth() * 1000 
 			&& (bottom - GameObject.offset.y) >= 0 
 			&& (top - GameObject.offset.y) <= c.getHeight() * 1000;
+	}
+	
+	public boolean checkWin() {
+		return true;
 	}
 	
 	public void drawP(Canvas c){

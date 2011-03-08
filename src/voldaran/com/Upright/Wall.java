@@ -47,6 +47,10 @@ public class Wall extends GameObject {
 	protected void restoreCheckpoint(){
 		color = colorCheckpoint;
 	}
+	@Override
+	public boolean checkWin() {
+		return (color==Color.GREEN);
+	}
 	
 	@Override
 	public void drawP(Canvas c){

@@ -40,12 +40,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public static DisplayMetrics displayMetrics = new DisplayMetrics();;
 	
-	
 	public enum GameState {
 		TITLE,
 		PLAYING,
 		PAUSED,
 		LEVEL_COMPLETE
+
 	}
 	
 	public GameState gameState;
@@ -430,7 +430,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				case TITLE:gameState = titleScreen();
 				case PLAYING:gameState = gameLoop();
 				case PAUSED:gameState = pause();
-				case LEVEL_COMPLETE:break;
+				case LEVEL_COMPLETE:gameState = levelComplete();
 				}
 			}
 		}
@@ -484,13 +484,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					
 				}
 
-
+				if (GameObject.returnWin()) gameState = GameState.LEVEL_COMPLETE;
 			}
 			return gameState;
 		}
 		
-
-
+		
 		public void death(){
 			float alpha = 255;
 			float fade = 0;
@@ -517,6 +516,37 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				alpha -= fade;
 				
 			}
+		}
+		
+		public GameState levelComplete() {
+			
+			while((gameState == GameState.LEVEL_COMPLETE) && (mRun)){
+				
+				Vec2d mClicked = _input.getCurrentPress();
+
+				Picture picScreen = new Picture();
+				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
+				
+				titleMenu.update();
+				
+					synchronized (_surfaceHolder) {
+						clearScreen(c, Game.cameraSize);
+						GameObject.drawAll(c);
+						
+						Paint text = new Paint();
+						    text.setColor(Color.RED);
+						    text.setTextSize(86);
+						    text.setTypeface(Typeface.DEFAULT_BOLD);
+						    
+						c.drawText("YOU WON!", 75, 125, text);
+						picScreen.endRecording();
+						drawToScreen(picScreen);
+					}
+					
+					if (!mClicked.isVoid()) gameState = GameState.TITLE;
+					
+			}
+			return gameState;
 		}
 		
 		public GameState titleScreen() {
