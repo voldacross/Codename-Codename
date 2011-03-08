@@ -30,8 +30,8 @@ public class MenuTitleScreen {
 		
 		mGame = game;
 
-		int height = (int) game.cameraSize.y;
-		int width = (int) game.cameraSize.x;
+		int height = (int) Game.cameraSize.y;
+		int width = (int) Game.cameraSize.x;
 
 		
 		Rect recSetup = new Rect(0, 0, width, height);
@@ -99,9 +99,9 @@ public class MenuTitleScreen {
 						activeButton = Play.returnButton(clicked);
 						
 						 distanceLeft = activeButton.clickableArea.left;
-						 distanceRight = (int) Game.getCameraSize().x - activeButton.clickableArea.right;
+						 distanceRight = (int) Game.cameraSize.x - activeButton.clickableArea.right;
 						 distanceUp = activeButton.clickableArea.top;
-						 distanceDown = (int) Game.getCameraSize().y - activeButton.clickableArea.bottom;
+						 distanceDown = (int) Game.cameraSize.y - activeButton.clickableArea.bottom;
 						
 						
 //						Play.returnButton(clicked).onClick();
@@ -231,20 +231,20 @@ public class MenuTitleScreen {
 //			activeButton.clickableArea.bottom = activeButton.clickableArea.bottom + (distanceDown / 15);
 //			activeButton.clickableArea.top = activeButton.clickableArea.top - (distanceUp / 15);
 			
-			if (activeButton.clickableArea.right<=Game.getCameraSize().x) activeButton.clickableArea.right = activeButton.clickableArea.right + ((distanceRight / 15) + 1);
+			if (activeButton.clickableArea.right<=Game.cameraSize.x) activeButton.clickableArea.right = activeButton.clickableArea.right + ((distanceRight / 15) + 1);
 			if (activeButton.clickableArea.left>=0) activeButton.clickableArea.left = activeButton.clickableArea.left - ((distanceLeft / 15) + 1);
-			if (activeButton.clickableArea.bottom<=Game.getCameraSize().y) activeButton.clickableArea.bottom = activeButton.clickableArea.bottom + ((distanceDown / 15) + 1);
+			if (activeButton.clickableArea.bottom<=Game.cameraSize.y) activeButton.clickableArea.bottom = activeButton.clickableArea.bottom + ((distanceDown / 15) + 1);
 			if (activeButton.clickableArea.top>=0) activeButton.clickableArea.top = activeButton.clickableArea.top - ((distanceUp / 15) + 1);
 			
-			if ((activeButton.clickableArea.right>=Game.getCameraSize().x) 
-					&& (activeButton.clickableArea.bottom>=Game.getCameraSize().y) 
+			if ((activeButton.clickableArea.right>=Game.cameraSize.x) 
+					&& (activeButton.clickableArea.bottom>=Game.cameraSize.y) 
 					&& ((activeButton.clickableArea.top<=0)) 
 					&& ((activeButton.clickableArea.left<=0))) {
 				
 				activeButton.onClick();
-				activeButton.clickableArea.right = (int) (Game.getCameraSize().x - distanceRight);
+				activeButton.clickableArea.right = (int) (Game.cameraSize.x - distanceRight);
 				activeButton.clickableArea.left = distanceLeft;
-				activeButton.clickableArea.bottom = (int) (Game.getCameraSize().y - distanceDown);
+				activeButton.clickableArea.bottom = (int) (Game.cameraSize.y - distanceDown);
 				activeButton.clickableArea.top = distanceUp;
 				activeButton = null;
 				

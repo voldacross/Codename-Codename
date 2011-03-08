@@ -28,10 +28,10 @@ public class MenuTitleScreenPanel {
 
 	public void drawButtons(Canvas c, MenuButton activeButton) {
 		for(MenuButton b : menuButtons){
-			if (b!=activeButton) b.drawButton(c);
+			if (b!=activeButton) b.drawButton(c, true);
 		}
 		
-		if (activeButton!=null) activeButton.drawButton(c);
+		if (activeButton!=null) activeButton.drawButton(c, false);
 		
 	}
 	

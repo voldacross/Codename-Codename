@@ -26,69 +26,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-// To "play" the game, played with the unit placed horizontally. Press on the right side to move right, press on the 
-// left side to move left. "Swiping" your fingers up or down will shift the gravity in the direction you swipe.
-// Swipping left or right will cause hero to jump - NOT IMPLEMENTED YET
-
-
-//For more information on design, please see below
-/*
-This is me typing....
-
-This is a test
-Feel free to update with new ideas.
-
-Platform / Puzzle game.
-
-Armor / Body Part Items provide abilities and are collected
-
-	Boots - provide gravity switch. Floor to ceiling.
-			If boots are on, hero cannot jump unless legs are found
-			
-	Legs -	Provide jump bonus. If no boots are on, jump even higher.
-	
-	Arms -	Provide climbing up and down vertical walls.
-			With the ability to wall jump back and forth - Maybe utilizing another item, Boots? Legs?
-			
-	Head -	Options: Shows invisible platforms
-					 Alters platforms to new position
-					 Mind control to be able to move around existing "special" platforms. I LIKE THIS IDEA.
-					 Activate/Always-On to slow down time. Enabling fast hero to move passed moving objects
-					 
-All these parts are situated(!) throughout the level. User must use quick timing and ingenuity to gain access
-to more body parts and be able to explore new areas of the map.
-
-
-Level - Game Design
-
-	1-15 "Tutorial" levels
-	30 Standard Mission Levels
-	
-	Daily Mission
-		Only can be played on that day. All previous missions are playable with AdFree+ version
-		Mission should have a difficultly warning. "Easy, Medium, Insane, etc". Not a toggle.
-		
-		Beating the level unlocks same level with more obstacles, less body parts?
-		
-Obstacle Ideas
-
-	Buzz Saw
-	Spikes that shoot up from little holes
-	Spiked Floor / Lava floor
-	Treadmills
-	Floor you can't gravitate towards?
-	Shooting projectiles
-	Walking/Moving Enemies. NOT A FAN OF THIS IDEA
-	Ejection Pad. Shoots you into the air at a designated target.
-	
-	
-
-
-
-Notes: 
-*/
-//END NOTES
-
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public GameThread thread;
     
@@ -98,15 +35,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public UserInput _input;
 	private PauseMenu pause;
-	public Vec2d surfaceSize = new Vec2d();
+	public static Vec2d surfaceSize = new Vec2d();
 	public static Vec2d cameraSize;
 	
 	public static DisplayMetrics displayMetrics = new DisplayMetrics();;
 	
-	
-	public static Vec2d getCameraSize() {
-		return cameraSize;
-	}
 	
 	public enum GameState {
 		TITLE,
@@ -126,9 +59,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		//Create Camera Size
 		
-		cameraSize = new Vec2d(800,480);
-		pause = new PauseMenu(cameraSize);
-		_input = new UserInput(cameraSize, surfaceSize);
+		Game.cameraSize = new Vec2d(800,480);
+		pause = new PauseMenu(Game.cameraSize);
+		_input = new UserInput(Game.cameraSize, Game.surfaceSize);
 	}
 	
 	
@@ -297,11 +230,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
-			Bitmap previewLevel = Bitmap.createBitmap((int) cameraSize.x / 4, (int) cameraSize.y / 4, Bitmap.Config.ARGB_8888);
+			Bitmap previewLevel = Bitmap.createBitmap((int) Game.cameraSize.x / 4, (int) Game.cameraSize.y / 4, Bitmap.Config.ARGB_8888);
 			
 			Canvas c = new Canvas(previewLevel);
 			
-			Rect rec = new Rect (0,0, (int) cameraSize.x / 4, (int) cameraSize.y / 4);
+			Rect rec = new Rect (0,0, (int) Game.cameraSize.x / 4, (int) Game.cameraSize.y / 4);
 			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 			backgroundPaint.setColor(Color.BLACK);
 			c.drawRect(rec, backgroundPaint);
@@ -401,7 +334,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		private void drawPause(Canvas c) {
-			c.drawBitmap(pauseButton, cameraSize.x - pauseButton.getWidth() - 15, 15, null);
+			c.drawBitmap(pauseButton, Game.cameraSize.x - pauseButton.getWidth() - 15, 15, null);
 		}
 		
 		public void drawPress(Canvas c, Input input) {
@@ -424,10 +357,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					if (hero.ground!=null) {
 						if (hero.findGround()==3) triPaint.setColor(Color.RED);
 					} else triPaint.setColor(Color.RED);
-					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0, 0);
 					triPath.lineTo(0, cameraSize.y);
-					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 					
 				} else if (input==Input.DOWN_RIGHT) {
@@ -435,30 +368,30 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						if (hero.findGround()==1) triPaint.setColor(Color.RED);
 					} else triPaint.setColor(Color.RED);
 					
-					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
-					triPath.lineTo(cameraSize.x, 0);
-					triPath.lineTo(cameraSize.x, cameraSize.y);
-					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
+					triPath.lineTo(Game.cameraSize.x, 0);
+					triPath.lineTo(Game.cameraSize.x, Game.cameraSize.y);
+					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_UP) {
 					if (hero.ground!=null) {
 						if (hero.findGround()==2) triPaint.setColor(Color.RED);
 					} else triPaint.setColor(Color.RED);
 					
-					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0,0);
-					triPath.lineTo(cameraSize.x,0);
-					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.lineTo(Game.cameraSize.x,0);
+					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_DOWN) {
 					if (hero.ground!=null) {
 						if (hero.findGround()==4) triPaint.setColor(Color.RED);
 					} else triPaint.setColor(Color.RED);
 					
-					triPath.moveTo(cameraSize.x/2, cameraSize.y/2);
-					triPath.lineTo(0,cameraSize.y);
-					triPath.lineTo(cameraSize.x,cameraSize.y);
-					triPath.lineTo(cameraSize.x/2, cameraSize.y/2);
+					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
+					triPath.lineTo(0,Game.cameraSize.y);
+					triPath.lineTo(Game.cameraSize.x,Game.cameraSize.y);
+					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				}
 				triPaint.setAlpha(80);				
@@ -529,10 +462,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 
 				Picture picScreen = new Picture();
-				Canvas c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
+				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
-					clearScreen(c, cameraSize);
+					clearScreen(c, Game.cameraSize);
 					GameObject.drawAll(c);
 					
 					drawPress(c, currentInput);
@@ -561,16 +494,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		public void death(){
 			float alpha = 255;
 			float fade = 0;
-			int height = (int) cameraSize.y;
-			int width = (int) cameraSize.x;
+			int height = (int) Game.cameraSize.y;
+			int width = (int) Game.cameraSize.x;
 
 			GameObject.restoreCheckpointAll();
 			while(mRun && alpha > 50){
 				Picture picScreen = new Picture();
-				Canvas c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
+				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
-					clearScreen(c, cameraSize);
+					clearScreen(c, Game.cameraSize);
 					GameObject.drawAll(c);
 					Rect rec = new Rect (0,0, width, height);
 					Paint whitePaint = new Paint();
@@ -600,7 +533,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				titleMenu.update();
 				
 					synchronized (_surfaceHolder) {
-						titleMenu.drawPanels(picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y));
+						titleMenu.drawPanels(picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y));
 						picScreen.endRecording();
 						drawToScreen(picScreen);
 					}
@@ -612,12 +545,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		Bitmap pausedState;
 		Picture picture = new Picture();
 		
-		//TODO Add button checks
-		//Buttons: 	Return to Title Screen
-		//			Resume Game
-		//			Reload board
-		//			Maybe Level Select
-		
 		public GameState pause(){
 			Picture picScreen = null;
 			Canvas c = null;
@@ -625,13 +552,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			while((gameState == GameState.PAUSED) && (mRun)){
 				
 				picScreen = new Picture();
-				c = picScreen.beginRecording((int) cameraSize.x, (int) cameraSize.y);
+				c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				Vec2d mClicked = _input.getCurrentPress();
-				if (!mClicked.isVoid())
-					gameState = pause.onClick(mClicked, mGame);
+				if (!mClicked.isVoid()) gameState = pause.onClick(mClicked, mGame);
 				
 					synchronized (_surfaceHolder) {
-						GameObject.drawPause(c, cameraSize);
+						GameObject.drawPause(c, Game.cameraSize);
 						drawFPS(c);
 						pause.Draw(c);
 						picScreen.endRecording();

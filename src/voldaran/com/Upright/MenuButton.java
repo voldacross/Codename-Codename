@@ -2,6 +2,9 @@ package voldaran.com.Upright;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import voldaran.com.Upright.Game.GameState;
 import android.content.res.AssetManager;
@@ -32,36 +35,45 @@ public class MenuButton {
 		try {
 			levelList = assets.list("level");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (levelList!=null) {
 			
 			int colCount = 0;
 			int rowCount = 0;
-		
+			
+		//sorting list
+			
+			
+			ArrayList<Integer> newLevelList = new ArrayList<Integer>();
+			
+			
 			for (String level : levelList) {
-			
 				if (level.indexOf("level")>=0) {
-					//Load Level button
 					int lvlID = Integer.valueOf(level.substring(5, level.indexOf(".txt")));
-					int left = 10 + rowCount * 130;
-					int top = 10 + colCount * 86;
-					
-					Bitmap preview;
-					
-					preview = g.thread.loadLeveltoBitmap("level" + String.valueOf(lvlID) + ".txt");
-					
-					menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), lvlID, b, preview));
-					
-					
-					if (rowCount>=3) {
-						rowCount = 0;
-						colCount++;
-					} else rowCount++;
-					
+					newLevelList.add(lvlID);
 				}
+			}
 			
+			Collections.sort(newLevelList);
+			
+			for (int level : newLevelList) {
+			
+				//Load Level button
+				int left = 10 + rowCount * 130;
+				int top = 10 + colCount * 86;
+				
+				Bitmap preview;
+				
+				preview = g.thread.loadLeveltoBitmap("level" + level + ".txt");
+				
+				menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), level, b, preview));
+				
+				if (rowCount>=3) {
+					rowCount = 0;
+					colCount++;
+				} else rowCount++;
+					
 			}
 			
 		}
@@ -89,21 +101,16 @@ public class MenuButton {
 		mGame.gameState = GameState.PLAYING;
 	}
 	
-	public void drawButton(Canvas c) {
-		
-//		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-//		paintObject.setColor(Color.GREEN);
-//		c.drawRect(clickableArea, paintObject);
+	public void drawButton(Canvas c, boolean drawText) {
 		
 		Paint text = new Paint();
-		    text.setColor(Color.BLACK);
-		    text.setTextSize(32);
-		    
+		    text.setColor(Color.RED);
+		    text.setTextSize(36);
 		    text.setTypeface(Typeface.DEFAULT_BOLD);
 		    
 		c.drawBitmap(previewMap, null, clickableArea, null);
 		    
-		c.drawText(String.valueOf(id), clickableArea.left + 50 - (String.valueOf(id).length()*8), clickableArea.top + 45, text);
+		if (drawText) c.drawText(String.valueOf(id), clickableArea.left + 48 - (String.valueOf(id).length()*8), clickableArea.top + 47, text);
 	}
 	
 }
