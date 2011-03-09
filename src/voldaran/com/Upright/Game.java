@@ -308,7 +308,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			_surfaceHolder = surfaceHolder;
 			mGame = game;
 			pauseButton = Game.loadBitmapAsset("pause_button.png");
-			
+			currentTime = System.currentTimeMillis();
 		}
 		
 		public void setRunning(boolean run) {
@@ -441,7 +441,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
 			
-  			currentTime = System.currentTimeMillis();
+  			
   			while((gameState == GameState.PLAYING)  && (mRun)){
 	  		    
 				
@@ -504,6 +504,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				synchronized (_surfaceHolder) {
 					clearScreen(c, Game.cameraSize);
 					GameObject.drawAll(c);
+					drawFPS(c);
+					drawPause(c);
 					Rect rec = new Rect (0,0, width, height);
 					Paint whitePaint = new Paint();
 					whitePaint.setColor(Color.WHITE);
@@ -532,7 +534,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					synchronized (_surfaceHolder) {
 						clearScreen(c, Game.cameraSize);
 						GameObject.drawAll(c);
-						
+						drawFPS(c);
 						Paint text = new Paint();
 						    text.setColor(Color.RED);
 						    text.setTextSize(86);
@@ -552,9 +554,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		public GameState titleScreen() {
 //			createTitleScreen();
 			
-			Picture picScreen = new Picture();
+			Picture picScreen = null;
+			Canvas c = null;
 			
 			while((gameState == GameState.TITLE) && (mRun)){
+				
+				picScreen = new Picture();
+				c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				UserInput.Input currentInput = _input.getInput();
 				
@@ -563,7 +569,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				titleMenu.update();
 				
 					synchronized (_surfaceHolder) {
-						titleMenu.drawPanels(picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y));
+						titleMenu.drawPanels(c);
+						drawFPS(c);
 						picScreen.endRecording();
 						drawToScreen(picScreen);
 					}

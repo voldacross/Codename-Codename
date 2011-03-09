@@ -2,9 +2,7 @@ package voldaran.com.Upright;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import voldaran.com.Upright.Game.GameState;
 import android.content.res.AssetManager;
@@ -22,6 +20,7 @@ public class MenuButton {
 
 	public int id;
 	public Rect clickableArea;
+	private int left, right, top, bottom;
 	
 	public static Game mGame;
 	private Bitmap previewMap;
@@ -83,6 +82,17 @@ public class MenuButton {
 	
 	public MenuButton(Rect r, String Name) {
 		clickableArea = r;
+		left = clickableArea.left;
+		right = clickableArea.right;
+		top = clickableArea.top;
+		bottom = clickableArea.bottom;
+	}
+	
+	public void reset() {
+		clickableArea.left = left;
+		clickableArea.right = right;
+		clickableArea.top = top;
+		clickableArea.bottom = bottom;
 	}
 	
 	public MenuButton(Rect r, int l, Bitmap b, Bitmap p) {

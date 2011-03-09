@@ -61,13 +61,11 @@ public class MenuTitleScreen {
 		Bitmap menuButton = Game.loadBitmapAsset("menublock.png");
 		MenuButton.loadLevelButtons(Play, menuButton, mGame);
 		
-		
-		
-		
-		
-		
 	}
-	private MenuButton activeButton = null;
+	
+	private static MenuButton activeButton = null;
+	public static MenuButton deactiveButton = null;
+	
 	int distanceLeft;
 	int distanceRight;
 	int distanceUp;
@@ -95,13 +93,14 @@ public class MenuTitleScreen {
 //					Log.d("GSTA", "setting releasePanel to Play");
 					inTransition = true;
 				} else {
-					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)){
-						activeButton = Play.returnButton(clicked);
+					if ((clicked!=null)&&(Play.returnButton(clicked)!= null)&&(!inTransition)&&(activeButton==null)&&(deactiveButton==null)){
 						
-						 distanceLeft = activeButton.clickableArea.left;
-						 distanceRight = (int) Game.cameraSize.x - activeButton.clickableArea.right;
-						 distanceUp = activeButton.clickableArea.top;
-						 distanceDown = (int) Game.cameraSize.y - activeButton.clickableArea.bottom;
+						activeButton = Play.returnButton(clicked);
+
+						distanceLeft = activeButton.clickableArea.left;
+						distanceRight = (int) Game.cameraSize.x - activeButton.clickableArea.right;
+						distanceUp = activeButton.clickableArea.top;
+						distanceDown = (int) Game.cameraSize.y - activeButton.clickableArea.bottom;
 						
 						
 //						Play.returnButton(clicked).onClick();
@@ -211,7 +210,7 @@ public class MenuTitleScreen {
 			c.drawBitmap(About.bit, null, About.rec, null);
 			c.drawBitmap(Play.bit, null, Play.rec, null);
 			
-			if ((!inTransition)&&(MenuTitleScreen.activePanel==Play)) Play.drawButtons(c, activeButton);
+			if ((!inTransition)&&(MenuTitleScreen.activePanel==Play)) Play.drawButtons(c, activeButton, deactiveButton);
 			
 		} else {
 			
@@ -242,15 +241,39 @@ public class MenuTitleScreen {
 					&& ((activeButton.clickableArea.left<=0))) {
 				
 				activeButton.onClick();
-				activeButton.clickableArea.right = (int) (Game.cameraSize.x - distanceRight);
-				activeButton.clickableArea.left = distanceLeft;
-				activeButton.clickableArea.bottom = (int) (Game.cameraSize.y - distanceDown);
-				activeButton.clickableArea.top = distanceUp;
+				
+				//Reset Button
+//				activeButton.clickableArea.right = (int) (Game.cameraSize.x - distanceRight);
+//				activeButton.clickableArea.left = distanceLeft;
+//				activeButton.clickableArea.bottom = (int) (Game.cameraSize.y - distanceDown);
+//				activeButton.clickableArea.top = distanceUp;
+				//save Button
+				deactiveButton = activeButton;
 				activeButton = null;
 				
 			}
 		}
 		
+		
+		if ((activeButton==null)&&(deactiveButton!=null)) {
+			deactiveButton.clickableArea.right = deactiveButton.clickableArea.right - ((distanceRight / 15) + 1);
+			deactiveButton.clickableArea.left = deactiveButton.clickableArea.left + ((distanceLeft / 15) + 1);
+			deactiveButton.clickableArea.bottom = deactiveButton.clickableArea.bottom - ((distanceDown / 15) + 1);
+			deactiveButton.clickableArea.top = deactiveButton.clickableArea.top + ((distanceUp / 15) + 1);
+			
+			if ((deactiveButton.clickableArea.right<=(int) (Game.cameraSize.x - distanceRight)) 
+					&& (deactiveButton.clickableArea.bottom<=(int) (Game.cameraSize.y - distanceDown)) 
+					&& ((deactiveButton.clickableArea.top>=distanceUp)) 
+					&& ((deactiveButton.clickableArea.left>=distanceLeft))) {
+				
+				deactiveButton.clickableArea.right = (int) (Game.cameraSize.x - distanceRight);
+				deactiveButton.clickableArea.left = distanceLeft;
+				deactiveButton.clickableArea.bottom = (int) (Game.cameraSize.y - distanceDown);
+				deactiveButton.clickableArea.top = distanceUp;
+				
+				deactiveButton = null;
+			}
+		}
 		
 		
 		

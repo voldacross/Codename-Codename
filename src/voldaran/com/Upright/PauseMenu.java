@@ -45,8 +45,10 @@ public class PauseMenu {
 			mGame.thread.loadLevel(mGame.thread.currentLevel);
 			return GameState.PLAYING;
 		}
-		if (LevelSelect.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1)))
+		if (LevelSelect.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1))) {
+//			MenuTitleScreen.deactiveButton =; 
 			return GameState.TITLE;
+		}
 		if (!Pause.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1)))
 			return GameState.PLAYING;
 		
