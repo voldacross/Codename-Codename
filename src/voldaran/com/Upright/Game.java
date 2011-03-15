@@ -2,9 +2,12 @@ package voldaran.com.Upright;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import voldaran.com.Upright.UserInput.Input;
 import android.content.Context;
@@ -27,19 +30,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
-	public GameThread thread;
-    
-	public int gameTIME = 0;
-	
 	public static Context mContext;
-	
-	public UserInput _input;
-	private PauseMenu pause;
 	public static Vec2d surfaceSize = new Vec2d();
 	public static Vec2d cameraSize;
-	
 	public static DisplayMetrics displayMetrics = new DisplayMetrics();;
-	
+
 	public enum GameState {
 		TITLE,
 		PLAYING,
@@ -47,8 +42,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		LEVEL_COMPLETE
 
 	}
-	
+
+	public GameThread thread;
+	public int gameTIME = 0;
+	public UserInput _input;
+	private PauseMenu pause;
 	public GameState gameState;
+	public String currentLevel = "";
 	
 	public Game(Context context, DisplayMetrics d) {
 		super(context);
@@ -159,7 +159,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	//GAME THREAD
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
-		private GameHero hero;
 		public boolean mRun = false;
 		private MenuTitleScreen titleMenu;
 		
@@ -169,16 +168,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
 		
 		public void loadLevel() {
-			//Called without a level, load current level. TODO 
 			if (currentLevel=="") {
-				loadLevel("level3.txt"); 
+				loadLevel("level3.txt", true); 
 			} else {
-				loadLevel(currentLevel);
+				loadLevel(currentLevel, true);
 			}
 					
 		}
-		
-		public String currentLevel = "";
 		
 		public Bitmap loadLeveltoBitmap(String levelAsset) {
 			//loading new level
@@ -209,8 +205,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						Log.d("LoadLevel", o.toString());
 					}
 					else if (line.startsWith("hero")) {
-						hero = GameHero.fromString(line.substring(4));
-						Log.d("LoadLevel", hero.toString());
+						GameHero.fromString(line.substring(4));
+						Log.d("LoadLevel", GameHero.hero.toString());
 					}
 					else Log.d("Load", rline);
 				}
@@ -244,18 +240,35 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			return previewLevel;
 		}
 		
+		public void loadLevel(String level, boolean asset){
+			if(asset){
+				currentLevel = level;
+				try{
+					InputStream stream = mContext.getAssets().open("level/" + level);
+					loadLevel(stream);
+				}catch (Exception e){
+					e.printStackTrace();
+					Log.d("LoadLevel", "error - " + e);
+				}
+			}else loadLevel(level);
+		}
+		
+		public void loadLevel(String level){
+			currentLevel = level;
+			try{
+				InputStream stream = mContext.openFileInput(level);
+				loadLevel(stream);
+			}catch (Exception e){
+				e.printStackTrace();
+				Log.d("LoadLevel", "error - " + e);
+			}
+		}
 		
 		//Loads a level
-		public void loadLevel(String levelAsset) {
-			//loading new level
-			currentLevel = levelAsset;
-			
+		public void loadLevel(InputStream stream) {
 			//Clear out old level if present
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
-			
-			//Set map size
-			mapSize = new Vec2d(10000,1000);
 			
 			//Boarders //Obstacles
 			GameObstacle.addObstacle(4,240,4,232);
@@ -263,41 +276,60 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObstacle.addObstacle(372,476,428,4);
 			GameObstacle.addObstacle(796,232,4,240);
 			
-			InputStream stream = null;
+			BufferedReader reader = null;
 			//Parse Level file
 			try{
-				AssetManager assets = mContext.getAssets();
-	            stream = assets.open("level/" + levelAsset);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
+				reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
 				String rline, line;
 				GameObject o;
 				while((rline = reader.readLine()) != null){
-					line = rline.replaceAll("\\) *extent", ",")
-						   	    .replaceAll(" |\\(|\\)|:|pos|extent", "")
-						        .toLowerCase();
+					line = rline.toLowerCase()
+								.replaceAll("\\) *extent|\\) *direction|\\) *light", ",")
+						   	    .replaceAll(" |\\(|\\)|:|pos|extent|direction|light", "");
 					if (line.startsWith("wall")){
 						o = (GameObject) Wall.fromString(line.substring(4));
 						Log.d("LoadLevel", o.toString());
 					}
 					else if (line.startsWith("hero")) {
-						hero = GameHero.fromString(line.substring(4));
-						Log.d("LoadLevel", hero.toString());
+						GameHero.fromString(line.substring(4));
+						Log.d("LoadLevel", GameHero.hero.toString());
 					}
 					else Log.d("Load", rline);
 				}
-			}
-			catch (Exception e){
+			}catch (Exception e){
 				e.printStackTrace();
 				Log.d("LoadLevel", "error - " + e);
+			}finally{
+				try{
+					if(reader != null) reader.close();
+				}catch (Exception e){
+					e.printStackTrace();
+					Log.d("LoadLevel", "error - " + e);
+				}
 			}
-			finally{
-				if(stream != null)
-					try {
-						stream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-						Log.d("LoadLevel", "error - " + e);
+
+		}
+		
+		public void SaveLevel(String level){
+			FileOutputStream stream = null;
+			BufferedWriter writer = null;
+			try{
+				stream = mContext.openFileOutput(level, Context.MODE_PRIVATE);
+				writer = new BufferedWriter (new OutputStreamWriter(stream));
+				GameObject.toFile(writer);
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.d("SaveLevel", "error - "  + e);
+			}finally{
+				try{
+					if(writer != null){
+						writer.flush();
+						writer.close();
 					}
+				}catch(Exception e){
+					e.printStackTrace();
+					Log.d("SaveLevel", "error - "  + e);
+				}
 			}
 		}
 		
@@ -330,7 +362,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   		    
   		    c.drawText(String.valueOf(sft), 20, 24, text);
 //  		    Log.d("FPS", "" + String.valueOf(sft));
-  		    c.drawText("" + hero.getToggleCount(), 700, 30, text);
+  		    c.drawText("" + GameHero.hero.getToggleCount(), 700, 30, text);
 		}
 		
 		private void drawPause(Canvas c) {
@@ -354,9 +386,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				triPaint.setStyle(Paint.Style.FILL);
 				
 				if (input==Input.DOWN_LEFT) {
-					if (hero.ground!=null) {
-						if (hero.findGround()==3) triPaint.setColor(Color.RED);
-					} else triPaint.setColor(Color.RED);
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.RIGHT) triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0, 0);
 					triPath.lineTo(0, cameraSize.y);
@@ -364,30 +394,21 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					triPath.close();
 					
 				} else if (input==Input.DOWN_RIGHT) {
-					if (hero.ground!=null) {
-						if (hero.findGround()==1) triPaint.setColor(Color.RED);
-					} else triPaint.setColor(Color.RED);
-					
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.LEFT)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(Game.cameraSize.x, 0);
 					triPath.lineTo(Game.cameraSize.x, Game.cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_UP) {
-					if (hero.ground!=null) {
-						if (hero.findGround()==2) triPaint.setColor(Color.RED);
-					} else triPaint.setColor(Color.RED);
-					
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.DOWN)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0,0);
 					triPath.lineTo(Game.cameraSize.x,0);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_DOWN) {
-					if (hero.ground!=null) {
-						if (hero.findGround()==4) triPaint.setColor(Color.RED);
-					} else triPaint.setColor(Color.RED);
-					
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.UP)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0,Game.cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x,Game.cameraSize.y);
@@ -456,8 +477,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 				currentInput = _input.getInput();
 				
-				hero.processInput(currentInput);
-				hero.collisionAvoid();
+				GameHero.hero.processInput(currentInput);
+				GameHero.hero.collisionAvoid();
 				MovingObject.updateAll();
 				
 
@@ -476,7 +497,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					drawToScreen(picScreen);
 				}
 
-				if(hero.dead){
+				if(GameHero.hero.dead){
 					death();
 //				}else if (currentTime>lastSavedTime+25000){			//Every ten Seconds save checkpoint
 //					if(GameObject.saveCheckpointAll())

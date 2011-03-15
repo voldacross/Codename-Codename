@@ -1,5 +1,7 @@
 package voldaran.com.Upright;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -75,6 +77,13 @@ public class GameObject {
 		}
 	}
 	
+	public static void toFile(BufferedWriter writer) throws IOException{
+		for(GameObject o : GameObject.gameObjects){
+			writer.write(o.toString());
+			writer.newLine();
+		}
+	}
+	
 	public Vec2d pos;
 	public Vec2d extent;
 	public Vec2d velocity;
@@ -109,7 +118,6 @@ public class GameObject {
 	public String toString(){
 		return "GameObject: pos: " + pos + " extent: " + extent;
 	}
-	
 	
 	protected void grounding(GameObject ground){
 		this.ground = ground;

@@ -100,7 +100,6 @@ public class Vec2d {
 		return this;
 	}
 	
-	
 	public Vec2d clear(){
 		this.x = 0;
 		this.y = 0;
@@ -219,4 +218,7 @@ public class Vec2d {
 		return (x==-478643&&y==-478643);
 	}
 	
+	public boolean isZero(){
+		return x==0 && y==0;
+	}
 }

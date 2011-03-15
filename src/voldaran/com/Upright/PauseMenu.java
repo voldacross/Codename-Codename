@@ -42,7 +42,7 @@ public class PauseMenu {
 			return GameState.PLAYING;
 		if (Options.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1)));
 		if (Restart.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1))) {
-			mGame.thread.loadLevel(mGame.thread.currentLevel);
+			mGame.thread.loadLevel(mGame.currentLevel, true);
 			return GameState.PLAYING;
 		}
 		if (LevelSelect.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1))) {

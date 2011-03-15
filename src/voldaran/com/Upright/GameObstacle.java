@@ -17,7 +17,11 @@ public class GameObstacle extends GameObject{
 		color = Color.RED;
 	}
 
-	
+	@Override
+	public String toString(){
+		return "GameObstacle: pos: " + pos + " extent: " + extent;
+	}
+
 	@Override
 	public void drawP(Canvas c){
 		Rect recObject = new Rect((int) left / 1000, (int) top  / 1000, (int) right  / 1000, (int)bottom  / 1000);

@@ -12,17 +12,16 @@ public class UserInput {
 	public Input uInput = Input.NONE;
 	
 	public static enum Input {
+		NONE,
 		PRESS_RIGHT,
-		PRESS_LEFT,
 		PRESS_UP,
+		PRESS_LEFT,
 		PRESS_DOWN,
 		
 		DOWN_RIGHT,
-		DOWN_LEFT,
 		DOWN_UP,
-		DOWN_DOWN,
-		NONE
-	
+		DOWN_LEFT,
+		DOWN_DOWN
 	}
 	
 	public UserInput(Vec2d c, Vec2d s) {

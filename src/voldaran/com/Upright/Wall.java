@@ -10,29 +10,32 @@ public class Wall extends GameObject {
 		String data[] = objectData.split(",");
 		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
 		Vec2d extent = new Vec2d(Integer.parseInt(data[2]), Integer.parseInt(data[3])).mul(1000);
-		return new Wall(pos, extent);
+		boolean lit = (data.length > 4 && Integer.parseInt(data[4]) == 1 );
+		return new Wall(pos, extent, lit);
 	}
 
 	protected int colorCheckpoint;
 	
-	public Wall(Vec2d pos, Vec2d extent) {
-		this(pos, extent, new Vec2d(0,0));
+	public Wall(Vec2d pos, Vec2d extent, boolean lit) {
+		this(pos, extent, new Vec2d(0,0), lit);
 	}
 
-	public Wall(Vec2d pos, Vec2d extent, Vec2d velocity) {
+	public Wall(Vec2d pos, Vec2d extent, Vec2d velocity, boolean lit) {
 		super(pos, extent, velocity);
+		if(lit) color = Color.GREEN;
 		colorCheckpoint = color;
 	}
 	
 	@Override
 	public String toString(){
-		return "Wall: pos: " + pos + " extent: " + extent;
+		int lit = (color == Color.GREEN) ? 1:0;
+		return "Wall: pos: " + pos + " extent: " + extent + " lit: " + lit;
 	}
 
 	@Override
 	public void toggle(GameObject o){
 		super.touch(o);
-		if(o instanceof GameHero){
+		if(o == GameHero.hero){
 			if(color == Color.WHITE) color = Color.GREEN;
 			else color = Color.WHITE;
 		}
