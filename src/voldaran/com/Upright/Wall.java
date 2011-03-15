@@ -62,8 +62,10 @@ public class Wall extends GameObject {
 		paintObject.setColor(color);
 		c.drawRect(recObject, paintObject);
 	}
+	
 	@Override
 	public void draw(Canvas c){
+		
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
 				                  (int)((top - GameObject.offset.y) / 1000), 
 				                  (int)((right - GameObject.offset.x)/ 1000), 

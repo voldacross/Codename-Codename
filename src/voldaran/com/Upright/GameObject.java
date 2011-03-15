@@ -8,6 +8,7 @@ import java.util.Iterator;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 public class GameObject {
@@ -111,8 +112,9 @@ public class GameObject {
 		
 		this.velocity = velocity;
 		color = Color.WHITE;
-		
+
 		GameObject.gameObjects.add(this);
+		
 	}
 	
 	public String toString(){
@@ -186,6 +188,15 @@ public class GameObject {
 	}
 	
 	public void draw(Canvas c){
+		
+		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
+				                  (int)((top - GameObject.offset.y) / 1000), 
+				                  (int)((right - GameObject.offset.x)/ 1000), 
+		 		                 (int)((bottom - GameObject.offset.y) / 1000));
+
+		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+		paintObject.setColor(color);
+		c.drawRect(recObject, paintObject);
 	}
 	
 	protected boolean allowCheckpoint(){

@@ -208,6 +208,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 						GameHero.fromString(line.substring(4));
 						Log.d("LoadLevel", GameHero.hero.toString());
 					}
+					else if (line.startsWith("rlaunch")) {
+						Log.d("GSTA", "rlaunch found " + line); 
+						new GameRLauncher(new Vec2d(424000,264000), new Vec2d(40000,40000));
+					}
 					else Log.d("Load", rline);
 				}
 			}

@@ -107,6 +107,7 @@ public class GameHero extends MovingObject{
 	public void touch(GameObject o){
 		dead = o instanceof GameObstacle;
 		if(!dead){
+			toggleCount++;
 			grounding(o);
 		}
 	}
@@ -130,6 +131,7 @@ public class GameHero extends MovingObject{
 		super.saveCheckpoint();
 		Log.d("GSTA", this.toString());
 		lastDirectionCheckpoint = lastDirection;
+		
 		previousToggleCount = toggleCount; 
 	}
 	
