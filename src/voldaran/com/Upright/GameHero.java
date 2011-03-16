@@ -106,9 +106,134 @@ public class GameHero extends MovingObject{
 	@Override
 	public void touch(GameObject o){
 		dead = o instanceof GameObstacle;
-		if(!dead){
+		if((!dead)&&(o instanceof Wall)){
 			toggleCount++;
 			grounding(o);
+		} else if ((o instanceof GameRLauncher) || (o instanceof GameDLauncher)) {
+			Log.d("GSTA", "you hit launcher");
+			int direction = 9;
+			
+			if (o instanceof GameRLauncher)  direction = ((GameRLauncher) o).direction;
+			if (o instanceof GameDLauncher)  direction = ((GameDLauncher) o).direction;
+			
+			switch (lastDirection) {
+				case RIGHT:
+					switch (direction) {
+						case 0:
+							pos.x = o.right + extent.x;
+							applyForce(Velocities[RIGHT]);
+							lastDirection = RIGHT;
+						break;
+						
+						case 1:
+							pos.y = o.bottom + extent.y;
+							pos.x = o.left + extent.x;
+							applyForce(Velocities[DOWN]);
+							lastDirection = DOWN;
+						break;
+						
+						case 2:
+							applyForce(Velocities[LEFT]);
+							lastDirection = LEFT;
+						break;
+						
+						case 3:
+							pos.y = o.top - extent.y;
+							pos.x = o.left + extent.x;
+							applyForce(Velocities[UP]);
+							lastDirection = UP;
+						break;
+					}
+					
+					
+					break;
+				case LEFT:
+						switch (direction) {
+						case 0:
+							applyForce(Velocities[RIGHT]);
+							lastDirection = RIGHT;
+						break;
+						
+						case 1:
+							pos.x = o.right - extent.x;
+							pos.y = o.bottom + extent.y;
+							applyForce(Velocities[DOWN]);
+							lastDirection = DOWN;
+						break;
+						
+						case 2:
+							pos.x = o.left - extent.x;
+							applyForce(Velocities[LEFT]);
+							lastDirection = LEFT;
+						break;
+						
+						case 3:
+							pos.y = o.top - extent.y;
+							pos.x = o.right - extent.x;
+							applyForce(Velocities[UP]);
+							lastDirection = UP;
+						break;
+						}
+					break;
+				case UP:
+					switch (direction) {
+					case 0:
+						pos.x = o.right + extent.x;
+						pos.y = o.bottom - extent.y;
+						applyForce(Velocities[RIGHT]);
+						lastDirection = RIGHT;
+					break;
+					
+					case 1:
+						applyForce(Velocities[DOWN]);
+						lastDirection = DOWN;
+					break;
+					
+					case 2:
+						pos.x = o.left - extent.x;
+						pos.y = o.bottom - extent.y;
+						applyForce(Velocities[LEFT]);
+						lastDirection = LEFT;
+					break;
+					
+					case 3:
+						pos.y = o.top - extent.y;
+						applyForce(Velocities[UP]);
+						lastDirection = UP;
+					break;
+				}
+					break;
+				case DOWN:
+					switch (direction) {
+					case 0:
+						pos.x = o.right + extent.x;
+						pos.y = o.top + extent.y;
+						applyForce(Velocities[RIGHT]);
+						lastDirection = RIGHT;
+					break;
+					
+					case 1:
+						pos.y = o.bottom + extent.y;
+						applyForce(Velocities[DOWN]);
+						lastDirection = DOWN;
+					break;
+					
+					case 2:
+						pos.x = o.left - extent.x;
+						pos.y = o.top + extent.y;
+						applyForce(Velocities[LEFT]);
+						lastDirection = LEFT;
+					break;
+					
+					case 3:
+						applyForce(Velocities[UP]);
+						lastDirection = UP;
+					break;
+				}
+					break;
+			}
+			if (o instanceof GameRLauncher) ((GameRLauncher) o).hit();
+			if (o instanceof GameDLauncher) ((GameDLauncher) o).hit();
 		}
 	}
 	
@@ -131,7 +256,6 @@ public class GameHero extends MovingObject{
 		super.saveCheckpoint();
 		Log.d("GSTA", this.toString());
 		lastDirectionCheckpoint = lastDirection;
-		
 		previousToggleCount = toggleCount; 
 	}
 	

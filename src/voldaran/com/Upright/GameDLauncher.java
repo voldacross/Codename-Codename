@@ -9,31 +9,20 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
 
-public class GameRLauncher extends GameObject{
+public class GameDLauncher extends GameObject{
 
 	public int direction = 1;
 	private int lastDirection;
 	private Bitmap bitmap;
 	
-	public static GameRLauncher fromString(String objectData){
-		String data[] = objectData.split(",");
-		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
-		Vec2d extent = new Vec2d(Integer.parseInt(data[2]), Integer.parseInt(data[3])).mul(1000);
-		return new GameRLauncher(pos, extent);
-	}
-	
-	
-	public GameRLauncher(Vec2d pos, Vec2d extent) {
+	public GameDLauncher(Vec2d pos, Vec2d extent) {
 		super(pos, extent);
 		color = Color.BLUE;
 		bitmap = Game.loadBitmapAsset("rlaunch.png");
 	}
 	
 	public void hit() {
-		Log.d("GSTA", "HIT! " + direction);
-		direction++;
-		if (direction>=4) direction = 0;
-		Log.d("GSTA", "HIT2! " + direction);	
+		if (direction==0) direction=1; else direction=0;
 	}
 	
 	@Override

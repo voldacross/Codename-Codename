@@ -195,24 +195,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	            stream = assets.open("level/" + levelAsset);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
 				String rline, line;
-				GameObject o;
 				while((rline = reader.readLine()) != null){
 					line = rline.replaceAll("\\) *extent", ",")
 						   	    .replaceAll(" |\\(|\\)|:|pos|extent", "")
 						        .toLowerCase();
-					if (line.startsWith("wall")){
-						o = (GameObject) Wall.fromString(line.substring(4));
-						Log.d("LoadLevel", o.toString());
-					}
-					else if (line.startsWith("hero")) {
-						GameHero.fromString(line.substring(4));
-						Log.d("LoadLevel", GameHero.hero.toString());
-					}
-					else if (line.startsWith("rlaunch")) {
-						Log.d("GSTA", "rlaunch found " + line); 
-						new GameRLauncher(new Vec2d(424000,264000), new Vec2d(40000,40000));
-					}
-					else Log.d("Load", rline);
+					parseLine(line);
 				}
 			}
 			catch (Exception e){
@@ -268,6 +255,28 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 		
+		//added so we didn't have to change 2 different places every time we needed to adjust the parsing.
+		public void parseLine(String line) {
+			GameObject o;
+			if (line.startsWith("wall")){
+				o = (GameObject) Wall.fromString(line.substring(4));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("hero")) {
+				GameHero.fromString(line.substring(4));
+				Log.d("LoadLevel", GameHero.hero.toString());
+			}
+			else if (line.startsWith("rlaunch")) {
+//				new GameRLauncher(new Vec2d(392000,200000), new Vec2d(40000,40000));
+				GameRLauncher rlaunch = GameRLauncher.fromString(line.substring(7));
+				Log.d("LoadLevel", "" + rlaunch.direction);
+				
+			}
+			else Log.d("Load", line);
+			
+		}
+		
+		
 		//Loads a level
 		public void loadLevel(InputStream stream) {
 			//Clear out old level if present
@@ -285,20 +294,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			try{
 				reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
 				String rline, line;
-				GameObject o;
 				while((rline = reader.readLine()) != null){
 					line = rline.toLowerCase()
 								.replaceAll("\\) *extent|\\) *direction|\\) *light", ",")
 						   	    .replaceAll(" |\\(|\\)|:|pos|extent|direction|light", "");
-					if (line.startsWith("wall")){
-						o = (GameObject) Wall.fromString(line.substring(4));
-						Log.d("LoadLevel", o.toString());
-					}
-					else if (line.startsWith("hero")) {
-						GameHero.fromString(line.substring(4));
-						Log.d("LoadLevel", GameHero.hero.toString());
-					}
-					else Log.d("Load", rline);
+					parseLine(line);
 				}
 			}catch (Exception e){
 				e.printStackTrace();

@@ -112,9 +112,8 @@ public class GameObject {
 		
 		this.velocity = velocity;
 		color = Color.WHITE;
-
-		GameObject.gameObjects.add(this);
 		
+		GameObject.gameObjects.add(this);
 	}
 	
 	public String toString(){
@@ -182,17 +181,28 @@ public class GameObject {
 	}
 	
 	public void drawP(Canvas c){
-	}
-	
-	public void drawPreview(Canvas c){
+		Rect recObject = new Rect((int) left / 1000, (int) top  / 1000, (int) right  / 1000, (int)bottom  / 1000);
+		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+		paintObject.setColor(color);
+		c.drawRect(recObject, paintObject);
 	}
 	
 	public void draw(Canvas c){
-		
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
 				                  (int)((top - GameObject.offset.y) / 1000), 
 				                  (int)((right - GameObject.offset.x)/ 1000), 
 		 		                 (int)((bottom - GameObject.offset.y) / 1000));
+
+		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+		paintObject.setColor(color);
+		c.drawRect(recObject, paintObject);
+	}
+	
+	public void drawPreview(Canvas c){
+		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000 / 4), 
+				                  (int)((top - GameObject.offset.y) / 1000 / 4), 
+				                  (int)((right - GameObject.offset.x)/ 1000 / 4), 
+		 		                 (int)((bottom - GameObject.offset.y) / 1000 / 4));
 
 		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 		paintObject.setColor(color);
