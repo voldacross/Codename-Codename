@@ -2,6 +2,8 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class MovingObject extends GameObject{
 	public static ArrayList<MovingObject> movingObjects = new ArrayList<MovingObject>();
 	
@@ -51,6 +53,10 @@ public class MovingObject extends GameObject{
 	}
 	
 	protected boolean overlaps(GameObject b){
+		if (b instanceof GameObstacleGen) { 
+			Log.d("GSTA", "testing laser overlap");
+			Log.d("GSTA", b.toString());
+		}
 		return this.right > b.left && this.left < b.right && this.bottom > b.top && this.top < b.bottom;
 	}
 	
@@ -59,21 +65,29 @@ public class MovingObject extends GameObject{
 		Collision firstcollision;
 		
 		firstcollision = null;
+		GameObject contact = null;
 		for(GameObject o : GameObject.gameObjects){
-			if(o != this) 
+			if ((o instanceof GameObstacleGen)&&(overlaps(o))) Log.d("GSTA", "touching laser");
+			if((o != this)&&(o.solid)) {
 				collision = sweepOverlaps(o);
 				if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
 					firstcollision = collision;
 				}
+			} else if ((!o.solid)&&(overlaps(o))) {
+				contact = o;
+			}
 		}
 		if(firstcollision != null){
 			this.velocity = firstcollision.correctedVelocity;
 			this.touch(firstcollision.collider);
 			firstcollision.collider.touch(this);
+		} else if (contact!=null) {
+			GameHero.hero.touch(contact);
 		}
 	}
 	
 	protected Collision sweepOverlaps(GameObject b){
+//		if (!b.solid) return new Collision(0,b.velocity,b);
 		if(overlaps(b)) return null;
 		
 		float[] to = {-1, -1};								// No collision flag

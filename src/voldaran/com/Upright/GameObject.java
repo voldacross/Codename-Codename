@@ -21,6 +21,7 @@ public class GameObject {
 	public final static int LEFT = 3; 
 	public final static int DOWN = 4; 
 	public final static int BOTTOM = 4; 
+	public boolean solid = true;
 	
 	public static void drawPause(Canvas c, Vec2d cameraSize) {
 		for (GameObject o : GameObject.gameObjects){

@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.util.Log;
 
 public class GameDLauncher extends GameObject{
 

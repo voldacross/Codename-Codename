@@ -1,5 +1,7 @@
 package voldaran.com.Upright;
 
+import java.util.ArrayList;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,13 +9,16 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.util.Log;
 
 public class GameRLauncher extends GameObject{
 
-	public int direction = 1;
-	private int lastDirection;
+	public int direction = 3;
+	private int lastDirection = 3;
 	private Bitmap bitmap;
+	
+	private ArrayList<GameRLauncherToggle> launchToggles = new ArrayList<GameRLauncherToggle>();
+	private ArrayList<GameRLauncherToggle> launchActiveToggles = new ArrayList<GameRLauncherToggle>();
+	
 	
 	public static GameRLauncher fromString(String objectData){
 		String data[] = objectData.split(",");
@@ -22,6 +27,23 @@ public class GameRLauncher extends GameObject{
 		return new GameRLauncher(pos, extent);
 	}
 	
+	public void addToggle(Vec2d pos) {
+		GameRLauncherToggle o = new GameRLauncherToggle(pos, new Vec2d(20000,20000), this);
+		launchToggles.add(o);
+		launchActiveToggles.add(o);
+	}
+	
+	public void toggle(GameRLauncherToggle toggle) {
+		launchActiveToggles.clear();
+		launchActiveToggles.addAll(launchToggles);
+		launchActiveToggles.remove(toggle);
+		for(GameRLauncherToggle o : launchToggles){
+			o.active = true;
+		}
+		toggle.active = false;
+		this.hit();
+		
+	}
 	
 	public GameRLauncher(Vec2d pos, Vec2d extent) {
 		super(pos, extent);
@@ -30,10 +52,8 @@ public class GameRLauncher extends GameObject{
 	}
 	
 	public void hit() {
-		Log.d("GSTA", "HIT! " + direction);
 		direction++;
 		if (direction>=4) direction = 0;
-		Log.d("GSTA", "HIT2! " + direction);	
 	}
 	
 	@Override

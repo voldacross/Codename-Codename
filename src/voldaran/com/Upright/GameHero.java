@@ -50,6 +50,7 @@ public class GameHero extends MovingObject{
 	protected void grounding(GameObject o){
    		if(o instanceof Wall){
    			((Wall)o).toggle(this);
+   			GameObstacleGen.adjustLasers();
     		switch(lastDirection){
     		case RIGHT:
     			pos.x = o.right + extent.x;
@@ -105,12 +106,14 @@ public class GameHero extends MovingObject{
 
 	@Override
 	public void touch(GameObject o){
-		dead = o instanceof GameObstacle;
+		
+		if  (o instanceof GameObstacleGen) Log.d("GSTA", "you touched a laser");
+		
+		dead = o instanceof GameObstacle || o instanceof GameObstacleGen;
 		if((!dead)&&(o instanceof Wall)){
 			toggleCount++;
 			grounding(o);
 		} else if ((o instanceof GameRLauncher) || (o instanceof GameDLauncher)) {
-			Log.d("GSTA", "you hit launcher");
 			int direction = 9;
 			
 			if (o instanceof GameRLauncher)  direction = ((GameRLauncher) o).direction;
@@ -232,8 +235,9 @@ public class GameHero extends MovingObject{
 				}
 					break;
 			}
-			if (o instanceof GameRLauncher) ((GameRLauncher) o).hit();
-			if (o instanceof GameDLauncher) ((GameDLauncher) o).hit();
+
+		} else if (o instanceof GameRLauncherToggle) {
+			((GameRLauncherToggle) o).hit();
 		}
 	}
 	

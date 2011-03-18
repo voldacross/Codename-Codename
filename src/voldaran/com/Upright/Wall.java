@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Wall extends GameObject {
+	
+	
 	public static Wall fromString(String objectData){
 		String data[] = objectData.split(",");
 		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
@@ -41,6 +43,8 @@ public class Wall extends GameObject {
 		}
 	}
 
+
+	
 	@Override
 	protected void saveCheckpoint(){
 		colorCheckpoint = color;

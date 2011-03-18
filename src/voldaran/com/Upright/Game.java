@@ -267,10 +267,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				Log.d("LoadLevel", GameHero.hero.toString());
 			}
 			else if (line.startsWith("rlaunch")) {
-//				new GameRLauncher(new Vec2d(392000,200000), new Vec2d(40000,40000));
-				GameRLauncher rlaunch = GameRLauncher.fromString(line.substring(7));
-				Log.d("LoadLevel", "" + rlaunch.direction);
-				
+				GameRLauncher rLaunch = GameRLauncher.fromString(line.substring(7));
+				rLaunch.addToggle(new Vec2d(660000,290000));
+				rLaunch.addToggle(new Vec2d(440000,380000));
 			}
 			else Log.d("Load", line);
 			
@@ -311,6 +310,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					Log.d("LoadLevel", "error - " + e);
 				}
 			}
+//			Wall448,376
+			new GameObstacleGen(new Vec2d(400000,0),1);
+			
+			
+			new GameObstacleGen(new Vec2d(400000,480000),3);
+//			new GameObstacleGen(new Vec2d(600000,40000),1);
+//			new GameObstacleGen(new Vec2d(40000,200000),0);
+//			new GameObstacleGen(new Vec2d(740000,300000),2);
+//			new GameObstacleGen(new Vec2d(448000,376000),3);
 
 		}
 		
