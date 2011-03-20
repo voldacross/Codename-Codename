@@ -7,6 +7,8 @@ import android.graphics.Rect;
 
 public class Wall extends GameObject {
 	
+	public int OFF = Color.WHITE;
+	public int ON = Color.GREEN;
 	
 	public static Wall fromString(String objectData){
 		String data[] = objectData.split(",");
@@ -24,26 +26,29 @@ public class Wall extends GameObject {
 
 	public Wall(Vec2d pos, Vec2d extent, Vec2d velocity, boolean lit) {
 		super(pos, extent, velocity);
-		if(lit) color = Color.GREEN;
+		updateColors(lit);
 		colorCheckpoint = color;
 	}
 	
 	@Override
 	public String toString(){
-		int lit = (color == Color.GREEN) ? 1:0;
+		int lit = (color == ON) ? 1:0;
 		return "Wall: pos: " + pos + " extent: " + extent + " lit: " + lit;
 	}
 
+	public void updateColors(boolean lit) {
+		if(lit) color = ON; else color = OFF; 
+		
+	}
+	
 	@Override
 	public void toggle(GameObject o){
 		super.touch(o);
 		if(o == GameHero.hero){
-			if(color == Color.WHITE) color = Color.GREEN;
-			else color = Color.WHITE;
+			if(color == OFF) color = ON;
+			else color = OFF;
 		}
 	}
-
-
 	
 	@Override
 	protected void saveCheckpoint(){
@@ -56,7 +61,7 @@ public class Wall extends GameObject {
 	}
 	@Override
 	public boolean checkWin() {
-		return (color==Color.GREEN);
+		return (color==ON);
 	}
 	
 	@Override

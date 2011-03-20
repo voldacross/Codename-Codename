@@ -15,6 +15,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Picture;
@@ -67,7 +68,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
-		_input.UpdateInput(event);
+		_input.UpdateInput(event,this);
 		return true;
 	}
 	
@@ -271,9 +272,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				rLaunch.addToggle(new Vec2d(660000,290000));
 				rLaunch.addToggle(new Vec2d(440000,380000));
 			}
+			else if (line.startsWith("twall")) {
+				o = (GameObject) WallToggle.fromString(line.substring(5));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("3wall")) {
+				o = (GameObject) Wall3.fromString(line.substring(5));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("2wall")) {
+				o = (GameObject) Wall2.fromString(line.substring(5));
+				Log.d("LoadLevel", o.toString());
+			}
 			else Log.d("Load", line);
 			
 		}
+		
 		
 		
 		//Loads a level
@@ -311,10 +325,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				}
 			}
 //			Wall448,376
-			new GameObstacleGen(new Vec2d(400000,0),1);
+//			new GameObstacleGen(new Vec2d(400000,0),1);
 			
 			
-			new GameObstacleGen(new Vec2d(400000,480000),3);
+//			new GameObstacleGen(new Vec2d(400000,480000),3);
 //			new GameObstacleGen(new Vec2d(600000,40000),1);
 //			new GameObstacleGen(new Vec2d(40000,200000),0);
 //			new GameObstacleGen(new Vec2d(740000,300000),2);
@@ -381,6 +395,44 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			c.drawBitmap(pauseButton, Game.cameraSize.x - pauseButton.getWidth() - 15, 15, null);
 		}
 		
+		Bitmap arrow = Game.loadBitmapAsset("arrow_guide.png");
+		
+		public void drawArrows(Canvas c) {
+			GameHero h = GameHero.hero;
+			Matrix mtx = new Matrix();
+			mtx.postRotate(90);
+			Bitmap downArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			mtx.postRotate(90);
+			Bitmap leftArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			mtx.postRotate(90);
+			Bitmap upArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			if (h.velocity.isZero()) {
+				
+				if(GameHero.hero.lastDirection == GameObject.RIGHT) {
+					/*RIGHT*/c.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
+					/*UP*/c.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
+					/*DOWN*/c.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
+				} else if(GameHero.hero.lastDirection == GameObject.LEFT) {
+					/*LEFT*/c.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
+					/*UP*/c.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
+					/*DOWN*/c.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
+					
+				} else if(GameHero.hero.lastDirection == GameObject.DOWN) {
+					/*RIGHT*/c.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
+					/*LEFT*/c.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
+					/*DOWN*/c.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
+					
+				} else if(GameHero.hero.lastDirection == GameObject.UP) {
+					/*RIGHT*/c.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
+					/*LEFT*/c.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
+					/*UP*/c.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
+				}
+					
+				
+				
+				
+			}
+		}
 		public void drawPress(Canvas c, Input input) {
 			
 			Vec2d down = _input.getDown();
@@ -399,35 +451,36 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 				if (input==Input.DOWN_LEFT) {
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.RIGHT) triPaint.setColor(Color.RED);
-					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo(0, 0);
-					triPath.lineTo(0, cameraSize.y);
+					triPath.moveTo((Game.cameraSize.x/2), Game.cameraSize.y/2);
+					triPath.lineTo((Game.cameraSize.x/2) - 1000, (Game.cameraSize.y/2) - 1000);
+					triPath.lineTo((Game.cameraSize.x/2) - 1000, (Game.cameraSize.y/2) + 1000);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 					
 				} else if (input==Input.DOWN_RIGHT) {
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.LEFT)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo(Game.cameraSize.x, 0);
-					triPath.lineTo(Game.cameraSize.x, Game.cameraSize.y);
+					triPath.lineTo((Game.cameraSize.x/2) + 1000, (Game.cameraSize.y/2) - 1000);
+					triPath.lineTo((Game.cameraSize.x/2) + 1000, (Game.cameraSize.y/2) + 1000);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_UP) {
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.DOWN)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo(0,0);
-					triPath.lineTo(Game.cameraSize.x,0);
+					triPath.lineTo((Game.cameraSize.x/2) + 1000,(Game.cameraSize.y/2) - 1000);
+					triPath.lineTo((Game.cameraSize.x/2) - 1000, (Game.cameraSize.y/2) - 1000);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_DOWN) {
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.UP)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo(0,Game.cameraSize.y);
-					triPath.lineTo(Game.cameraSize.x,Game.cameraSize.y);
+					triPath.lineTo((Game.cameraSize.x/2) + 1000,(Game.cameraSize.y/2) +1000);
+					triPath.lineTo((Game.cameraSize.x/2) - 1000,(Game.cameraSize.y/2) + 1000);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				}
-				triPaint.setAlpha(80);				
+				triPaint.setAlpha(80);			
+				triPath.offset((GameHero.hero.pos.x / 1000) - 400, (GameHero.hero.pos.y / 1000) - 240);
 				c.drawPath(triPath, triPaint);
 //				c.drawCircle(down.x, down.y, 13, paint);
 //				c.drawCircle(current.x, current.y, 7, paint);
@@ -500,11 +553,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				synchronized (_surfaceHolder) {
 					clearScreen(c, Game.cameraSize);
 					GameObject.drawAll(c);
-					
+//					drawArrows(c);
 					drawPress(c, currentInput);
 					drawFPS(c);
 					drawPause(c);
-					
+
 					picScreen.endRecording();
 					drawToScreen(picScreen);
 				}

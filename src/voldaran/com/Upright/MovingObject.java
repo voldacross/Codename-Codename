@@ -53,10 +53,6 @@ public class MovingObject extends GameObject{
 	}
 	
 	protected boolean overlaps(GameObject b){
-		if (b instanceof GameObstacleGen) { 
-			Log.d("GSTA", "testing laser overlap");
-			Log.d("GSTA", b.toString());
-		}
 		return this.right > b.left && this.left < b.right && this.bottom > b.top && this.top < b.bottom;
 	}
 	

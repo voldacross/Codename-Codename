@@ -149,6 +149,10 @@ public class GameObject {
 	
 	}
 	
+	public boolean touching(GameObject o){
+		return right == o.left && overlap(o, false) || top == o.bottom && overlap(o, true) || left == o.right && overlap(o, false) || bottom == o.top && overlap(o, true);
+	}
+	
 	// overlap - tests if the project of the horizontal or vertical extent of this object and given object overlap
 	// in: o - object to test against
 	//     horizontal - true = horizontal extent, false = vertical extent
