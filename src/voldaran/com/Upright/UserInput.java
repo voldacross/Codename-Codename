@@ -31,19 +31,12 @@ public class UserInput {
 	}
 
 	
-	private int calcQuad (Vec2d point, Game mGame) {
+	private int calcQuad (Vec2d point) {
 		float x1, x2, x3, y1, y2, y3, a0, a1, a2, a3;
-		if (mGame.gameState==Game.GameState.PLAYING) {
-			x1 = (GameHero.hero.pos.x / 1000); y1 = (GameHero.hero.pos.y / 1000);
-			x2 = (GameHero.hero.pos.x / 1000) + 1000; y2 = (GameHero.hero.pos.y / 1000) - 1000;
-			x3 = (GameHero.hero.pos.x / 1000) + 1000; y3 = (GameHero.hero.pos.y / 1000) + 1000;			
-			
-		} else {
-			x1 = surfaceSize.x / 2; y1 = surfaceSize.y / 2;
-			x2 = surfaceSize.x; y2 = 0;
-			x3 = surfaceSize.x; y3 = surfaceSize.y;
-		}
-		Log.d("GSTA", "" + x1 + "," + y1 + " "+ x2 + "," + y2+ " "+ x3 + "," + y3);
+		x1 = surfaceSize.x / 2; y1 = surfaceSize.y / 2;
+		x2 = surfaceSize.x; y2 = 0;
+		x3 = surfaceSize.x; y3 = surfaceSize.y;
+		
 		for (int i = 0; i<4; i++) {
 			a0 = Math.abs((x2-x1)*(y3-y1)-(x3-x1)*(y2-y1));
 			a1 = Math.abs((x1-point.x)*(y2-point.y)-(x2-point.x)*(y1-point.y));
@@ -54,35 +47,16 @@ public class UserInput {
 			
 			switch (i) {
 			case 0: //1
-				if (mGame.gameState==Game.GameState.PLAYING) {
-					
-					x2 = (GameHero.hero.pos.x / 1000) + 1000; y2 = (GameHero.hero.pos.y / 1000) + 1000;
-					x3 = (GameHero.hero.pos.x / 1000) - 1000; y3 = (GameHero.hero.pos.y / 1000) + 1000;	
-				} else {
-				
-					x2 = 0; y2 = surfaceSize.y;
-					x3 = surfaceSize.x; y3 = surfaceSize.y;
-				}
+				x2 = 0; y2 = surfaceSize.y;
+				x3 = surfaceSize.x; y3 = surfaceSize.y;				
 				break;
 			case 1: //2
-				if (mGame.gameState==Game.GameState.PLAYING) {
-					x2 = (GameHero.hero.pos.x / 1000) - 1000; y2 = (GameHero.hero.pos.y / 1000) - 1000;
-					x3 = (GameHero.hero.pos.x / 1000) - 1000; y3 = (GameHero.hero.pos.y / 1000) + 1000;	
-				} else {
-				
-					x2 = 0; y2 = 0;
-					x3 = 0; y3 = surfaceSize.y;
-				}
+				x2 = 0; y2 = 0;
+				x3 = 0; y3 = surfaceSize.y;
 				break;
 			case 2: //3
-				if (mGame.gameState==Game.GameState.PLAYING) {
-					x2 = (GameHero.hero.pos.x / 1000) + 1000; y2 = (GameHero.hero.pos.y / 1000) - 1000;
-					x3 = (GameHero.hero.pos.x / 1000) - 1000; y3 = (GameHero.hero.pos.y / 1000) - 1000;	
-				} else {
-				
-					x2 = 0; y2 = 0;
-					x3 = surfaceSize.x; y3 = 0;
-				}
+				x2 = 0; y2 = 0;
+				x3 = surfaceSize.x; y3 = 0;
 				break;
 			}
 
@@ -91,7 +65,7 @@ public class UserInput {
 	}
 
 	
-	public void UpdateInput (MotionEvent event, Game mGame) {
+	public void UpdateInput (MotionEvent event) {
 		final int action = event.getAction();
 		
 		switch (action & MotionEvent.ACTION_MASK) {
@@ -101,9 +75,9 @@ public class UserInput {
 			
 			mPress.setVoid();
 			
-			Log.d("GSTA", "" + calcQuad(mCurrentTouch, mGame));
+			Log.d("GSTA", "" + calcQuad(mCurrentTouch));
 			
-			switch (calcQuad(mCurrentTouch, mGame)) {
+			switch (calcQuad(mCurrentTouch)) {
 			case 0:
 				uInput = Input.DOWN_RIGHT;
 				break;
@@ -128,7 +102,7 @@ public class UserInput {
 			
 			mPress.set(event.getX(), event.getY());
 			Log.d("GSTA", "UP! " + mPress.x);
-			switch (calcQuad(mCurrentTouch, mGame)) {
+			switch (calcQuad(mCurrentTouch)) {
 			case 0:
 				uInput = Input.PRESS_RIGHT;
 				break;
@@ -151,7 +125,7 @@ public class UserInput {
 		case MotionEvent.ACTION_MOVE:
 			mCurrentTouch.set(event.getX(),event.getY());
 			
-			switch (calcQuad(mCurrentTouch, mGame)) {
+			switch (calcQuad(mCurrentTouch)) {
 			case 0:
 				uInput = Input.DOWN_RIGHT;
 				break;
@@ -218,4 +192,3 @@ public class UserInput {
 
 
 }
-

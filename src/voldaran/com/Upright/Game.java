@@ -68,7 +68,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public boolean onTouchEvent (MotionEvent event) {
-		_input.UpdateInput(event,this);
+		_input.UpdateInput(event);
 		return true;
 	}
 	
@@ -433,8 +433,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				
 			}
 		}
-		public void drawPress(Canvas c, Input input) {
+public void drawPress(Canvas c, Input input) {
 			
+	Matrix mtx = new Matrix();
+	mtx.postRotate(90);
+	Bitmap downArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+	mtx.postRotate(90);
+	Bitmap leftArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+	mtx.postRotate(90);
+	Bitmap upArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+	
 			Vec2d down = _input.getDown();
 			Vec2d mClicked = new Vec2d(_input.getCurrent());
 			if ((!down.isVoid()) && !((mClicked.x>700)&&(mClicked.y<100))){
@@ -450,37 +458,40 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				triPaint.setStyle(Paint.Style.FILL);
 				
 				if (input==Input.DOWN_LEFT) {
+					c.drawBitmap(leftArrow, cameraSize.x / 4 - leftArrow.getWidth(), cameraSize.y / 2 - leftArrow.getHeight() / 2, null);
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.RIGHT) triPaint.setColor(Color.RED);
-					triPath.moveTo((Game.cameraSize.x/2), Game.cameraSize.y/2);
-					triPath.lineTo((Game.cameraSize.x/2) - 1000, (Game.cameraSize.y/2) - 1000);
-					triPath.lineTo((Game.cameraSize.x/2) - 1000, (Game.cameraSize.y/2) + 1000);
+					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
+					triPath.lineTo(0, 0);
+					triPath.lineTo(0, cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 					
 				} else if (input==Input.DOWN_RIGHT) {
+					c.drawBitmap(arrow, (cameraSize.x - (cameraSize.x / 4)), cameraSize.y / 2 - (arrow.getHeight() / 2), null);
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.LEFT)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo((Game.cameraSize.x/2) + 1000, (Game.cameraSize.y/2) - 1000);
-					triPath.lineTo((Game.cameraSize.x/2) + 1000, (Game.cameraSize.y/2) + 1000);
+					triPath.lineTo(Game.cameraSize.x, 0);
+					triPath.lineTo(Game.cameraSize.x, Game.cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_UP) {
+					c.drawBitmap(upArrow, ((cameraSize.x / 2)) - (upArrow.getWidth() / 2), (cameraSize.y / 4) - upArrow.getHeight(), null);
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.DOWN)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo((Game.cameraSize.x/2) + 1000,(Game.cameraSize.y/2) - 1000);
-					triPath.lineTo((Game.cameraSize.x/2) - 1000, (Game.cameraSize.y/2) - 1000);
+					triPath.lineTo(0,0);
+					triPath.lineTo(Game.cameraSize.x,0);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				} else if (input==Input.DOWN_DOWN) {
+					c.drawBitmap(downArrow, ((cameraSize.x / 2)) - (downArrow.getWidth() / 2), (cameraSize.y - (cameraSize.y / 4)), null);
 					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.UP)triPaint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
-					triPath.lineTo((Game.cameraSize.x/2) + 1000,(Game.cameraSize.y/2) +1000);
-					triPath.lineTo((Game.cameraSize.x/2) - 1000,(Game.cameraSize.y/2) + 1000);
+					triPath.lineTo(0,Game.cameraSize.y);
+					triPath.lineTo(Game.cameraSize.x,Game.cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				}
-				triPaint.setAlpha(80);			
-				triPath.offset((GameHero.hero.pos.x / 1000) - 400, (GameHero.hero.pos.y / 1000) - 240);
+				triPaint.setAlpha(80);				
 				c.drawPath(triPath, triPaint);
 //				c.drawCircle(down.x, down.y, 13, paint);
 //				c.drawCircle(current.x, current.y, 7, paint);
