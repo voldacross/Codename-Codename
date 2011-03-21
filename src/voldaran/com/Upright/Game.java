@@ -325,8 +325,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				}
 			}
 //			Wall448,376
-//			new GameObstacleGen(new Vec2d(400000,0),1);
-			
+			new GameObstacleGen(new Vec2d(296000,8000),1);
+			new GameObstacleGen(new Vec2d(488000,472000),3);
+//			Wall296,8,8,8
+//			Wall488,472,8,8
 			
 //			new GameObstacleGen(new Vec2d(400000,480000),3);
 //			new GameObstacleGen(new Vec2d(600000,40000),1);

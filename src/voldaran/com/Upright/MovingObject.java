@@ -63,7 +63,6 @@ public class MovingObject extends GameObject{
 		firstcollision = null;
 		GameObject contact = null;
 		for(GameObject o : GameObject.gameObjects){
-			if ((o instanceof GameObstacleGen)&&(overlaps(o))) Log.d("GSTA", "touching laser");
 			if((o != this)&&(o.solid)) {
 				collision = sweepOverlaps(o);
 				if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){

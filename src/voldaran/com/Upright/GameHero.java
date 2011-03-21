@@ -51,6 +51,7 @@ public class GameHero extends MovingObject{
    		if(o instanceof Wall || o instanceof WallToggle){
    			o.toggle(this);
    			GameObstacleGen.adjustLasers();
+   			
     		switch(lastDirection){
     		case RIGHT:
     			pos.x = o.right + extent.x;
@@ -65,6 +66,9 @@ public class GameHero extends MovingObject{
     			pos.y = o.bottom + extent.y;
     			break;
     		}
+//    		setSides();
+//    		GameHero.hero.collisionAvoid();
+//    		TrailOfDeath.updateTrail(this);
     		GameObject.saveCheckpointAll();
     	}
 	}
