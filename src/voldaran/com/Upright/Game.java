@@ -284,7 +284,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				o = (GameObject) Wall2.fromString(line.substring(5));
 				Log.d("LoadLevel", o.toString());
 			}
-			else if (line.startsWith("trail")) TrailOfDeath.enabled = true;
+//			else if (line.startsWith("mode")) {
+//					if (line.indexOf("trail")>0) { 
+//						TrailOfDeath.enabled = true;
+//						TrailOfDeath.enabled = false;
+//					}
+//					else 
+//						TrailOfDeath.enabled = false;
+//				
+//			}
 			
 			else Log.d("Load", line);
 			
@@ -327,8 +335,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				}
 			}
 //			Wall448,376
-//			new GameObstacleGen(new Vec2d(296000,8000),1);
-//			new GameObstacleGen(new Vec2d(488000,472000),3);
+			new GameObstacleGen(new Vec2d(296000,8000),1);
+			new GameObstacleGen(new Vec2d(488000,472000),3);
 //			Wall296,8,8,8
 //			Wall488,472,8,8
 			

@@ -1,4 +1,4 @@
-trail
+mode trail
 LEVEL: level33
 Wall120,304,8,128
 Wall80,280,32,8
