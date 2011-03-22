@@ -45,6 +45,15 @@ public class GameHero extends MovingObject{
 	public String toString(){
 		return "Hero: pos: " + pos + " lastDirection: " + lastDirection;
 	}
+	
+	public boolean testDeath() {
+		for(GameObject o : GameObject.gameObjects){
+			if (o instanceof GameObstacle) {
+				if (overlaps(o)) return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	protected void grounding(GameObject o){
@@ -66,10 +75,10 @@ public class GameHero extends MovingObject{
     			pos.y = o.bottom + extent.y;
     			break;
     		}
-//    		setSides();
-//    		GameHero.hero.collisionAvoid();
-//    		TrailOfDeath.updateTrail(this);
-    		GameObject.saveCheckpointAll();
+    		setSides();
+    		dead = GameHero.hero.testDeath();
+    		TrailOfDeath.updateTrail(this);
+    		if (!dead) GameObject.saveCheckpointAll();
     	}
 	}
 	
@@ -110,8 +119,6 @@ public class GameHero extends MovingObject{
 
 	@Override
 	public void touch(GameObject o){
-		
-		if  (o instanceof GameObstacleGen) Log.d("GSTA", "you touched a laser");
 		
 		dead = o instanceof GameObstacle || o instanceof GameObstacleGen;
 		if((!dead)&&(o instanceof Wall||o instanceof WallToggle)){
