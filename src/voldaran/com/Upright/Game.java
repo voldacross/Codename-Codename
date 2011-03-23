@@ -287,7 +287,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			else if (line.startsWith("mode")) {
 					if (line.indexOf("trail")>0) { 
 						TrailOfDeath.enabled = true;
-						TrailOfDeath.enabled = false;
 					}
 					else 
 						TrailOfDeath.enabled = false;
