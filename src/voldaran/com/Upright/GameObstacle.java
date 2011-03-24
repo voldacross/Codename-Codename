@@ -11,7 +11,7 @@ public class GameObstacle extends GameObject{
 		Vec2d extent = new Vec2d(w, h).mul(1000);
 		return new GameObstacle(pos, extent);
 	}
-	
+
 	public GameObstacle(Vec2d pos, Vec2d extent) {
 		super(pos, extent);
 		color = Color.RED;

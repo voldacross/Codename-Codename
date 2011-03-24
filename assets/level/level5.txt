@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level5
 Wall408,288,8,80
 Wall608,248,48,8

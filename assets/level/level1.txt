@@ -1,3 +1,4 @@
+mode normal
 LEVEL:Level 1
 DIFICULTY:TUTORIAL
 hero (32,48)

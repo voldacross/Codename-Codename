@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level31
 tWall392,232,72,8
 Wall56,232,8,56

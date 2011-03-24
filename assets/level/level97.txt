@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level97
 Wall312,408,88,8
 Hero316,364

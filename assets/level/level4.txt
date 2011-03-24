@@ -1,3 +1,4 @@
+mode normal
 LEVEL:Level 4
 DIFICULTY:MEDIUM
 hero (144,384)

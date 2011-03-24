@@ -200,7 +200,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					line = rline.replaceAll("\\) *extent", ",")
 						   	    .replaceAll(" |\\(|\\)|:|pos|extent", "")
 						        .toLowerCase();
-					parseLine(line);
+					parseLine(line, false);
 				}
 			}
 			catch (Exception e){
@@ -257,7 +257,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		//added so we didn't have to change 2 different places every time we needed to adjust the parsing.
-		public void parseLine(String line) {
+		public void parseLine(String line, Boolean gameLoad) {
 			GameObject o;
 			if (line.startsWith("wall")){
 				o = (GameObject) Wall.fromString(line.substring(4));
@@ -284,15 +284,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				o = (GameObject) Wall2.fromString(line.substring(5));
 				Log.d("LoadLevel", o.toString());
 			}
-			else if (line.startsWith("mode")) {
-					if (line.indexOf("trail")>0) { 
-						TrailOfDeath.enabled = true;
-					}
-					else 
-						TrailOfDeath.enabled = false;
-				
+			else if (line.startsWith("rlas")) { //redLaserofDeath!!!!
+				o = (GameObject) GameObstacleGen.fromString(line.substring(4));
+				Log.d("LoadLevel", o.toString());
 			}
-			
+			else if (line.startsWith("mode")) {
+				if (gameLoad) {
+					if (line.indexOf("trail")>0) {
+						TrailOfDeath.enabled = true;
+					} else 
+						TrailOfDeath.enabled = false;
+				} 
+			}
 			else Log.d("Load", line);
 			
 		}
@@ -320,7 +323,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					line = rline.toLowerCase()
 								.replaceAll("\\) *extent|\\) *direction|\\) *light", ",")
 						   	    .replaceAll(" |\\(|\\)|:|pos|extent|direction|light", "");
-					parseLine(line);
+					parseLine(line, true);
 				}
 			}catch (Exception e){
 				e.printStackTrace();

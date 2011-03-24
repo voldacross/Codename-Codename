@@ -82,7 +82,6 @@ public class upright extends Activity{
     	
     	Bundle resumeState = new Bundle();
     	
-    	
     	resumeState.putInt("GAME_STATE", settings.getInt("GAME_STATE", 0));
     	
     	return resumeState;

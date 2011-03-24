@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level11
 Wall312,56,296,8
 Wall600,176,8,112

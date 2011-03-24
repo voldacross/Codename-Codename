@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level13
 Wall472,280,56,8
 Wall344,232,56,8

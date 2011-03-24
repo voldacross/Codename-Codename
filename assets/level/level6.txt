@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level6
 Wall424,240,8,224
 Wall136,56,120,8

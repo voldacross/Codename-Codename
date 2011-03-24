@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level32
 twall600,176,8,112
 wall216,304,8,112

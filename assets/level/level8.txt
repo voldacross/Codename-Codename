@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level8
 Wall408,240,8,240
 Wall400,376,160,8

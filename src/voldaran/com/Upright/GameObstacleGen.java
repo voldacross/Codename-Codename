@@ -2,8 +2,10 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
@@ -17,6 +19,13 @@ public class GameObstacleGen extends GameObject{
 		for (GameObstacleGen l: GameObstacleGen.gameLasers) {
 			l.adjustLaser();
 		}
+	}
+	
+	public static GameObstacleGen fromString(String objectData){
+		String data[] = objectData.split(",");
+		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
+		int d = Integer.parseInt(data[2]);
+		return new GameObstacleGen(pos, d);
 	}
 	
 	public GameObstacleGen(Vec2d pos, int d) {
@@ -129,9 +138,39 @@ public class GameObstacleGen extends GameObject{
 				                  (int)((top - GameObject.offset.y) / 1000), 
 				                  (int)((right - GameObject.offset.x)/ 1000), 
 		 		                 (int)((bottom - GameObject.offset.y) / 1000));
+		
+		
 		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 		paintObject.setColor(color);
 		c.drawRect(recObject, paintObject);
+		
+		Bitmap laserUp = Game.loadBitmapAsset("laser.GIF");
+		Matrix mtx = new Matrix();
+		
+		mtx.postRotate(90);
+		Bitmap laserRight = Bitmap.createBitmap(laserUp, 0, 0, laserUp.getWidth(), laserUp.getHeight(), mtx, true);
+		mtx.postRotate(90);
+		Bitmap laserDown = Bitmap.createBitmap(laserUp, 0, 0, laserUp.getWidth(), laserUp.getHeight(), mtx, true);
+		mtx.postRotate(90);
+		Bitmap laserLeft = Bitmap.createBitmap(laserUp, 0, 0, laserUp.getWidth(), laserUp.getHeight(), mtx, true);
+		
+		switch (direction) {
+		case 0:
+			c.drawBitmap(laserRight, left / 1000 , bottom / 1000 , null);
+			break;
+		case 1:
+			c.drawBitmap(laserDown, left / 1000 , top / 1000 , null);
+			break;
+		case 2:
+			c.drawBitmap(laserLeft, right / 1000 , bottom / 1000 , null);
+			break;
+		case 3:
+			c.drawBitmap(laserUp, left / 1000, bottom / 1000 , null);
+			break;
+			
+		
+		}
+		
 	}
 	
 	@Override
@@ -144,5 +183,7 @@ public class GameObstacleGen extends GameObject{
 		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 		paintObject.setColor(color);
 		c.drawRect(recObject, paintObject);
+		
+	
 	}
 }

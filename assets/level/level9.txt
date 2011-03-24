@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level9
 Wall616,240,8,176
 Wall376,296,360,8

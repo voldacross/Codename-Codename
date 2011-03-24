@@ -1,3 +1,4 @@
+mode trail
 LEVEL: level35
 wall424,328,72,8
 wall488,264,8,216

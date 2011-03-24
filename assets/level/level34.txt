@@ -1,4 +1,7 @@
+mode normal
 LEVEL: level34
+rlas296,8,1
+rlas488,455,3
 tWall600,56,8,56
 tWall200,424,8,56
 Wall144,360,112,8

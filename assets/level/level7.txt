@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level7
 Wall296,88,88,8
 Wall208,136,192,8

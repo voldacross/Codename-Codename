@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level3
 Hero252,124
 Wall380,240,8,120

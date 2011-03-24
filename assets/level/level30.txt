@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level30
 3Wall392,192,8,80
 Wall72,144,8,128

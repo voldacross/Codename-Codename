@@ -1,3 +1,4 @@
+mode normal
 LEVEL: level90
 Wall482,296,290,8
 Wall200,376,8,72
