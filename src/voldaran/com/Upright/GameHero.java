@@ -58,8 +58,6 @@ public class GameHero extends MovingObject{
 	@Override
 	protected void grounding(GameObject o){
    		if(o instanceof Wall || o instanceof WallToggle){
-   			o.toggle(this);
-   			GameObstacleGen.adjustLasers();
    			
     		switch(lastDirection){
     		case RIGHT:
@@ -119,7 +117,6 @@ public class GameHero extends MovingObject{
 
 	@Override
 	public void touch(GameObject o){
-		
 		dead = o instanceof GameObstacle || o instanceof GameObstacleGen;
 		if((!dead)&&(o instanceof Wall||o instanceof WallToggle)){
 			toggleCount++;

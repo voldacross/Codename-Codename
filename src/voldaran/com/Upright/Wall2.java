@@ -42,50 +42,46 @@ public class Wall2 extends Wall {
 	}
 
 	@Override
-	public void toggle(GameObject o){
-		super.touch(o);
-		if(o == GameHero.hero){
-
-			switch(((GameHero)o).lastDirection){
-	    		case RIGHT:
-	    			if (firstBulbLit) {
-	    				firstBulbLit = false;
-	    				firstBulbColor = OFF;
-	    			} else {
-	    				firstBulbLit = true; 
-	    				firstBulbColor = ON;
-	    			}
-	    			break;
-	    		case UP:
-	    			if (secondBulbLit) {
-	    				secondBulbLit = false;
-	    				secondBulbColor = OFF;
-	    			} else {
-	    				secondBulbLit = true;
-	    				secondBulbColor = ON;
-	    			}
-	    			break;
-	    		case LEFT:
-	    			if (secondBulbLit) {
-	    				secondBulbLit = false;
-	    				secondBulbColor = OFF;
-	    			} else {
-	    				secondBulbLit = true;
-	    				secondBulbColor = ON;
-	    			}
-	    			break;
-	    		case DOWN:
-	    			if (firstBulbLit) {
-	    				firstBulbLit = false;
-	    				firstBulbColor = OFF;
-	    			} else {
-	    				firstBulbLit = true; 
-	    				firstBulbColor = ON;
-	    			}
-	    			break;
-	    		}				
+	public void toggle(){
+		switch(GameHero.hero.lastDirection){
+		case RIGHT:
+			if (firstBulbLit) {
+				firstBulbLit = false;
+				firstBulbColor = OFF;
+			} else {
+				firstBulbLit = true; 
+				firstBulbColor = ON;
+			}
+			break;
+		case UP:
+			if (secondBulbLit) {
+				secondBulbLit = false;
+				secondBulbColor = OFF;
+			} else {
+				secondBulbLit = true;
+				secondBulbColor = ON;
+			}
+			break;
+		case LEFT:
+			if (secondBulbLit) {
+				secondBulbLit = false;
+				secondBulbColor = OFF;
+			} else {
+				secondBulbLit = true;
+				secondBulbColor = ON;
+			}
+			break;
+		case DOWN:
+			if (firstBulbLit) {
+				firstBulbLit = false;
+				firstBulbColor = OFF;
+			} else {
+				firstBulbLit = true; 
+				firstBulbColor = ON;
+			}
+			break;
+		}				
 				
-		}
 	}
 	
 	@Override

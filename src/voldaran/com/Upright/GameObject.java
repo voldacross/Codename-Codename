@@ -171,7 +171,7 @@ public class GameObject {
 	public void touch(GameObject o){
 	}
 	
-	public void toggle(GameObject o){
+	public void toggle(){
 	}
 		
 	private boolean onScreen(Canvas c){

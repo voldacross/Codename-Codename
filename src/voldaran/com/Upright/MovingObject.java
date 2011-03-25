@@ -2,8 +2,6 @@ package voldaran.com.Upright;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 public class MovingObject extends GameObject{
 	public static ArrayList<MovingObject> movingObjects = new ArrayList<MovingObject>();
 	
@@ -76,8 +74,9 @@ public class MovingObject extends GameObject{
 			this.velocity = firstcollision.correctedVelocity;
 			this.touch(firstcollision.collider);
 			firstcollision.collider.touch(this);
+   			GameObstacleGen.adjustLasers();
 		} else if (contact!=null) {
-			GameHero.hero.touch(contact);
+			this.touch(contact);
 		}
 	}
 	
