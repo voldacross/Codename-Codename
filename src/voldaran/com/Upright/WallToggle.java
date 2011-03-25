@@ -51,14 +51,9 @@ public class WallToggle extends Wall {
 					for(GameObject x: GameObject.gameObjects){
 						
 						if ((x instanceof Wall) && ((o.touching(x))||(overlaps(x, o))) && (!walls.contains(x))) {
-//						if(x instanceof Wall){
-//							if ((o.touching(x))||(overlaps(x, o))) {
-//								if (!walls.contains(x)) {
 									walls.add((Wall) x);
 									if (x instanceof WallToggle) tempbucket.add((Wall) x);
 								}
-//							}
-//						}
 					}
 			}
 			wallbucket.clear(); wallbucket.addAll(tempbucket); tempbucket.clear();
