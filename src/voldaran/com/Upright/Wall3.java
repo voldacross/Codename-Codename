@@ -38,18 +38,14 @@ public class Wall3 extends Wall {
 	}
 
 	@Override
-	public void toggle(GameObject o){
-		super.touch(o);
-		if(o == GameHero.hero){
+	public void toggle(){
+		if (color == OFF) { 
+			color = DIM;
+		} else if (color == DIM){
+			color = ON;
 			
-			if (color == OFF) { 
-				color = DIM;
-			} else if (color == DIM){
-				color = ON;
-				
-			} else if (color == ON) {
-				color = OFF;
-			}
+		} else if (color == ON) {
+			color = OFF;
 		}
 	}
 	
