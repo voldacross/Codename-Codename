@@ -95,7 +95,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		gameState=GameState.values()[resumeGame.getInt("GAME_STATE")];
 		
-		if (gameState==GameState.PLAYING) thread.loadLevel();
+//		if (gameState==GameState.PLAYING) thread.loadLevel();
 	}
 	
 	public void pauseThread() {
@@ -195,14 +195,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 //		private ArrayList<Walls> _walls = new ArrayList<Walls>();
 		
-		public void loadLevel() {
-			if (currentLevel=="") {
-				loadLevel("level3.txt", true); 
-			} else {
-				loadLevel(currentLevel, true);
-			}
-					
-		}
+
 		
 		public Bitmap loadLeveltoBitmap(String levelAsset) {
 			//loading new level
@@ -257,6 +250,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObject.drawAllPreview(c);
 			
 			return previewLevel;
+		}
+		
+		public void loadLevel() {
+			if (currentLevel=="") {
+				loadLevel("level3.txt", true); 
+			} else {
+				loadLevel(currentLevel, true);
+			}
+					
 		}
 		
 		public void loadLevel(String level, boolean asset){
@@ -342,7 +344,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObstacle.addObstacle(796,232,4,240);
 			
 			BufferedReader reader = null;
+			WallToggle.WallToggles.clear();
 			//Parse Level file
+			
 			try{
 				reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 4096);
 				String rline, line;
@@ -375,6 +379,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 //			new GameObstacleGen(new Vec2d(740000,300000),2);
 //			new GameObstacleGen(new Vec2d(448000,376000),3);
 
+			
+			WallToggle.setLists();
 		}
 		
 		public void SaveLevel(String level){
