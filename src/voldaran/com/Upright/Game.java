@@ -98,14 +98,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		if (gameState==GameState.PLAYING) thread.loadLevel();
 	}
 	
+	public void pauseThread() {
+		Log.d( "GameThread", "pauseThread");
+		thread.setRunning(false);
+		
+	}
+	public void resumeThread() {
+		Log.d( "GameThread", "resumeThread");
+		thread.setRunning(true);
+	}
+	
 	public void createThread(){
-		
+		Log.d( "GameThread", "createThread");
 		thread = new GameThread(getHolder(), this);
-		
+		startThread();
 	}
 	
 	public void stopThread(){
+		Log.d( "GameThread", "stopThread");
+		if (thread!=null) {
 		thread.setRunning(false);
+		thread.active = false;
 		boolean retry = false;
 		while(retry){
 			try{
@@ -116,25 +129,39 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 		thread = null;
+		}
 	}
 	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
-
+		Log.d( "GameThread", "surfaceChanged");
+		
 	}
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Log.d("GSTA", "surfaceCreated");
+		Log.d( "GameThread", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
-		thread.createTitleScreen();
-		thread.setRunning(true);
-		thread.start();
 		
 	}
 	
+	public void startThread() {
+		thread.createTitleScreen();
+		thread.setRunning(true);
+		thread.active = true;
+		thread.start();
+	}
+	
+	public void resumeStartThread() {
+		
+		
+	}
+	
+	
 	@Override public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.d( "GameThread", "surfaceDestoyed");
+		stopThread();
 	}
 	
 
@@ -532,16 +559,20 @@ public void drawPress(Canvas c, Input input) {
 		Long currentTime;
 		long sft = 0;
 		
+		public boolean active = false;
+		
     //This is my main loop, runs as fast as it can possibly go!
 		@Override
 		public void run() {
 			gameState = GameState.TITLE;
-			while (mRun) {
-				switch(gameState){
-				case TITLE:gameState = titleScreen();
-				case PLAYING:gameState = gameLoop();
-				case PAUSED:gameState = pause();
-				case LEVEL_COMPLETE:gameState = levelComplete();
+			while (active) {
+				while (mRun) {
+					switch(gameState){
+					case TITLE:gameState = titleScreen();
+					case PLAYING:gameState = gameLoop();
+					case PAUSED:gameState = pause();
+					case LEVEL_COMPLETE:gameState = levelComplete();
+					}
 				}
 			}
 		}

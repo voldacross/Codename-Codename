@@ -23,6 +23,12 @@ public class WallToggle extends Wall {
 		OFF = Color.CYAN;
 		ON = Color.BLUE;
 		updateColors(lit);
+		createList();
+	}
+	
+	public void createList() {
+		
+		
 	}
 	
 	@Override

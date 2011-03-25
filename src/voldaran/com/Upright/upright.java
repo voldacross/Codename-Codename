@@ -21,43 +21,55 @@ public class upright extends Activity{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        Log.d( "GameThread", "onCreate");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        game = new Game(this, displayMetrics);
-        
-        setContentView(game);
-    	game.setDrawingCacheEnabled(true); 
-    	
-    
 
     }
     
+    @Override
+    protected void onStart() {
+    	super.onStart();
+    	Log.d( "GameThread", "onStart");
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        game = new Game(this, displayMetrics);
+        setContentView(game);
+    	game.setDrawingCacheEnabled(true); 
+    	game.createThread();
+    }
+    
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	Log.d( "GameThread", "onStop");
+    }
 
+    @Override
+    protected void onRestart() {
+    	super.onRestart();
+    	Log.d( "GameThread", "onRestart");
+    }
+    
+    
     @Override
     protected void onResume(){
     	super.onResume();
-    	
-    	//start thread
-    	game.createThread();
-    	
-    	
+    	Log.d( "GameThread", "onResume");
     	
     	//resume previous gamestate
     	game.resumeGameBundle(resumeGameState());
-    	
+    	game.resumeThread();
     }
     
     @Override
     protected void onPause(){
     	super.onPause();
-    	Log.d("GSTA", "onPause called");
+    	Log.d( "GameThread", "onPause");
     	//Load SavedBundle to SharedPreferences
     	saveBundletoShared(game.saveGameBundle());
     	
-    	//Kill thread;
-    	game.stopThread();
+    	game.pauseThread();
     }
 
     

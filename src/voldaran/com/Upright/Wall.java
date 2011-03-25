@@ -9,7 +9,7 @@ public class Wall extends GameObject {
 	
 	public int OFF = Color.WHITE;
 	public int ON = Color.GREEN;
-	
+
 	public static Wall fromString(String objectData){
 		String data[] = objectData.split(",");
 		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
