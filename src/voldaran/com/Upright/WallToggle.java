@@ -34,17 +34,18 @@ public class WallToggle extends Wall {
 	@Override
 	public void toggle(GameObject o){
 		super.touch(o);
-		if(o == GameHero.hero){
+		if (o!=this) {
 			if(color == OFF) color = ON;
 			else color = OFF;
 			
 			for (GameObject oo : GameObject.gameObjects) {
-				if (oo instanceof Wall && !(oo instanceof WallToggle)) {
+				if (oo instanceof Wall && oo!=o) {
 					if ((touching(oo))||(overlaps(oo)))
-						((Wall)oo).toggle(o);
+						((Wall)oo).toggle(this);
 				}
 			}
 		}
+		
 	}
 	
 	protected boolean overlaps(GameObject b){

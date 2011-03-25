@@ -44,10 +44,8 @@ public class Wall extends GameObject {
 	@Override
 	public void toggle(GameObject o){
 		super.touch(o);
-		if(o == GameHero.hero){
 			if(color == OFF) color = ON;
 			else color = OFF;
-		}
 	}
 	
 	@Override
