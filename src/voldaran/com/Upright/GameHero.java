@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class GameHero extends MovingObject{
 	public final static Bitmap bitmap = Game.loadBitmapAsset("meatwad.png");
-	private final static int WALKSPEED = 4000;
+	private final static int WALKSPEED = 100;
 	private final static Vec2d Velocities[] = {new Vec2d(0,0),
 											   new Vec2d(WALKSPEED, 0),
 											   new Vec2d(0, -WALKSPEED),
@@ -77,6 +77,7 @@ public class GameHero extends MovingObject{
     		dead = GameHero.hero.testDeath();
     		TrailOfDeath.updateTrail(this);
     		if (!dead) GameObject.saveCheckpointAll();
+			velocity.set(0,0);
     	}
 	}
 	

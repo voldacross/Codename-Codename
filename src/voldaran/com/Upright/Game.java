@@ -421,13 +421,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			mRun = run;
 		}
 		
-		public void drawFPS(Canvas c) {
-			
+		private long getFrameTime(){
 			previousTime = currentTime;
   		    currentTime = System.currentTimeMillis();
-  		    long ft = ((currentTime - previousTime));
-  		    
-  		    sft = (long) (sft * 0.9 + ft * 0.1);
+  		    return (currentTime - previousTime);
+		}
+		
+		public void drawFPS(Canvas c, long FrameTime) {
+  		    sft = (long) (sft * 0.9 + FrameTime * 0.1);
   		    
   		    Paint text = new Paint();
   		    text.setColor(Color.GREEN);
@@ -589,12 +590,10 @@ public void drawPress(Canvas c, Input input) {
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
 			UserInput.Input currentInput;
+			long frameTime;
 			
   			
   			while((gameState == GameState.PLAYING)  && (mRun)){
-	  		    
-				
-				
 				Vec2d mClicked = _input.getCurrentPress();
 				if(!mClicked.isVoid()) //Pause
 					if ((mClicked.x>700)&&(mClicked.y<100)) {
@@ -604,10 +603,10 @@ public void drawPress(Canvas c, Input input) {
 				
 				
 				currentInput = _input.getInput();
-				
+				frameTime = getFrameTime();
 				GameHero.hero.processInput(currentInput);
-				GameHero.hero.collisionAvoid();
-				MovingObject.updateAll();
+				GameHero.hero.collisionAvoid(frameTime);
+				MovingObject.updateAll(frameTime);
 				
 
 				Picture picScreen = new Picture();
@@ -618,7 +617,7 @@ public void drawPress(Canvas c, Input input) {
 					GameObject.drawAll(c);
 //					drawArrows(c);
 					drawPress(c, currentInput);
-					drawFPS(c);
+					drawFPS(c, frameTime);
 					drawPause(c);
 
 					picScreen.endRecording();
@@ -644,16 +643,18 @@ public void drawPress(Canvas c, Input input) {
 			float fade = 0;
 			int height = (int) Game.cameraSize.y;
 			int width = (int) Game.cameraSize.x;
+			long frameTime;
 
 			GameObject.restoreCheckpointAll();
 			while(mRun && alpha > 50){
+				frameTime = getFrameTime();
 				Picture picScreen = new Picture();
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
 					clearScreen(c, Game.cameraSize);
 					GameObject.drawAll(c);
-					drawFPS(c);
+					drawFPS(c, frameTime);
 					drawPause(c);
 					Rect rec = new Rect (0,0, width, height);
 					Paint whitePaint = new Paint();
@@ -670,11 +671,12 @@ public void drawPress(Canvas c, Input input) {
 		}
 		
 		public GameState levelComplete() {
-			
+			long frameTime;
+		
 			while((gameState == GameState.LEVEL_COMPLETE) && (mRun)){
-				
 				Vec2d mClicked = _input.getCurrentPress();
-
+				
+				frameTime = getFrameTime();
 				Picture picScreen = new Picture();
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
@@ -683,7 +685,7 @@ public void drawPress(Canvas c, Input input) {
 					synchronized (_surfaceHolder) {
 						clearScreen(c, Game.cameraSize);
 						GameObject.drawAll(c);
-						drawFPS(c);
+						drawFPS(c, frameTime);
 						Paint text = new Paint();
 						    text.setColor(Color.RED);
 						    text.setTextSize(86);
@@ -702,12 +704,13 @@ public void drawPress(Canvas c, Input input) {
 		
 		public GameState titleScreen() {
 //			createTitleScreen();
-			
+			long frameTime;
 			Picture picScreen = null;
 			Canvas c = null;
 			
 			while((gameState == GameState.TITLE) && (mRun)){
 				
+				frameTime = getFrameTime();
 				picScreen = new Picture();
 				c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
@@ -719,7 +722,7 @@ public void drawPress(Canvas c, Input input) {
 				
 					synchronized (_surfaceHolder) {
 						titleMenu.drawPanels(c);
-						drawFPS(c);
+						drawFPS(c, frameTime);
 						picScreen.endRecording();
 						drawToScreen(picScreen);
 					}
@@ -732,11 +735,12 @@ public void drawPress(Canvas c, Input input) {
 		Picture picture = new Picture();
 		
 		public GameState pause(){
+			long frameTime;
 			Picture picScreen = null;
 			Canvas c = null;
 			_input.Clear();
 			while((gameState == GameState.PAUSED) && (mRun)){
-				
+				frameTime = getFrameTime();
 				picScreen = new Picture();
 				c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				Vec2d mClicked = _input.getCurrentPress();
@@ -744,7 +748,7 @@ public void drawPress(Canvas c, Input input) {
 				
 					synchronized (_surfaceHolder) {
 						GameObject.drawPause(c, Game.cameraSize);
-						drawFPS(c);
+						drawFPS(c, frameTime);
 						pause.Draw(c);
 						picScreen.endRecording();
 						drawToScreen(picScreen);

@@ -165,7 +165,7 @@ public class GameObject {
         	return bottom > o.top && top < o.bottom;
 	}
 	
-	public void update(){
+	public void update(long frameTime){
 	}
 	
 	public void touch(GameObject o){
