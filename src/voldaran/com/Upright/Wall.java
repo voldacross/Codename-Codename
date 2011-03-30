@@ -4,29 +4,32 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class Wall extends GameObject {
 	
 	public int OFF = Color.WHITE;
 	public int ON = Color.GREEN;
+	
 
 	public static Wall fromString(String objectData){
 		String data[] = objectData.split(",");
 		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
 		Vec2d extent = new Vec2d(Integer.parseInt(data[2]), Integer.parseInt(data[3])).mul(1000);
-		boolean lit = (data.length > 4 && Integer.parseInt(data[4]) == 1 );
-		return new Wall(pos, extent, lit);
+		boolean unlit = ((data.length > 4) && (Integer.parseInt(data[4]) == 0 ));
+		Log.d("GSTA", "lit   + " + unlit);
+		return new Wall(pos, extent, unlit);
 	}
 
 	protected int colorCheckpoint;
 	
-	public Wall(Vec2d pos, Vec2d extent, boolean lit) {
-		this(pos, extent, new Vec2d(0,0), lit);
+	public Wall(Vec2d pos, Vec2d extent, boolean unlit) {
+		this(pos, extent, new Vec2d(0,0), unlit);
 	}
 
-	public Wall(Vec2d pos, Vec2d extent, Vec2d velocity, boolean lit) {
+	public Wall(Vec2d pos, Vec2d extent, Vec2d velocity, boolean unlit) {
 		super(pos, extent, velocity);
-		updateColors(lit);
+		updateColors(unlit);
 		colorCheckpoint = color;
 	}
 	
@@ -36,8 +39,8 @@ public class Wall extends GameObject {
 		return "Wall: pos: " + pos + " extent: " + extent + " lit: " + lit;
 	}
 
-	public void updateColors(boolean lit) {
-		if(lit) color = ON; else color = OFF; 
+	public void updateColors(boolean unlit) {
+		if(unlit) color = OFF; else color = ON; 
 		
 	}
 	
@@ -65,7 +68,7 @@ public class Wall extends GameObject {
 	}
 	@Override
 	public boolean checkWin() {
-		return (color==ON);
+		return (color==OFF);
 	}
 	
 	@Override

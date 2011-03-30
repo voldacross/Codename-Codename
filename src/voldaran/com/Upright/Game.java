@@ -381,6 +381,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 			
 			WallToggle.setLists();
+			GameObstacleGen.adjustLasers();
 		}
 		
 		public void SaveLevel(String level){

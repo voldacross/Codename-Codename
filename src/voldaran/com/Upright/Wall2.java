@@ -18,7 +18,7 @@ public class Wall2 extends Wall {
 		String data[] = objectData.split(",");
 		Vec2d pos = new Vec2d(Integer.parseInt(data[0]), Integer.parseInt(data[1])).mul(1000);
 		Vec2d extent = new Vec2d(Integer.parseInt(data[2]), Integer.parseInt(data[3])).mul(1000);
-		boolean lit = (data.length > 4 && Integer.parseInt(data[4]) == 1 );
+		boolean lit = (!(data.length > 4) && !(Integer.parseInt(data[4]) == 1 ));
 		return new Wall2(pos, extent, lit);
 	}
 
@@ -28,6 +28,10 @@ public class Wall2 extends Wall {
 		this(pos, extent, new Vec2d(0,0), lit);
 		if ((extent.x / 1000)==8) horizontal = false;
 		Log.d("GSTA", extent.toString() + ", " + horizontal);
+		firstBulbLit = true; 
+		firstBulbColor = ON;
+		secondBulbLit = false;
+		secondBulbColor = OFF;
 		
 	}
 
@@ -86,7 +90,7 @@ public class Wall2 extends Wall {
 	
 	@Override
 	public boolean checkWin() {
-		return (firstBulbLit&&secondBulbLit);
+		return (!firstBulbLit&&!secondBulbLit);
 	}
 	
 	@Override

@@ -43,8 +43,6 @@ public class GameObstacleGen extends GameObject{
 	}
 	
 	public void adjustLaser() {
-		Log.d("GSTA", "Adjusting laser");
-		
 		long lowest = 10000000;
 		
 		switch (direction) {
@@ -53,7 +51,7 @@ public class GameObstacleGen extends GameObject{
 			extent.x = ((Game.cameraSize.x * 1000) - startPOS.x) / 2;
 			setSides();
 			for (GameObject o: GameObject.gameObjects) {
-				if ((o instanceof Wall) && (o.color==Color.GREEN)) {
+				if ((o instanceof Wall) && (o.color==((Wall)o).ON)) {
 					if (overlaps(o)) {
 						if (o.pos.x<=lowest) lowest = o.pos.x; 
 					}
@@ -70,7 +68,7 @@ public class GameObstacleGen extends GameObject{
 			setSides();
 			
 			for (GameObject o: GameObject.gameObjects) {
-				if ((o instanceof Wall) && (o.color==Color.GREEN)) {
+				if ((o instanceof Wall) && (o.color==((Wall)o).ON)) {
 					if (overlaps(o)) {
 						if (o.pos.y<=lowest) lowest = o.pos.y; 
 					}
@@ -87,7 +85,7 @@ public class GameObstacleGen extends GameObject{
 			extent.x = ((Game.cameraSize.x * 1000) + startPOS.x) / 2;
 			setSides();
 			for (GameObject o: GameObject.gameObjects) {
-				if ((o instanceof Wall) && (o.color==Color.GREEN)) {
+				if ((o instanceof Wall) && (o.color==((Wall)o).ON)) {
 					if (overlaps(o)) {
 						if (o.pos.x>=lowest) lowest = o.pos.x; 
 					}
@@ -104,7 +102,7 @@ public class GameObstacleGen extends GameObject{
 			extent.y = ((Game.cameraSize.y * 1000) + startPOS.y) / 2;
 			setSides();
 			for (GameObject o: GameObject.gameObjects) {
-				if ((o instanceof Wall) && (o.color==Color.GREEN)) {
+				if ((o instanceof Wall) && (o.color==((Wall)o).ON)) {
 					if (overlaps(o)) {
 						if (o.pos.y>=lowest) lowest = o.pos.y; 
 					}
