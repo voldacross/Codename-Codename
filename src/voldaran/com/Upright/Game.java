@@ -111,7 +111,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void createThread(){
 		Log.d( "GameThread", "createThread");
 		thread = new GameThread(getHolder(), this);
-		startThread();
+		
 	}
 	
 	public void stopThread(){
@@ -136,6 +136,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
 		Log.d( "GameThread", "surfaceChanged");
+		surfaceSize.set(getWidth(), getHeight());
 		
 	}
 	
@@ -143,7 +144,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d( "GameThread", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
-		
+		startThread();
 	}
 	
 	public void startThread() {
@@ -718,6 +719,7 @@ public void drawPress(Canvas c, Input input) {
 				titleMenu.update();
 				
 					synchronized (_surfaceHolder) {
+//						Log.d("GameThread", "DRAWWWWING");
 						titleMenu.drawPanels(c);
 						drawFPS(c);
 						picScreen.endRecording();
