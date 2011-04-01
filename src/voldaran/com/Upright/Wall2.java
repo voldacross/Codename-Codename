@@ -137,18 +137,14 @@ public class Wall2 extends Wall {
 			
 		}
 
-		Paint paintObject1 = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			paintObject1.setColor(firstBulbColor);
-		
-		Paint paintObject2 = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			paintObject2.setColor(secondBulbColor);
-
-		Paint lineObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			lineObject.setColor(Color.BLACK);
-		
-		c.drawRect(recBulb1, paintObject1);
-		c.drawRect(recBulb2, paintObject2);
-		c.drawLine(lineX1, lineY1, lineX2, lineY2, lineObject);
+			GameObject.paint.setColor(firstBulbColor);
+			c.drawRect(recBulb1, GameObject.paint);
+			
+			GameObject.paint.setColor(secondBulbColor);
+			c.drawRect(recBulb2, GameObject.paint);
+			
+			GameObject.paint.setColor(Color.BLACK);
+			c.drawLine(lineX1, lineY1, lineX2, lineY2, GameObject.paint);
 
 	}
 }

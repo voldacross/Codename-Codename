@@ -31,10 +31,9 @@ public class GameObject {
 			o.drawP(c);
 		}
 		
-		Paint whitePaint = new Paint();
-		whitePaint.setColor(Color.BLACK);
-		whitePaint.setAlpha((int) 185);
-		c.drawRect(0, 0, cameraSize.x, cameraSize.y, whitePaint);
+		GameObject.paint.setColor(Color.BLACK);
+		GameObject.paint.setAlpha((int) 185);
+		c.drawRect(0, 0, cameraSize.x, cameraSize.y, GameObject.paint);
 	}
 
 	public static void drawAllPreview(Canvas c){  //TODO Not entirely needed anymore
@@ -192,10 +191,13 @@ public class GameObject {
 	}
 	
 	public void drawP(Canvas c){
-		Rect recObject = new Rect((int) left / 1000, (int) top  / 1000, (int) right  / 1000, (int)bottom  / 1000);
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000);
+		
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 	
 	public void draw(Canvas c, float interpolation){

@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class GameHero extends MovingObject{
 	public final static Bitmap bitmap = Game.loadBitmapAsset("meatwad.png");
-	private final static int WALKSPEED = 4000;
+	private final static int WALKSPEED = 8000;
 	private final static Vec2d Velocities[] = {new Vec2d(0,0),
 											   new Vec2d(WALKSPEED, 0),
 											   new Vec2d(0, -WALKSPEED),

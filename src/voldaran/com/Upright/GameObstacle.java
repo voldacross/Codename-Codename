@@ -25,9 +25,9 @@ public class GameObstacle extends GameObject{
 	@Override
 	public void drawP(Canvas c){
 		Rect recObject = new Rect((int) left / 1000, (int) top  / 1000, (int) right  / 1000, (int)bottom  / 1000);
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		
+		GameObject.paint.setColor(color);
+		c.drawRect(recObject, GameObject.paint);
 	}
 
 	@Override

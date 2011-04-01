@@ -59,8 +59,7 @@ public class Wall3 extends Wall {
 				                  (int)((right - GameObject.offset.x)/ 1000), 
 		 		                 (int)((bottom - GameObject.offset.y) / 1000));
 
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(tempColor);
-		c.drawRect(recObject, paintObject);
+			GameObject.paint.setColor(tempColor);
+		c.drawRect(recObject, GameObject.paint);
 	}
 }

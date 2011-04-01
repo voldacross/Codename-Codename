@@ -8,6 +8,7 @@ public class UserInput {
 	private Vec2d mCurrentTouch  = new Vec2d();
 	private Vec2d mPress  = new Vec2d();
 	private Vec2d mDownPress = new Vec2d();
+	private Vec2d tempCurrentPress = new Vec2d();
 	
 	public Input uInput = Input.NONE;
 	
@@ -153,7 +154,8 @@ public class UserInput {
 	}
 
 	private Vec2d convertCoord(Vec2d c) {
-		Vec2d tempCurrentPress = new Vec2d(c);
+		
+		tempCurrentPress.set(c);
 		
 		if (!tempCurrentPress.isVoid()) {
 			double convertX = (double) ((double) cameraSize.x / (double) surfaceSize.x) * tempCurrentPress.x;
@@ -166,7 +168,7 @@ public class UserInput {
 	
 	//Converts mPress to our native camera size and eats it
 	public Vec2d getCurrentPress() {
-		Vec2d tempCurrentPress = new Vec2d(convertCoord(mPress));
+		tempCurrentPress.set(convertCoord(mPress));
 		mPress.setVoid();  
 		return tempCurrentPress;
 	}

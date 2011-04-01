@@ -136,6 +136,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
 		Log.d( "GameThread", "surfaceChanged");
+		surfaceSize.set(getWidth(), getHeight());
 		
 	}
 	
@@ -409,12 +410,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public Game mGame;
 		private Bitmap pauseButton;
-		
+		private Bitmap downArrow, leftArrow, upArrow, arrow;
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
 			_surfaceHolder = surfaceHolder;
 			mGame = game;
 			pauseButton = Game.loadBitmapAsset("pause_button.png");
 			currentTime = System.currentTimeMillis();
+			
+			arrow = Game.loadBitmapAsset("arrow_guide.png");
+			Matrix mtx = new Matrix();
+			mtx.postRotate(90);
+			downArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			mtx.postRotate(90);
+			leftArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			mtx.postRotate(90);
+			upArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			
 		}
 		
 		public void setRunning(boolean run) {
@@ -445,9 +456,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			c.drawBitmap(pauseButton, Game.cameraSize.x - pauseButton.getWidth() - 15, 15, null);
 		}
 		
-		Bitmap arrow = Game.loadBitmapAsset("arrow_guide.png");
 		
-		public void drawArrows(Canvas c) {
+		
+/*		public void drawArrows(Canvas c) {
 			GameHero h = GameHero.hero;
 			Matrix mtx = new Matrix();
 			mtx.postRotate(90);
@@ -459,53 +470,48 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			if (h.velocity.isZero()) {
 				
 				if(GameHero.hero.lastDirection == GameObject.RIGHT) {
-					/*RIGHT*/c.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
-					/*UP*/c.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
-					/*DOWN*/c.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
+					RIGHTc.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
+					UPc.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
+					DOWNc.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
 				} else if(GameHero.hero.lastDirection == GameObject.LEFT) {
-					/*LEFT*/c.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
-					/*UP*/c.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
-					/*DOWN*/c.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
+					LEFTc.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
+					UPc.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
+					DOWNc.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
 					
 				} else if(GameHero.hero.lastDirection == GameObject.DOWN) {
-					/*RIGHT*/c.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
-					/*LEFT*/c.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
-					/*DOWN*/c.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
+					RIGHTc.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
+					LEFTc.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
+					DOWNc.drawBitmap(downArrow, h.pos.x / 1000 - (downArrow.getWidth() / 2), ((h.pos.y + h.extent.y) / 1000) + 10, null);
 					
 				} else if(GameHero.hero.lastDirection == GameObject.UP) {
-					/*RIGHT*/c.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
-					/*LEFT*/c.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
-					/*UP*/c.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
+					RIGHTc.drawBitmap(arrow, ((h.pos.x + h.extent.x) / 1000)  + 10, (h.pos.y / 1000) - (arrow.getHeight() / 2), null);
+					LEFTc.drawBitmap(leftArrow, (((h.pos.x - h.extent.x) / 1000) - ((leftArrow.getWidth()) + 10)), (h.pos.y / 1000) - (leftArrow.getHeight() / 2), null);
+					UPc.drawBitmap(upArrow, (h.pos.x / 1000) - (upArrow.getWidth() / 2), ((h.pos.y - h.extent.y) / 1000) - (upArrow.getHeight()) - 10, null);
 				}
 					
 				
 				
 				
 			}
-		}
+		}*/
+		
+		private Vec2d down = new Vec2d();
+		private Vec2d mClicked  = new Vec2d();
 public void drawPress(Canvas c, Input input) {
 			
-	Matrix mtx = new Matrix();
-	mtx.postRotate(90);
-	Bitmap downArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
-	mtx.postRotate(90);
-	Bitmap leftArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
-	mtx.postRotate(90);
-	Bitmap upArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
-	
-			Vec2d down = _input.getDown();
-			Vec2d mClicked = new Vec2d(_input.getCurrent());
+
+			down.set(_input.getDown());
+			mClicked.set(_input.getCurrent());
 			if ((!down.isVoid()) && !((mClicked.x>700)&&(mClicked.y<100))){
 
 				Path triPath = new Path();
-				Paint triPaint = new Paint();
 				paint.setColor(Color.WHITE);
 				paint.setAlpha(80);
 				paint.setStyle(Paint.Style.FILL);
 				
 				if (input==Input.DOWN_LEFT) {
 					c.drawBitmap(leftArrow, cameraSize.x / 4 - leftArrow.getWidth(), cameraSize.y / 2 - leftArrow.getHeight() / 2, null);
-					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.RIGHT) triPaint.setColor(Color.RED);
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.RIGHT) paint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0, 0);
 					triPath.lineTo(0, cameraSize.y);
@@ -514,7 +520,7 @@ public void drawPress(Canvas c, Input input) {
 					
 				} else if (input==Input.DOWN_RIGHT) {
 					c.drawBitmap(arrow, (cameraSize.x - (cameraSize.x / 4)), cameraSize.y / 2 - (arrow.getHeight() / 2), null);
-					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.LEFT)triPaint.setColor(Color.RED);
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.LEFT)paint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(Game.cameraSize.x, 0);
 					triPath.lineTo(Game.cameraSize.x, Game.cameraSize.y);
@@ -522,7 +528,7 @@ public void drawPress(Canvas c, Input input) {
 					triPath.close();
 				} else if (input==Input.DOWN_UP) {
 					c.drawBitmap(upArrow, ((cameraSize.x / 2)) - (upArrow.getWidth() / 2), (cameraSize.y / 4) - upArrow.getHeight(), null);
-					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.DOWN)triPaint.setColor(Color.RED);
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.DOWN)paint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0,0);
 					triPath.lineTo(Game.cameraSize.x,0);
@@ -530,15 +536,15 @@ public void drawPress(Canvas c, Input input) {
 					triPath.close();
 				} else if (input==Input.DOWN_DOWN) {
 					c.drawBitmap(downArrow, ((cameraSize.x / 2)) - (downArrow.getWidth() / 2), (cameraSize.y - (cameraSize.y / 4)), null);
-					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.UP)triPaint.setColor(Color.RED);
+					if(!GameHero.hero.velocity.isZero() || GameHero.hero.lastDirection == GameObject.UP)paint.setColor(Color.RED);
 					triPath.moveTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.lineTo(0,Game.cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x,Game.cameraSize.y);
 					triPath.lineTo(Game.cameraSize.x/2, Game.cameraSize.y/2);
 					triPath.close();
 				}
-				triPaint.setAlpha(80);				
-				c.drawPath(triPath, triPaint);
+				paint.setAlpha(80);				
+				c.drawPath(triPath, paint);
 //				c.drawCircle(down.x, down.y, 13, paint);
 //				c.drawCircle(current.x, current.y, 7, paint);
 //				c.drawLine(down.x, down.y, current.x, current.y, paint);
@@ -595,6 +601,8 @@ public void drawPress(Canvas c, Input input) {
 			int loops;
 			float interpolation = 0;
   			
+			Picture picScreen = new Picture();
+			
   			while((gameState == GameState.PLAYING)  && (mRun)){
   				loops = 0;
   				while(android.os.SystemClock.elapsedRealtime() > next_game_tick && loops < MAX_FRAMESKIP){
@@ -604,7 +612,6 @@ public void drawPress(Canvas c, Input input) {
 							gameState = GameState.PAUSED;
 							_input.Clear();
 						}
-					
 					
 					currentInput = _input.getInput();
 					GameHero.hero.processInput(currentInput);
@@ -617,7 +624,7 @@ public void drawPress(Canvas c, Input input) {
 
 				frameTime = getFrameTime();
   				interpolation = (float)(android.os.SystemClock.elapsedRealtime() + SKIP_TICKS - next_game_tick) / (float)SKIP_TICKS;
-				Picture picScreen = new Picture();
+				
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
@@ -681,12 +688,12 @@ public void drawPress(Canvas c, Input input) {
 		public GameState levelComplete() {
 			long frameTime;
 			float interpolation = 0;
-		
+			Picture picScreen = new Picture();
 			while((gameState == GameState.LEVEL_COMPLETE) && (mRun)){
 				Vec2d mClicked = _input.getCurrentPress();
 				
 				frameTime = getFrameTime();
-				Picture picScreen = new Picture();
+				
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				titleMenu.update();
