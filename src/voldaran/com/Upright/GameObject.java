@@ -23,6 +23,9 @@ public class GameObject {
 	public final static int BOTTOM = 4; 
 	public boolean solid = true;
 	
+	public static Rect rect;
+	public static Paint paint;
+	
 	public static void drawPause(Canvas c, Vec2d cameraSize) {
 		for (GameObject o : GameObject.gameObjects){
 			o.drawP(c);
@@ -115,6 +118,9 @@ public class GameObject {
 		color = Color.WHITE;
 		
 		GameObject.gameObjects.add(this);
+		
+		GameObject.rect = new Rect();
+		GameObject.paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 	}
 	
 	public String toString(){
@@ -193,25 +199,23 @@ public class GameObject {
 	}
 	
 	public void draw(Canvas c){
-		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
-				                  (int)((top - GameObject.offset.y) / 1000), 
-				                  (int)((right - GameObject.offset.x)/ 1000), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000));
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000);
 
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 	
 	public void drawPreview(Canvas c){
-		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000 / 4), 
-				                  (int)((top - GameObject.offset.y) / 1000 / 4), 
-				                  (int)((right - GameObject.offset.x)/ 1000 / 4), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000 / 4));
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000 / 4);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000 / 4);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000 / 4);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000 / 4);
 
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 	
 	protected boolean allowCheckpoint(){

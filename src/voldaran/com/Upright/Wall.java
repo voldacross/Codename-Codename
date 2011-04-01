@@ -23,8 +23,11 @@ public class Wall extends GameObject {
 
 	protected int colorCheckpoint;
 	
+
+	
 	public Wall(Vec2d pos, Vec2d extent, boolean unlit) {
 		this(pos, extent, new Vec2d(0,0), unlit);
+
 	}
 
 	public Wall(Vec2d pos, Vec2d extent, Vec2d velocity, boolean unlit) {
@@ -80,26 +83,24 @@ public class Wall extends GameObject {
 	}
 	@Override
 	public void draw(Canvas c){
-		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
-				                  (int)((top - GameObject.offset.y) / 1000), 
-				                  (int)((right - GameObject.offset.x)/ 1000), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000));
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000);
 
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 	
 	@Override
 	public void drawPreview(Canvas c){
-		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000 / 4), 
-				                  (int)((top - GameObject.offset.y) / 1000 / 4), 
-				                  (int)((right - GameObject.offset.x)/ 1000 / 4), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000 / 4));
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000 / 4);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000 / 4);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000 / 4);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000 / 4);
 
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 	
 }

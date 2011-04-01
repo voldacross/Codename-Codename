@@ -32,24 +32,23 @@ public class GameObstacle extends GameObject{
 
 	@Override
 	public void draw(Canvas c){
-		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
-				                  (int)((top - GameObject.offset.y) / 1000), 
-				                  (int)((right - GameObject.offset.x)/ 1000), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000));
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000);
+
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 	
 	@Override
 	public void drawPreview(Canvas c){
-		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000 / 4), 
-				                  (int)((top - GameObject.offset.y) / 1000 / 4), 
-				                  (int)((right - GameObject.offset.x)/ 1000 / 4), 
-		 		                 (int)((bottom - GameObject.offset.y) / 1000 / 4));
-		
-		Paint paintObject = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-		paintObject.setColor(color);
-		c.drawRect(recObject, paintObject);
+		GameObject.rect.left = (int)((left - GameObject.offset.x) / 1000 / 4);
+		GameObject.rect.top = (int)((top - GameObject.offset.y) / 1000 / 4);
+		GameObject.rect.right = (int)((right - GameObject.offset.x)/ 1000 / 4);
+		GameObject.rect.bottom = (int)((bottom - GameObject.offset.y) / 1000 / 4);
+
+		GameObject.paint.setColor(color);
+		c.drawRect(GameObject.rect, GameObject.paint);
 	}
 }
