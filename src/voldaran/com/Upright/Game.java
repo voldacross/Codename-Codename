@@ -426,18 +426,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   		    currentTime = System.currentTimeMillis();
   		    return (currentTime - previousTime);
 		}
+		public Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);;
+		public Rect rect = new Rect();
 		
 		public void drawFPS(Canvas c, long FrameTime) {
   		    sft = (long) (sft * 0.9 + FrameTime * 0.1);
   		    
-  		    Paint text = new Paint();
-  		    text.setColor(Color.GREEN);
-  		    text.setTextSize(16);
-  		    text.setTypeface(Typeface.MONOSPACE);
+  		  paint.setColor(Color.GREEN);
+  		paint.setTextSize(16);
+  		paint.setTypeface(Typeface.MONOSPACE);
   		    
-  		    c.drawText(String.valueOf(sft), 20, 24, text);
+  		    c.drawText(String.valueOf(sft), 20, 24, paint);
 //  		    Log.d("FPS", "" + String.valueOf(sft));
-  		    c.drawText("" + GameHero.hero.getToggleCount(), 700, 30, text);
+  		    c.drawText("" + GameHero.hero.getToggleCount(), 700, 30, paint);
 		}
 		
 		private void drawPause(Canvas c) {
@@ -495,16 +496,12 @@ public void drawPress(Canvas c, Input input) {
 			Vec2d down = _input.getDown();
 			Vec2d mClicked = new Vec2d(_input.getCurrent());
 			if ((!down.isVoid()) && !((mClicked.x>700)&&(mClicked.y<100))){
-				
-				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-				paint.setColor(Color.RED);
-				paint.setAlpha(50);
-				
+
 				Path triPath = new Path();
 				Paint triPaint = new Paint();
-				triPaint.setColor(Color.WHITE);
-				triPaint.setAlpha(80);
-				triPaint.setStyle(Paint.Style.FILL);
+				paint.setColor(Color.WHITE);
+				paint.setAlpha(80);
+				paint.setStyle(Paint.Style.FILL);
 				
 				if (input==Input.DOWN_LEFT) {
 					c.drawBitmap(leftArrow, cameraSize.x / 4 - leftArrow.getWidth(), cameraSize.y / 2 - leftArrow.getHeight() / 2, null);
@@ -552,9 +549,8 @@ public void drawPress(Canvas c, Input input) {
 		public void drawAd(Canvas c) {
 			
 			Rect ad = new Rect(0, 0, 320, 50);
-			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			backgroundPaint.setColor(Color.YELLOW);
-			c.drawRect(ad, backgroundPaint);
+			paint.setColor(Color.YELLOW);
+			c.drawRect(ad, paint);
 		}
 		
 		public void createTitleScreen() {
@@ -670,10 +666,9 @@ public void drawPress(Canvas c, Input input) {
 					drawFPS(c, frameTime);
 					drawPause(c);
 					Rect rec = new Rect (0,0, width, height);
-					Paint whitePaint = new Paint();
-					whitePaint.setColor(Color.WHITE);
-					whitePaint.setAlpha((int) alpha);
-					c.drawRect(rec, whitePaint);
+					paint.setColor(Color.WHITE);
+					paint.setAlpha((int) alpha);
+					c.drawRect(rec, paint);
 					picScreen.endRecording();
 					drawToScreen(picScreen);
 				}
@@ -700,12 +695,11 @@ public void drawPress(Canvas c, Input input) {
 						clearScreen(c, Game.cameraSize);
 						GameObject.drawAll(c, interpolation);
 						drawFPS(c, frameTime);
-						Paint text = new Paint();
-						    text.setColor(Color.RED);
-						    text.setTextSize(86);
-						    text.setTypeface(Typeface.DEFAULT_BOLD);
+						paint.setColor(Color.RED);
+						paint.setTextSize(86);
+						paint.setTypeface(Typeface.DEFAULT_BOLD);
 						    
-						c.drawText("YOU WON!", 75, 125, text);
+						c.drawText("YOU WON!", 75, 125, paint);
 						picScreen.endRecording();
 						drawToScreen(picScreen);
 					}
@@ -803,9 +797,8 @@ public void drawPress(Canvas c, Input input) {
 			int height = (int) size.y;
 			int width = (int) size.x;
 			Rect rec = new Rect (0,0, width, height);
-			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			backgroundPaint.setColor(Color.BLACK);
-			c.drawRect(rec, backgroundPaint);
+			paint.setColor(Color.BLACK);
+			c.drawRect(rec, paint);
 		}
 	}
 }
