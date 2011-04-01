@@ -34,7 +34,7 @@ public class GameRLauncherToggle extends GameObject{
 	}
 	
 	@Override
-	public void draw(Canvas c) {
+	public void draw(Canvas c, float interpolation) {
 		if (active) color = Color.CYAN; else color = Color.GRAY;
 		
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 

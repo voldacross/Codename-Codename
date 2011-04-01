@@ -94,7 +94,7 @@ public class Wall2 extends Wall {
 	}
 	
 	@Override
-	public void draw(Canvas c){
+	public void draw(Canvas c, float interpolation){
 		Rect recBulb1 = null;
 		Rect recBulb2 = null;
 		

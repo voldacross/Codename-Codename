@@ -36,8 +36,8 @@ public class Platform extends MovingObject {
 	}
 	
 	@Override
-	public void update(long frameTime){
-		super.update(frameTime);
+	public void update(){
+		super.update();
 //		Log.d("Platform", "Before update pos " + pos + " velocity " + velocity + " step " + step + " : " + steps.get(step));
 		checkStep();
 //		Log.d("Platform", "After update pos " + pos + " velocity " + velocity + " step " + step + " : " + steps.get(step));

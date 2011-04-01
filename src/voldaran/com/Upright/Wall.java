@@ -79,7 +79,7 @@ public class Wall extends GameObject {
 		c.drawRect(recObject, paintObject);
 	}
 	@Override
-	public void draw(Canvas c){
+	public void draw(Canvas c, float interpolation){
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
 				                  (int)((top - GameObject.offset.y) / 1000), 
 				                  (int)((right - GameObject.offset.x)/ 1000), 

@@ -589,32 +589,44 @@ public void drawPress(Canvas c, Input input) {
 		public GameState gameLoop(){
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
-			UserInput.Input currentInput;
+			UserInput.Input currentInput = UserInput.Input.NONE;
+			int TICKS_PER_SECOND = 15;
+			int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+			int MAX_FRAMESKIP = 5;
 			long frameTime;
 			
+			long next_game_tick = android.os.SystemClock.elapsedRealtime();
+			int loops;
+			float interpolation = 0;
   			
   			while((gameState == GameState.PLAYING)  && (mRun)){
-				Vec2d mClicked = _input.getCurrentPress();
-				if(!mClicked.isVoid()) //Pause
-					if ((mClicked.x>700)&&(mClicked.y<100)) {
-						gameState = GameState.PAUSED;
-						_input.Clear();
-					}
-				
-				
-				currentInput = _input.getInput();
-				frameTime = getFrameTime();
-				GameHero.hero.processInput(currentInput);
-				GameHero.hero.collisionAvoid(frameTime);
-				MovingObject.updateAll(frameTime);
-				
+  				loops = 0;
+  				while(android.os.SystemClock.elapsedRealtime() > next_game_tick && loops < MAX_FRAMESKIP){
+					Vec2d mClicked = _input.getCurrentPress();
+					if(!mClicked.isVoid()) //Pause
+						if ((mClicked.x>700)&&(mClicked.y<100)) {
+							gameState = GameState.PAUSED;
+							_input.Clear();
+						}
+					
+					
+					currentInput = _input.getInput();
+					GameHero.hero.processInput(currentInput);
+					GameHero.hero.collisionAvoid();
+					MovingObject.updateAll();
+					
+					next_game_tick += SKIP_TICKS;
+					loops++;
+  				}
 
+				frameTime = getFrameTime();
+  				interpolation = (float)(android.os.SystemClock.elapsedRealtime() + SKIP_TICKS - next_game_tick) / (float)SKIP_TICKS;
 				Picture picScreen = new Picture();
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
 					clearScreen(c, Game.cameraSize);
-					GameObject.drawAll(c);
+					GameObject.drawAll(c, interpolation);
 //					drawArrows(c);
 					drawPress(c, currentInput);
 					drawFPS(c, frameTime);
@@ -644,6 +656,7 @@ public void drawPress(Canvas c, Input input) {
 			int height = (int) Game.cameraSize.y;
 			int width = (int) Game.cameraSize.x;
 			long frameTime;
+			float interpolation = 0;
 
 			GameObject.restoreCheckpointAll();
 			while(mRun && alpha > 50){
@@ -653,7 +666,7 @@ public void drawPress(Canvas c, Input input) {
 				
 				synchronized (_surfaceHolder) {
 					clearScreen(c, Game.cameraSize);
-					GameObject.drawAll(c);
+					GameObject.drawAll(c, interpolation);
 					drawFPS(c, frameTime);
 					drawPause(c);
 					Rect rec = new Rect (0,0, width, height);
@@ -672,6 +685,7 @@ public void drawPress(Canvas c, Input input) {
 		
 		public GameState levelComplete() {
 			long frameTime;
+			float interpolation = 0;
 		
 			while((gameState == GameState.LEVEL_COMPLETE) && (mRun)){
 				Vec2d mClicked = _input.getCurrentPress();
@@ -684,7 +698,7 @@ public void drawPress(Canvas c, Input input) {
 				
 					synchronized (_surfaceHolder) {
 						clearScreen(c, Game.cameraSize);
-						GameObject.drawAll(c);
+						GameObject.drawAll(c, interpolation);
 						drawFPS(c, frameTime);
 						Paint text = new Paint();
 						    text.setColor(Color.RED);

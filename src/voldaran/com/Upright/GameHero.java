@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class GameHero extends MovingObject{
 	public final static Bitmap bitmap = Game.loadBitmapAsset("meatwad.png");
-	private final static int WALKSPEED = 100;
+	private final static int WALKSPEED = 4000;
 	private final static Vec2d Velocities[] = {new Vec2d(0,0),
 											   new Vec2d(WALKSPEED, 0),
 											   new Vec2d(0, -WALKSPEED),
@@ -251,11 +251,12 @@ public class GameHero extends MovingObject{
 	}
 	
 	@Override
-	public void draw(Canvas c){
-		Rect recHero = new Rect((int) ((pos.x - extent.x) / 1000),
-				(int) ((pos.y - extent.y) / 1000),
-				(int) ((pos.x + extent.x) / 1000),
-				(int) ((pos.y + extent.y) / 1000));
+	public void draw(Canvas c, float interpolation){
+		Vec2d drawpos= new Vec2d(pos).add(velocity.x * interpolation, velocity.y * interpolation);
+		Rect recHero = new Rect((int) ((drawpos.x - extent.x) / 1000),
+				(int) ((drawpos.y - extent.y) / 1000),
+				(int) ((drawpos.x + extent.x) / 1000),
+				(int) ((drawpos.y + extent.y) / 1000));
 		c.drawBitmap(bitmap, null, recHero, null);
 	}
 	

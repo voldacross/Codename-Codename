@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 public class GameObstacleGen extends GameObject{
 	public static ArrayList<GameObstacleGen> gameLasers = new ArrayList<GameObstacleGen>();
@@ -131,7 +130,7 @@ public class GameObstacleGen extends GameObject{
 	}
 
 	@Override
-	public void draw(Canvas c){
+	public void draw(Canvas c, float interpolation){
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
 				                  (int)((top - GameObject.offset.y) / 1000), 
 				                  (int)((right - GameObject.offset.x)/ 1000), 

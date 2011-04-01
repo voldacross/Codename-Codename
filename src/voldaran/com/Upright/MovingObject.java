@@ -5,15 +5,16 @@ import java.util.ArrayList;
 public class MovingObject extends GameObject{
 	public static ArrayList<MovingObject> movingObjects = new ArrayList<MovingObject>();
 	
-	public static void updateAll(long frameTime){
+	public static void updateAll(){
 		for(MovingObject o : MovingObject.movingObjects){
-			o.update(frameTime);
+			o.update();
 		}
 	}
 	
 	protected Vec2d posCheckpoint = new Vec2d();
 	protected Vec2d velocityCheckpoint = new Vec2d();
 	protected GameObject newGround = null;
+	private Vec2d v = new Vec2d();
 	
 	public MovingObject(Vec2d pos, Vec2d extent, Vec2d velocity){
 		super(pos, extent, velocity);
@@ -32,8 +33,8 @@ public class MovingObject extends GameObject{
 	}
 	
 	@Override
-	public void update(long frameTime){
-		pos.add(velocity.x * frameTime, velocity.y * frameTime);
+	public void update(){
+		pos.add(velocity);
 		setSides();
 	}
 	
@@ -54,7 +55,7 @@ public class MovingObject extends GameObject{
 		return this.right > b.left && this.left < b.right && this.bottom > b.top && this.top < b.bottom;
 	}
 	
-	public void collisionAvoid(long frameTime){
+	public void collisionAvoid(){
 		Collision collision = null;
 		Collision firstcollision;
 		
@@ -62,7 +63,7 @@ public class MovingObject extends GameObject{
 		GameObject contact = null;
 		for(GameObject o : GameObject.gameObjects){
 			if((o != this)&&(o.solid)) {
-				collision = sweepOverlaps(o, frameTime);
+				collision = sweepOverlaps(o);
 				if((collision != null) && (firstcollision == null || collision.time < firstcollision.time)){
 					firstcollision = collision;
 				}
@@ -80,14 +81,15 @@ public class MovingObject extends GameObject{
 		}
 	}
 	
-	protected Collision sweepOverlaps(GameObject b, long frameTime){
+	protected Collision sweepOverlaps(GameObject b){
 //		if (!b.solid) return new Collision(0,b.velocity,b);
 		if(overlaps(b)) return null;
 		
 		float[] to = {-1, -1};								// No collision flag
 		float[] ts = {1, 1};								// No separation flag
 		
-		Vec2d v = new Vec2d(velocity).sub(b.velocity).mul(frameTime);		// calculate from b's frame of reference
+		v.set(velocity);
+		v.sub(b.velocity);		// calculate from b's frame of reference
 		
 		if((b.right <= left) && (v.x < 0))					// approaches b from the right
 			to[0] = (b.right - left) / (float)v.x;			// time of x overlap
@@ -125,9 +127,9 @@ public class MovingObject extends GameObject{
 		
 		// calculate the avoidance velocity
 		if(to[0] > to[1]) 
-			return new Collision(tom, new Vec2d(velocity.x * tom + b.velocity.x * (tsm - tom), velocity.y).div(frameTime), b);
+			return new Collision(tom, new Vec2d(velocity.x * tom + b.velocity.x * (tsm - tom), velocity.y), b);
 		else 
-			return new Collision(tom, new Vec2d(velocity.x, velocity.y * tom + b.velocity.y * (tsm - tom)).div(frameTime), b);
+			return new Collision(tom, new Vec2d(velocity.x, velocity.y * tom + b.velocity.y * (tsm - tom)), b);
 	}
 	
 	@Override

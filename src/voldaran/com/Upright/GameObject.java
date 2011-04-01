@@ -40,10 +40,10 @@ public class GameObject {
 		}
 	}
 	
-	public static void drawAll(Canvas c){  //TODO Not entirely needed anymore
+	public static void drawAll(Canvas c, float interpolation){  //TODO Not entirely needed anymore
 		for(GameObject o : GameObject.gameObjects){
 			if(o.onScreen(c))
-				o.draw(c);
+				o.draw(c, interpolation);
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class GameObject {
         	return bottom > o.top && top < o.bottom;
 	}
 	
-	public void update(long frameTime){
+	public void update(){
 	}
 	
 	public void touch(GameObject o){
@@ -192,7 +192,7 @@ public class GameObject {
 		c.drawRect(recObject, paintObject);
 	}
 	
-	public void draw(Canvas c){
+	public void draw(Canvas c, float interpolation){
 		Rect recObject = new Rect((int)((left - GameObject.offset.x) / 1000), 
 				                  (int)((top - GameObject.offset.y) / 1000), 
 				                  (int)((right - GameObject.offset.x)/ 1000), 

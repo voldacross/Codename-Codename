@@ -50,7 +50,7 @@ public class Wall3 extends Wall {
 	}
 	
 	@Override
-	public void draw(Canvas c){
+	public void draw(Canvas c, float interpolation){
 		if (color == DIM){
 			if (tempColor==DIM) tempColor = OFF; else tempColor=DIM;
 		} else tempColor = color;
