@@ -7,11 +7,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Button {
-	public int id;
 	public Rect buttonSize;
 	public int left, right, top, bottom;
 	public Bitmap bitmap;
 	public boolean clickable = true;
+	public boolean Back = false;
 	
 	public static Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
 	
@@ -29,14 +29,15 @@ public class Button {
 	}
 
 	public void reset() {
-		buttonSize.left = left;
-		buttonSize.right = right;
-		buttonSize.top = top;
-		buttonSize.bottom = bottom;
+
 	}
 	
 	public void onClick() {
 		//do nothing
+	}
+	
+	public void load() {
+		
 	}
 	
 	public void draw(Canvas c) {
@@ -46,6 +47,10 @@ public class Button {
 		    	paint.setColor(Color.GREEN);
 		    	c.drawRect(buttonSize, paint);
 		    }
+	}
+	
+
+	public void fullScreen() {
 	}
 	
 }

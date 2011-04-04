@@ -44,12 +44,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
 	}
 
-	public GameThread thread;
+	public static GameThread thread;
 	public int gameTIME = 0;
 	public UserInput _input;
 	private PauseMenu pause;
-	public GameState gameState;
-	public String currentLevel = "";
+	public static GameState gameState;
+	public static String currentLevel = "world1/level104.txt";
 	
 	public Game(Context context, DisplayMetrics d) {
 		super(context);
@@ -94,7 +94,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void resumeGameBundle(Bundle resumeGame) {
 		
 		gameState=GameState.values()[resumeGame.getInt("GAME_STATE")];
-		
+		gameState=GameState.TITLE;
 //		if (gameState==GameState.PLAYING) thread.loadLevel();
 	}
 	
@@ -426,6 +426,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			mtx.postRotate(90);
 			upArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
 			
+			
+			
 		}
 		
 		public void setRunning(boolean run) {
@@ -441,16 +443,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		public Rect rect = new Rect();
 		
 		public void drawFPS(Canvas c, long FrameTime) {
-  		    sft = (long) (sft * 0.9 + FrameTime * 0.1);
+		    sft = (long) (sft * 0.9 + FrameTime * 0.1);
   		    
-  		  paint.setColor(Color.GREEN);
-  		paint.setTextSize(16);
-  		paint.setTypeface(Typeface.MONOSPACE);
-  		    
-  		    c.drawText(String.valueOf(sft), 20, 24, paint);
-//  		    Log.d("FPS", "" + String.valueOf(sft));
-  		    c.drawText("" + GameHero.hero.getToggleCount(), 700, 30, paint);
+			paint.setColor(Color.GREEN);
+			paint.setTextSize(16);
+			paint.setTypeface(Typeface.MONOSPACE);
+			    
+			c.drawText(String.valueOf(sft), 20, 24, paint);
+			if (Game.gameState==GameState.PLAYING) c.drawText(String.valueOf(GameHero.hero.getToggleCount()), 700, 30, paint);
+			
+			
+  		  
 		}
+
 		
 		private void drawPause(Canvas c) {
 			c.drawBitmap(pauseButton, Game.cameraSize.x - pauseButton.getWidth() - 15, 15, null);
@@ -575,6 +580,7 @@ public void drawPress(Canvas c, Input input) {
 		@Override
 		public void run() {
 			gameState = GameState.TITLE;
+			MenuSystem.createMenus();
 			while (active) {
 				while (mRun) {
 					switch(gameState){
@@ -592,7 +598,7 @@ public void drawPress(Canvas c, Input input) {
 			Vec2d offset = new Vec2d(0,0);
 			GameObject.offset = offset;
 			UserInput.Input currentInput = UserInput.Input.NONE;
-			int TICKS_PER_SECOND = 15;
+			int TICKS_PER_SECOND = 25;
 			int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
 			int MAX_FRAMESKIP = 5;
 			long frameTime;
@@ -716,12 +722,16 @@ public void drawPress(Canvas c, Input input) {
 			}
 			return gameState;
 		}
-		
 		public GameState titleScreen() {
 //			createTitleScreen();
 			long frameTime;
 			Picture picScreen = null;
 			Canvas c = null;
+			mClicked.setVoid();
+			
+			MenuSystem.activePanel = MenuSystem.mainPanel;
+			MenuSystem.mainPanel.deactiveButton = MenuSystem.continueButton;
+			MenuSystem.updateContinue();
 			
 			while((gameState == GameState.TITLE) && (mRun)){
 				
@@ -729,20 +739,19 @@ public void drawPress(Canvas c, Input input) {
 				picScreen = new Picture();
 				c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
-				UserInput.Input currentInput = _input.getInput();
-				
-				Vec2d mClicked = _input.getCurrentPress();
-				if (!mClicked.isVoid()) titleMenu.processInput(currentInput, mClicked);
-				titleMenu.update();
+				mClicked = _input.getCurrentPress();
+				if (!mClicked.isVoid()) MenuSystem.processInput(mClicked);
+				MenuSystem.updateMenus();
 				
 					synchronized (_surfaceHolder) {
-						titleMenu.drawPanels(c);
+						MenuSystem.drawMenus(c);
 						drawFPS(c, frameTime);
 						picScreen.endRecording();
 						drawToScreen(picScreen);
 					}
 					
 			}
+			
 			return gameState;
 		}
 		
@@ -775,20 +784,25 @@ public void drawPress(Canvas c, Input input) {
 			return gameState;
 		}
 		
+		
 		public void drawToScreen(Picture pic){
 			drawToScreen(pic, 0);
 		}
-		
+		private Rect rectSurface = new Rect();
+		private Canvas actual = null;
 		public void drawToScreen(Picture pic, float fade){
-			Canvas actual = null;
-			
+			actual = null;
 			try {
 				actual = _surfaceHolder.lockCanvas(null);
 				synchronized (_surfaceHolder) {
-					Rect rectSurface = new Rect(0,0,(int) surfaceSize.x,(int) surfaceSize.y);
+					rectSurface.left = 0;
+					rectSurface.top = 0;
+					rectSurface.right = (int) surfaceSize.x;
+					rectSurface.bottom = (int) surfaceSize.y;
 					
 					clearScreen(actual, surfaceSize);
 					actual.drawPicture(pic, rectSurface);
+					
 				}
             }catch(NullPointerException e){
             }
@@ -799,16 +813,22 @@ public void drawPress(Canvas c, Input input) {
             }
 			
 		}
-		
+		private Rect clearRec = new Rect ();
 		public void clearScreen(Canvas c, Vec2d size){
-			int height = (int) size.y;
-			int width = (int) size.x;
-			Rect rec = new Rect (0,0, width, height);
+			clearRec.left = 0;
+			clearRec.right = (int) size.x;
+			clearRec.top = 0;
+			clearRec.bottom = (int) size.y;
 			paint.setColor(Color.BLACK);
-			c.drawRect(rec, paint);
+			c.drawRect(clearRec, paint);
 		}
 	}
 }
+
+
+
+
+
 
 
 
