@@ -117,6 +117,7 @@ public class MenuPanel {
 			if (testButton.Back) {
 //				deactiveButton = testButton;
 //				startTransition(deactiveButton);
+				Log.d("GSTA", "onClick!");
 				testButton.onClick();
 			} else {
 				activeButton = testButton;
@@ -153,6 +154,7 @@ public class MenuPanel {
 			testRect.top = b.buttonSize.top;
 			testRect.right = b.buttonSize.right;
 			testRect.bottom = b.buttonSize.bottom;
+			
 			if (testRect.intersects((int) click.x,(int) click.y,(int) click.x,(int) click.y)) {
 				return b;
 			}

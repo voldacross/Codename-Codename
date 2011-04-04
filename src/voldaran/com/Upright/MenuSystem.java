@@ -97,6 +97,11 @@ public class MenuSystem {
 		return o;
 	}
 	
+	public static MenuPanel loadWorldSelect() {
+		
+		return null;
+	}
+	
 	public static void updateContinue() {
 		Bitmap preview = Game.thread.loadLeveltoBitmap(Game.currentLevel);
 		
@@ -171,7 +176,7 @@ public class MenuSystem {
 			
 		}
 		
-		o.addButton(new PreviewButton(new Rect(750, 0, 800, 50), null, false) {
+		o.addButton(new PreviewButton(new Rect(750, 0, 800, 50), null, true) {
 			
 			public void onClick () {
 				MenuSystem.activePanel = MenuSystem.mainPanel;
