@@ -111,7 +111,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void createThread(){
 		Log.d( "GameThread", "createThread");
 		thread = new GameThread(getHolder(), this);
-		startThread();
+		
 	}
 	
 	public void stopThread(){
@@ -144,7 +144,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d( "GameThread", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
-		
+		startThread();
 	}
 	
 	public void startThread() {
@@ -583,6 +583,7 @@ public void drawPress(Canvas c, Input input) {
 			MenuSystem.createMenus();
 			while (active) {
 				while (mRun) {
+					System.gc();
 					switch(gameState){
 					case TITLE:gameState = titleScreen();
 					case PLAYING:gameState = gameLoop();
@@ -717,7 +718,10 @@ public void drawPress(Canvas c, Input input) {
 						drawToScreen(picScreen);
 					}
 					
-					if (!mClicked.isVoid()) gameState = GameState.TITLE;
+					if (!mClicked.isVoid()) {
+						MenuSystem.returnToMain();
+						gameState = GameState.TITLE;
+					}
 					
 			}
 			return gameState;
@@ -729,9 +733,9 @@ public void drawPress(Canvas c, Input input) {
 			Canvas c = null;
 			mClicked.setVoid();
 			
-			MenuSystem.activePanel = MenuSystem.mainPanel;
-			MenuSystem.mainPanel.deactiveButton = MenuSystem.continueButton;
-			MenuSystem.updateContinue();
+//			MenuSystem.activePanel = MenuSystem.mainPanel;
+//			MenuSystem.mainPanel.deactiveButton = MenuSystem.continueButton;
+//			MenuSystem.updateContinue();
 			
 			while((gameState == GameState.TITLE) && (mRun)){
 				

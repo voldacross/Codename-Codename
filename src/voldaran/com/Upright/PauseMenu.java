@@ -46,7 +46,8 @@ public class PauseMenu {
 			return GameState.PLAYING;
 		}
 		if (LevelSelect.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1))) {
-//			MenuTitleScreen.deactiveButton =; 
+//			MenuTitleScreen.deactiveButton =;
+			MenuSystem.returnToMain();
 			return GameState.TITLE;
 		}
 		if (!Pause.intersects((int) click.x, (int) click.y,(int) (click.x+1), (int) (click.y+1)))
