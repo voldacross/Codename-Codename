@@ -244,9 +244,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			Canvas c = new Canvas(previewLevel);
 			
 			Rect rec = new Rect (0,0, (int) Game.cameraSize.x / 4, (int) Game.cameraSize.y / 4);
-			Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
-			backgroundPaint.setColor(Color.BLACK);
-			c.drawRect(rec, backgroundPaint);
+			paint.setColor(Color.BLACK);
+			c.drawRect(rec, paint);
 			
 			GameObject.drawAllPreview(c);
 			
@@ -411,6 +410,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		public Game mGame;
 		private Bitmap pauseButton;
 		private Bitmap downArrow, leftArrow, upArrow, arrow;
+		private Bitmap background1,background2,background3,background4,background5; 
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
 			_surfaceHolder = surfaceHolder;
 			mGame = game;
@@ -425,6 +425,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			leftArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
 			mtx.postRotate(90);
 			upArrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(), arrow.getHeight(), mtx, true);
+			
+			background1 = Game.loadBitmapAsset("bg1.png");
+			background2 = Game.loadBitmapAsset("2.png");
+			background3 = Game.loadBitmapAsset("3.png");
+			background4 = Game.loadBitmapAsset("4.png");
+			background5 = Game.loadBitmapAsset("5.png");
 			
 			
 			
@@ -635,7 +641,7 @@ public void drawPress(Canvas c, Input input) {
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
 				
 				synchronized (_surfaceHolder) {
-					clearScreen(c, Game.cameraSize);
+					drawBackground(c, Game.cameraSize);
 					GameObject.drawAll(c, interpolation);
 //					drawArrows(c);
 					drawPress(c, currentInput);
@@ -676,6 +682,7 @@ public void drawPress(Canvas c, Input input) {
 				
 				synchronized (_surfaceHolder) {
 					clearScreen(c, Game.cameraSize);
+					drawBackground(c, Game.cameraSize);
 					GameObject.drawAll(c, interpolation);
 					drawFPS(c, frameTime);
 					drawPause(c);
@@ -707,6 +714,7 @@ public void drawPress(Canvas c, Input input) {
 				
 					synchronized (_surfaceHolder) {
 						clearScreen(c, Game.cameraSize);
+						drawBackground(c, Game.cameraSize);
 						GameObject.drawAll(c, interpolation);
 						drawFPS(c, frameTime);
 						paint.setColor(Color.RED);
@@ -818,6 +826,28 @@ public void drawPress(Canvas c, Input input) {
 			
 		}
 		private Rect clearRec = new Rect ();
+		private boolean up = true;
+		double x = 100;
+		public void drawBackground(Canvas c, Vec2d size){
+			if (up)
+				x++;
+			else 
+				x--;
+			
+			Log.d("GSTA", "dim x " + x);
+			c.drawBitmap(background1, 0, 0, null);
+			paint.setColor(Color.BLACK);
+			paint.setAlpha((int) x);
+			
+			c.drawRect(0, 0, cameraSize.x, cameraSize.y, paint);
+			
+			if (up){
+				if (x>=220) up=false;
+			} else {
+				if (x<=0) up=true;
+			}
+		}
+		
 		public void clearScreen(Canvas c, Vec2d size){
 			clearRec.left = 0;
 			clearRec.right = (int) size.x;

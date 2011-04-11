@@ -49,6 +49,16 @@ public class MenuPanel {
 	private Canvas tempC = null;
 	private Rect snapshotRect = new Rect();
 	
+	public void reset() {
+		snapshotRect.left = 0;
+		snapshotRect.top = 0;
+		snapshotRect.right = (int) Game.cameraSize.x;
+		snapshotRect.bottom = (int) Game.cameraSize.y;
+		currentStep = 1;
+		inTransition = false;
+		
+	}
+	
 	public Picture setSnapshot() {
 		boolean tempTransition = inTransition;
 		inTransition = false;

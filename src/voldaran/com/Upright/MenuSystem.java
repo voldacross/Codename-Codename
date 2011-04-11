@@ -63,7 +63,7 @@ public class MenuSystem {
 	
 	public static MenuPanel loadMainPanel() {
 		
-		background = Game.loadBitmapAsset("menu_background.png");
+		background = Game.loadBitmapAsset("menu_background2.png");
 		
 		
 		MenuPanel o = new MenuPanel(background);
@@ -205,7 +205,7 @@ public class MenuSystem {
 //		Canvas c = new Canvas(previewLevel);
 //		tempO.draw(c);
 		
-		Bitmap previewLevel = Game.loadBitmapAsset("world_select.png");
+		Bitmap previewLevel = Game.loadBitmapAsset("world_select2.png");
 		Matrix matrix = new Matrix();
 		matrix.postScale((float) 0.50,(float) 0.50);
 		
@@ -221,6 +221,7 @@ public class MenuSystem {
 //	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 	
 	public static MenuPanel loadWorldSelect() {
+		background = Game.loadBitmapAsset("world_select2.png");
 		MenuPanel o = new MenuPanel(background);
 		Log.d("GSTA", "loading world select");
 		AssetManager assets = Game.mContext.getAssets();
@@ -292,6 +293,8 @@ public class MenuSystem {
 		MenuSystem.mainPanel.activeButton = null;
 		MenuSystem.mainPanel.fullscreenButton(MenuSystem.continueButton);
 		MenuSystem.mainPanel.setSnapshot();
+		MenuSystem.worldSelect.deactiveButton = null;
+		MenuSystem.worldSelect.reset();
 		MenuSystem.activePanel = MenuSystem.mainPanel;
 	}
 
