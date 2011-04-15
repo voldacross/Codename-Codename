@@ -215,12 +215,12 @@ public class MenuSystem {
 	
 	public static Bitmap loadWorldSelectToBitmap() {
 		
-		MenuPanel tempO = loadWorldSelect();
-		Bitmap previewLevel = Bitmap.createBitmap((int) Game.cameraSize.x, (int) Game.cameraSize.y, Bitmap.Config.ARGB_8888);
-		Canvas c = new Canvas(previewLevel);
-		tempO.draw(c);
+//		MenuPanel tempO = loadWorldSelect();
+//		Bitmap previewLevel = Bitmap.createBitmap((int) Game.cameraSize.x, (int) Game.cameraSize.y, Bitmap.Config.ARGB_8888);
+//		Canvas c = new Canvas(previewLevel);
+//		tempO.draw(c);
 		
-//		Bitmap previewLevel = Game.loadBitmapAsset("world_select2.png");
+		Bitmap previewLevel = Game.loadBitmapAsset("world_select.png");
 		Matrix matrix = new Matrix();
 		matrix.postScale((float) 0.50,(float) 0.50);
 		

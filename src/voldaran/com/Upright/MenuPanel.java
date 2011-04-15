@@ -41,7 +41,6 @@ public class MenuPanel {
 		activeButton = null;
 		deactiveButton = null;
 		background = Background;
-		double test;
 		
 	}
 	
@@ -90,7 +89,7 @@ public class MenuPanel {
 		Log.d("GSTA", "startTransition");
 		setSnapshot();
 		currentStep = 1;
-		Log.d("GSTA", "snapshotRect " + snapshotRect.flattenToString());
+//		Log.d("GSTA", "snapshotRect " + snapshotRect.flattenToString());
 		
 		snapshotRect.left = 0;
 		snapshotRect.top = 0;
@@ -199,7 +198,7 @@ public class MenuPanel {
 	public void draw (Canvas c) {
 		
 		if (inTransition) {
-			Log.d("GSTA", "draw snapshotRect " + snapshotRect.flattenToString());
+//			Log.d("GSTA", "draw snapshotRect " + snapshotRect.flattenToString());
 			c.drawPicture(snapshot, snapshotRect);
 		} else {
 			testRect.left = 0;
