@@ -3,15 +3,19 @@ package voldaran.com.Upright;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 import voldaran.com.Upright.UserInput.Input;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -35,7 +39,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public static Vec2d surfaceSize = new Vec2d();
 	public static Vec2d cameraSize;
 	public static DisplayMetrics displayMetrics = new DisplayMetrics();;
-
+	DataBaseHelper myDbHelper = null;
+	
 	public enum GameState {
 		TITLE,
 		PLAYING,
@@ -49,7 +54,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	public UserInput _input;
 	private PauseMenu pause;
 	public static GameState gameState;
-	public static String currentLevel = "world1/level104.txt";
+//	public static String currentLevel = "world1/level104.txt";
+	public static int currentLevel = 1104;
 	
 	public Game(Context context, DisplayMetrics d) {
 		super(context);
@@ -57,7 +63,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		setFocusable(true);
 		Game.mContext = context;
 		Game.displayMetrics = d;
-		
+		myDbHelper = new DataBaseHelper(context);
 		//Create Camera Size
 		
 		Game.cameraSize = new Vec2d(800,480);
@@ -112,10 +118,26 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		Log.d( "GameThread", "createThread");
 		thread = new GameThread(getHolder(), this);
 		
+		try {
+        	myDbHelper.createDataBase();
+        } catch (IOException ioe) {
+        	throw new Error("Unable to create database");
+        }
+ 
+        try {
+        	myDbHelper.openDataBase();
+        }catch(SQLException sqle){
+        	throw sqle;
+ 
+        }
+        loadLevelInfo();
 	}
+	
+	
 	
 	public void stopThread(){
 		Log.d( "GameThread", "stopThread");
+		myDbHelper.close();
 		if (thread!=null) {
 		thread.setRunning(false);
 		thread.active = false;
@@ -132,7 +154,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 	
-	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 	int height) {
 		Log.d( "GameThread", "surfaceChanged");
@@ -140,7 +161,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 	}
 	
-	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.d( "GameThread", "surfaceCreated");
 		surfaceSize.set(getWidth(), getHeight());
@@ -160,12 +180,40 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	
-	@Override public void surfaceDestroyed(SurfaceHolder holder) {
+	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d( "GameThread", "surfaceDestoyed");
 		stopThread();
 	}
 	
-
+	public void loadLevelInfo() {
+		Cursor c;
+		c = myDbHelper.returnAllRecords();
+			if (c != null) {
+				if (c.moveToFirst()){
+					LevelInfo l;
+					do {
+						l = new LevelInfo(c.getInt(c.getColumnIndex("world")), 
+								c.getInt(c.getColumnIndex("level")), 
+								c.getInt(c.getColumnIndex("id")));
+						
+						l.highscore = c.getInt(c.getColumnIndex("highscore"));
+						l.first = c.getInt(c.getColumnIndex("first"));
+						l.optimal = c.getInt(c.getColumnIndex("optimal"));
+						l.second = c.getInt(c.getColumnIndex("second"));
+						l.state = c.getInt(c.getColumnIndex("state"));
+						l = null;
+					} while (c.moveToNext());
+				}
+			}
+			
+			c = null;
+			
+			LevelInfo l = LevelInfo.returnLevelInfo(1100);
+			Log.d("GSTA", l.toString());
+			
+			
+//			c = myDbHelper.readRecord(l.id);
+	}
 	
 	//Static Helper Class
 	public static Bitmap loadBitmapAsset(String asset) {
@@ -198,9 +246,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		
 
 		
-		public Bitmap loadLeveltoBitmap(String levelAsset) {
+		public Bitmap loadLeveltoBitmap(int l) {
 			//loading new level
 			
+			String levelAsset = LevelInfo.levelToString(l);
+			Log.d("GSTA", "levelAsset = " + levelAsset);
 			//Clear out old level if present
 			GameObject.gameObjects.clear();
 			MovingObject.movingObjects.clear();
@@ -253,17 +303,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		public void loadLevel() {
-			if (currentLevel=="") {
-				loadLevel("level3.txt", true); 
+			if (currentLevel==0) {
+				loadLevel(1104, true); 
 			} else {
 				loadLevel(currentLevel, true);
 			}
 					
 		}
 		
-		public void loadLevel(String level, boolean asset){
+		public void loadLevel(int l, boolean asset){
+			String level = LevelInfo.levelToString(l);
+			
 			if(asset){
-				currentLevel = level;
+				currentLevel = l;
 				try{
 					InputStream stream = mContext.getAssets().open("level/" + level);
 					loadLevel(stream);
@@ -271,11 +323,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 					e.printStackTrace();
 					Log.d("LoadLevel", "error - " + e);
 				}
-			}else loadLevel(level);
+			}else loadLevel(l);
 		}
 		
-		public void loadLevel(String level){
-			currentLevel = level;
+		public void loadLevel(int l){
+			String level = LevelInfo.levelToString(l);
+			currentLevel = l;
 			try{
 				InputStream stream = mContext.openFileInput(level);
 				loadLevel(stream);
@@ -284,52 +337,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 				Log.d("LoadLevel", "error - " + e);
 			}
 		}
-		
-		//added so we didn't have to change 2 different places every time we needed to adjust the parsing.
-		public void parseLine(String line, Boolean gameLoad) {
-			GameObject o;
-			if (line.startsWith("wall")){
-				o = (GameObject) Wall.fromString(line.substring(4));
-				Log.d("LoadLevel", o.toString());
-			}
-			else if (line.startsWith("hero")) {
-				GameHero.fromString(line.substring(4));
-				Log.d("LoadLevel", GameHero.hero.toString());
-			}
-			else if (line.startsWith("rlaunch")) {
-				GameRLauncher rLaunch = GameRLauncher.fromString(line.substring(7));
-				rLaunch.addToggle(new Vec2d(660000,290000));
-				rLaunch.addToggle(new Vec2d(440000,380000));
-			}
-			else if (line.startsWith("twall")) {
-				o = (GameObject) WallToggle.fromString(line.substring(5));
-				Log.d("LoadLevel", o.toString());
-			}
-			else if (line.startsWith("3wall")) {
-				o = (GameObject) Wall3.fromString(line.substring(5));
-				Log.d("LoadLevel", o.toString());
-			}
-			else if (line.startsWith("2wall")) {
-				o = (GameObject) Wall2.fromString(line.substring(5));
-				Log.d("LoadLevel", o.toString());
-			}
-			else if (line.startsWith("rlas")) { //redLaserofDeath!!!!
-				o = (GameObject) GameObstacleGen.fromString(line.substring(4));
-				Log.d("LoadLevel", o.toString());
-			}
-			else if (line.startsWith("mode")) {
-				if (gameLoad) {
-					if (line.indexOf("trail")>0) {
-						TrailOfDeath.enabled = true;
-					} else 
-						TrailOfDeath.enabled = false;
-				} 
-			}
-			else Log.d("Load", line);
-			
-		}
-		
-		
 		
 		//Loads a level
 		public void loadLevel(InputStream stream) {
@@ -384,6 +391,50 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			GameObstacleGen.adjustLasers();
 		}
 		
+		//added so we didn't have to change 2 different places every time we needed to adjust the parsing.
+		public void parseLine(String line, Boolean gameLoad) {
+			GameObject o;
+			if (line.startsWith("wall")){
+				o = (GameObject) Wall.fromString(line.substring(4));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("hero")) {
+				GameHero.fromString(line.substring(4));
+				Log.d("LoadLevel", GameHero.hero.toString());
+			}
+			else if (line.startsWith("rlaunch")) {
+				GameRLauncher rLaunch = GameRLauncher.fromString(line.substring(7));
+				rLaunch.addToggle(new Vec2d(660000,290000));
+				rLaunch.addToggle(new Vec2d(440000,380000));
+			}
+			else if (line.startsWith("twall")) {
+				o = (GameObject) WallToggle.fromString(line.substring(5));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("3wall")) {
+				o = (GameObject) Wall3.fromString(line.substring(5));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("2wall")) {
+				o = (GameObject) Wall2.fromString(line.substring(5));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("rlas")) { //redLaserofDeath!!!!
+				o = (GameObject) GameObstacleGen.fromString(line.substring(4));
+				Log.d("LoadLevel", o.toString());
+			}
+			else if (line.startsWith("mode")) {
+				if (gameLoad) {
+					if (line.indexOf("trail")>0) {
+						TrailOfDeath.enabled = true;
+					} else 
+						TrailOfDeath.enabled = false;
+				} 
+			}
+			else Log.d("Load", line);
+			
+		}
+		
 		public void SaveLevel(String level){
 			FileOutputStream stream = null;
 			BufferedWriter writer = null;
@@ -411,6 +462,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 		private Bitmap pauseButton;
 		private Bitmap downArrow, leftArrow, upArrow, arrow;
 		private Bitmap background1,background2,background3,background4,background5; 
+		
+
+		
+		
 		public GameThread(SurfaceHolder surfaceHolder, Game game) {
 			_surfaceHolder = surfaceHolder;
 			mGame = game;
@@ -432,9 +487,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 			background4 = Game.loadBitmapAsset("4.png");
 			background5 = Game.loadBitmapAsset("5.png");
 			
-			
-			
 		}
+		
+
 		
 		public void setRunning(boolean run) {
 			mRun = run;
@@ -703,6 +758,12 @@ public void drawPress(Canvas c, Input input) {
 			long frameTime;
 			float interpolation = 0;
 			Picture picScreen = new Picture();
+			Log.d("GSTA", "currentlevel " + Game.currentLevel);
+			
+			
+//			LevelInfo = 
+//			GameHero.hero.getToggleCount()
+			
 			while((gameState == GameState.LEVEL_COMPLETE) && (mRun)){
 				Vec2d mClicked = _input.getCurrentPress();
 				
@@ -825,6 +886,8 @@ public void drawPress(Canvas c, Input input) {
             }
 			
 		}
+		
+		
 		private Rect clearRec = new Rect ();
 		private boolean up = true;
 		double x = 100;
@@ -834,7 +897,7 @@ public void drawPress(Canvas c, Input input) {
 			else 
 				x--;
 			
-			Log.d("GSTA", "dim x " + x);
+//			Log.d("GSTA", "dim x " + x);
 			c.drawBitmap(background1, 0, 0, null);
 			paint.setColor(Color.BLACK);
 			paint.setAlpha((int) x);
@@ -866,5 +929,139 @@ public void drawPress(Canvas c, Input input) {
 
 
 
-
+//public ArrayList<String> masterArray = new ArrayList<String>();
+//private final String MASTERFILE = "master";
+//
+//public void LoadMaster() {
+//	LoadMaster(false);
+//}
+//
+//public void LoadMaster(boolean retry) {
+//	Log.d("GSTA", "Loading Master");
+//
+//	FileInputStream fIn = null;
+//	
+//	InputStreamReader isr = null;
+//	
+//	char[] inputBuffer = new char[285];
+//	
+//	String data = null;
+//	
+//	try {
+//		fIn = mContext.openFileInput(MASTERFILE);
+//		Log.d("GSTA", "FILE FOUND");
+//	} catch (Exception e) {
+//		//File doesn't exist, create it!
+//		Log.d("GSTA", "Master file doesn't exist, creating file");
+//		CreateMasterFromRaw();				
+//		if (!retry) LoadMaster(true);
+//		
+//	}
+////	finally {
+////		try {
+////			if (fIn!=null) fIn.close();
+////		} catch (IOException e) {
+////			e.printStackTrace();
+////		}
+////	}
+//	
+//
+//	BufferedReader reader = null;
+//	//Parse Level file
+//	
+//	try{
+//		reader = new BufferedReader(new InputStreamReader(fIn, "UTF-8"), 4096);
+//		String rline;
+//		while((rline = reader.readLine()) != null){
+//			Log.d("GSTA", "YAY    " + rline);
+//			masterArray.add(rline);
+//		}
+//	}catch (Exception e){
+//		e.printStackTrace();
+//		Log.d("LoadLevel", "error - " + e);
+//	}finally{
+//		try{
+//			if(reader != null) reader.close();
+//		}catch (Exception e){
+//			e.printStackTrace();
+//			Log.d("LoadLevel", "error - " + e);
+//		}
+//	}
+//	
+//	
+//	
+//
+//	//test
+////	Log.d("GSTA", "return     " + returnLevelStats(1,101));
+////	Log.d("GSTA", "return     " + returnLevelStats(1,102));
+////	Log.d("GSTA", "return     " + returnLevelStats(1,103));
+////	Log.d("GSTA", "return     " + returnLevelStats(1,104));
+////	Log.d("GSTA", "return     " + returnLevelStats(1,105));
+////	Log.d("GSTA", "return     " + returnLevelStats(1,106));
+//	
+////	saveLevelStats(1,105,"1,105,8,12,22,2,18");
+//}
+//
+//public void CreateMasterFromRaw() {
+//	Log.d("GSTA", "Creating master from raw");
+//	InputStream master = getResources().openRawResource(voldaran.com.Upright.R.raw.master); //Read Master Raw
+//	InputStreamReader isr = null; //Read Master Raw
+//	char[] inputBuffer = new char[255]; //Read Master Raw
+//	String data = null; //Read Master Raw
+//	
+//	FileOutputStream fOut = null;
+//	OutputStreamWriter osw = null;
+//	
+//	
+//	try {
+//		isr = new InputStreamReader(master); //Read Master Raw
+//		isr.read(inputBuffer); //Read Master Raw
+//		data = new String(inputBuffer); //Read Master Raw
+//		
+//		fOut = mContext.openFileOutput(MASTERFILE,Context.MODE_PRIVATE);
+//		osw = new OutputStreamWriter(fOut);
+//		osw.write(data);
+//		osw.flush();
+//		
+//		
+//	} catch (Exception e) {
+//		e.printStackTrace();
+//		Log.d("GSTA", "CreatingMasterFromRaw " + e);
+//	} finally {
+//		try {
+//			isr.close();//Read Master Raw
+//			master.close();//Read Master Raw
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			Log.d("GSTA", "CreatingMasterFromRaw " + e);
+//		}
+//	}
+//	
+//	
+//	
+//}
+//
+//public String returnLevelStats(int world, int level) {
+//	for (String x: masterArray) {
+//		if (x.startsWith(String.valueOf(world + "," + level))) {
+//			return x;
+//		}
+//	}
+//	return null;
+//}
+//
+//
+//public void saveLevelStats(int world, int level, String stats) {
+//	for (int i = 0; i<masterArray.size(); i++){
+//		if (masterArray.get(i).startsWith(String.valueOf(world + "," + level))) {
+//			masterArray.get(i).equals(stats);
+//			break;
+//		}
+//	}
+//}
+//
+//public void saveLevelStats() {
+//	
+//	
+//}
 

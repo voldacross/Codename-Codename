@@ -64,9 +64,9 @@ public class MenuButton {
 				
 				Bitmap preview;
 				
-				preview = g.thread.loadLeveltoBitmap("level" + level + ".txt");
+//				preview = g.thread.loadLeveltoBitmap("level" + level + ".txt");
 				
-				menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), level, b, preview));
+//				menu.addButton(new MenuButton(new Rect(left, top, left + 110, top + 66), level, b, preview));
 				
 				if (rowCount>=3) {
 					rowCount = 0;
@@ -107,7 +107,7 @@ public class MenuButton {
 		
 		//Start zoom animation
 		String level = "level" + String.valueOf(id) + ".txt";
-		mGame.thread.loadLevel(level, true);
+//		mGame.thread.loadLevel(level, true);
 		mGame.gameState = GameState.PLAYING;
 	}
 	

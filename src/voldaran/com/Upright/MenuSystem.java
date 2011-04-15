@@ -29,14 +29,11 @@ public class MenuSystem {
 //		
 ////		if (levelList.)
 		
-		
-		
-		
 	}
 	
 	public static MenuPanel activePanel;
 	
-	public static MenuPanel mainPanel, worldSelect, levelSelect;
+	public static MenuPanel mainPanel, worldSelect, levelSelect, levelInfo;
 	public static Rect testRect = new Rect();
 	public static Bitmap background;
 	
@@ -70,14 +67,22 @@ public class MenuSystem {
 		
 		o.step = 15;
 		
-		preview = Game.thread.loadLeveltoBitmap(Game.currentLevel);
+		Bitmap title = Game.loadBitmapAsset("title.png");
 		
+		Button b = new Button(new Rect(10, 10, 421, 138), title);
+		b.clickable = false;
+		
+		o.addButton(b);
+		
+		preview = Game.thread.loadLeveltoBitmap(Game.currentLevel);
+				
 		continueButton = new PreviewButton(new Rect(50, 150, 270, 282), preview) {
 			public void onClick () {
 				Game.thread.loadLevel(Game.currentLevel, true);
 				Game.gameState = GameState.PLAYING;
 			}
 		};
+		
 		
 		o.addButton(continueButton);
 		preview = MenuSystem.loadWorldSelectToBitmap();
@@ -108,9 +113,9 @@ public class MenuSystem {
 	
 	public static Bitmap loadLevelSelectToBitmap(String world) {
 		Log.d("GSTA", "loadLevelSelectToBitmap " + world);
-		if (world!="world1") {
-			world="world2";
-		}
+//		if (!world.equals("world1")) {
+//			world="world2";
+//		}
 //		MenuPanel tempO = loadLevelSelect(world);
 //		Bitmap previewLevel = Bitmap.createBitmap((int) Game.cameraSize.x, (int) Game.cameraSize.y, Bitmap.Config.ARGB_8888);
 //		Canvas c = new Canvas(previewLevel);
@@ -128,14 +133,15 @@ public class MenuSystem {
 //	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 	
 	
-	public static MenuPanel loadLevelSelect(String world) {
+	public static MenuPanel loadLevelSelect(int world) {
+		background = Game.loadBitmapAsset("world" + world + ".png");
 		MenuPanel o = new MenuPanel(background);
 		AssetManager assets = Game.mContext.getAssets();
-		
+	
 		String[] levelList = null;
 		
 		try {
-			levelList = assets.list("level/" + world);
+			levelList = assets.list("level/world" + world);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -163,16 +169,25 @@ public class MenuSystem {
 				//Load Level button
 				int left = 10 + rowCount * 130;
 				int top = 10 + colCount * 86;
+//				final int level = 
 				
-				final String strLevel = world + "/level" + level + ".txt";
-				preview = Game.thread.loadLeveltoBitmap(strLevel);
+				final int iLevel = LevelInfo.levelToIntFromInt(world,level);
+				
+				Log.d("GSTA", "iLevel " + iLevel);
+				final LevelInfo levelI = LevelInfo.returnLevelInfo(iLevel);
+
+//				final String strLevel = world + "/level" + level + ".txt";
+				preview = Game.thread.loadLeveltoBitmap(iLevel);
 				
 				o.addButton(new PreviewButton(new Rect(left, top, left + 110, top + 66), preview) {
 					
 					public void onClick () {
-						Game.thread.loadLevel(strLevel, true);
+						Game.thread.loadLevel(iLevel, true);
 						Game.gameState = GameState.PLAYING;
-						Game.currentLevel = strLevel;
+						Game.currentLevel = iLevel;
+//						MenuSystem.levelInfo = MenuSystem.loadLevelInfo(levelI);
+//						MenuSystem.activePanel = MenuSystem.levelInfo;
+						
 					}
 					
 				});
@@ -200,12 +215,12 @@ public class MenuSystem {
 	
 	public static Bitmap loadWorldSelectToBitmap() {
 		
-//		MenuPanel tempO = loadWorldSelect();
-//		Bitmap previewLevel = Bitmap.createBitmap((int) Game.cameraSize.x, (int) Game.cameraSize.y, Bitmap.Config.ARGB_8888);
-//		Canvas c = new Canvas(previewLevel);
-//		tempO.draw(c);
+		MenuPanel tempO = loadWorldSelect();
+		Bitmap previewLevel = Bitmap.createBitmap((int) Game.cameraSize.x, (int) Game.cameraSize.y, Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(previewLevel);
+		tempO.draw(c);
 		
-		Bitmap previewLevel = Game.loadBitmapAsset("world_select2.png");
+//		Bitmap previewLevel = Game.loadBitmapAsset("world_select2.png");
 		Matrix matrix = new Matrix();
 		matrix.postScale((float) 0.50,(float) 0.50);
 		
@@ -223,6 +238,7 @@ public class MenuSystem {
 	public static MenuPanel loadWorldSelect() {
 		background = Game.loadBitmapAsset("world_select2.png");
 		MenuPanel o = new MenuPanel(background);
+		
 		Log.d("GSTA", "loading world select");
 		AssetManager assets = Game.mContext.getAssets();
 		String[] worldList = null;
@@ -249,9 +265,10 @@ public class MenuSystem {
 		for (final Integer world : newWorldList) {
 			Log.d("GSTA", "WORLD" + world);
 			
-			//Load Level button
-			int left = 10 + rowCount * 130;
-			int top = 10 + colCount * 86;
+			//Load world button
+			int left = 20 + rowCount * 252;
+			int top = 16 + colCount * 168;
+			Log.d("GSTA", "loading World Select - Loading World Preview - " + world);
 			preview = MenuSystem.loadLevelSelectToBitmap("world" + world);
 			
 //			if (world!=1) {
@@ -259,16 +276,15 @@ public class MenuSystem {
 //			} else preview = Game.loadBitmapAsset("world" + world + ".png");
 			
 			
-			o.addButton(new PreviewButton(new Rect(left, top, left + 110, top + 66), preview) {
+			o.addButton(new PreviewButton(new Rect(left, top, left + 211, top + 127), preview) {
 				
 				public void onClick () {
-					MenuSystem.levelSelect = MenuSystem.loadLevelSelect("world" + world);
+					MenuSystem.levelSelect = MenuSystem.loadLevelSelect(world);
 					activePanel = MenuSystem.levelSelect;
 				}
 				
 			});
-			int row = 4;
-			if (colCount>1) row = 5;
+			int row = 2;
 			if (rowCount>=row) {
 				rowCount = 0;
 				colCount++;
@@ -283,6 +299,34 @@ public class MenuSystem {
 			}
 		});
 		
+		
+		return o;
+	}
+	
+	public static MenuPanel loadLevelInfo(LevelInfo level) {
+		Log.d("GSTA", "level ID " + level.id);
+		final int levelID = level.id;		
+		final int world = level.world;
+		MenuPanel o = new MenuPanel(background);
+		o.step = 10;
+		preview = Game.thread.loadLeveltoBitmap(levelID);
+		
+		o.addButton(new PreviewButton(new Rect(25, 100, 525, 400), preview) {
+			
+			public void onClick () {
+				Game.thread.loadLevel(levelID, true);
+				Game.gameState = GameState.PLAYING;
+				Game.currentLevel = levelID;
+			}
+		});
+		
+		o.addButton(new PreviewButton(new Rect(750, 0, 800, 50), null, true) {
+			
+			public void onClick () {
+				MenuSystem.levelSelect = MenuSystem.loadLevelSelect(world);
+				MenuSystem.activePanel = MenuSystem.levelSelect;
+			}
+		});
 		
 		return o;
 	}
@@ -305,7 +349,6 @@ public class MenuSystem {
 	
 	public static void updateMenus() {
 		MenuSystem.activePanel.update();
-		
 	}
 	
 	public static void drawMenus(Canvas c) {

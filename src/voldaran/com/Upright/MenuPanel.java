@@ -35,13 +35,13 @@ public class MenuPanel {
 		menuButtons.add(d);
 	}
 	
+	
+	
 	public MenuPanel (Bitmap Background) {
 		activeButton = null;
 		deactiveButton = null;
 		background = Background;
 		double test;
-		test = 10 / 3;
-		Log.d("GSTA", "test " + test);
 		
 	}
 	
