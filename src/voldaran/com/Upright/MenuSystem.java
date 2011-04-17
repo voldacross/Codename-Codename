@@ -67,16 +67,16 @@ public class MenuSystem {
 		
 		o.step = 15;
 		
-		Bitmap title = Game.loadBitmapAsset("title.png");
+		Bitmap title = Game.loadBitmapAsset("title2.png");
 		
-		Button b = new Button(new Rect(10, 10, 421, 138), title);
+		Button b = new Button(new Rect(50, 100, 368, 321), title);
 		b.clickable = false;
 		
 		o.addButton(b);
 		
 		preview = Game.thread.loadLeveltoBitmap(Game.currentLevel);
 				
-		continueButton = new PreviewButton(new Rect(50, 150, 270, 282), preview) {
+		continueButton = new PreviewButton(new Rect(450, 50, 670, 182), preview) {
 			public void onClick () {
 				Game.thread.loadLevel(Game.currentLevel, true);
 				Game.gameState = GameState.PLAYING;
@@ -177,9 +177,9 @@ public class MenuSystem {
 				final LevelInfo levelI = LevelInfo.returnLevelInfo(iLevel);
 
 //				final String strLevel = world + "/level" + level + ".txt";
-				preview = Game.thread.loadLeveltoBitmap(iLevel);
+//				preview = Game.thread.loadLeveltoBitmap(iLevel);
 				
-				o.addButton(new PreviewButton(new Rect(left, top, left + 110, top + 66), preview) {
+				o.addButton(new PreviewButton(new Rect(left, top, left + 110, top + 66), null) {
 					
 					public void onClick () {
 						Game.thread.loadLevel(iLevel, true);

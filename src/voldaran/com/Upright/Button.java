@@ -44,8 +44,8 @@ public class Button {
 		    if (bitmap!=null){
 		    	c.drawBitmap(bitmap, null, buttonSize, null);
 		    } else {
-		    	paint.setColor(Color.GREEN);
-		    	c.drawRect(buttonSize, paint);
+//		    	paint.setColor(Color.GREEN);
+//		    	c.drawRect(buttonSize, paint);
 		    }
 	}
 	
