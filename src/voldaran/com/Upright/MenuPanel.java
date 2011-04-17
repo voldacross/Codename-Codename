@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
 import android.graphics.Rect;
@@ -206,6 +207,8 @@ public class MenuPanel {
 			testRect.right = (int) Game.cameraSize.x;
 			testRect.bottom = (int) Game.cameraSize.y;
 			
+//			paint.setColor(Color.BLACK);
+//			c.drawRect(testRect, paint);
 			c.drawBitmap(background, null, testRect, null);
 			
 //			MenuPanel.paint.setColor(Color.BLACK);
