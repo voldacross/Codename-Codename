@@ -57,6 +57,15 @@ public class MenuSystem {
 //	LOAD MAIN SCREEN
 //	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 	
+	public static Bitmap loadMainPaneltoBitmap() {
+		Bitmap previewMain = Bitmap.createBitmap((int) Game.cameraSize.x, (int) Game.cameraSize.y, Bitmap.Config.ARGB_8888);
+		Canvas t = new Canvas(previewMain);
+		MenuPanel p = loadMainPanel();
+		p.draw(t);
+		p = null;
+		return previewMain;
+	}
+	
 	
 	public static MenuPanel loadMainPanel() {
 		
@@ -64,9 +73,7 @@ public class MenuSystem {
 		
 		
 		MenuPanel o = new MenuPanel(background);
-		
 		o.step = 15;
-		
 		Bitmap title = Game.loadBitmapAsset("title2.png");
 		
 		Button b = new Button(new Rect(50, 100, 368, 321), title);

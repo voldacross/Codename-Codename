@@ -11,13 +11,11 @@ public class PauseMenu {
 	
 	private Bitmap bitPause;
 	private Vec2d camera = new Vec2d();
-	MenuTitleScreenPanel pause;
 	Rect Continue, LevelSelect, Restart, Options, Pause;
 	
 	public PauseMenu(Vec2d c) {
 		bitPause = Game.loadBitmapAsset("menu_pause.png");
 		camera = c;
-		pause = new MenuTitleScreenPanel(null, null, 0, 0, 0);
 		
 		Pause = new Rect((int) (camera.x / 2) - (bitPause.getWidth() / 2),(int) (camera.y / 2) - (bitPause.getHeight() / 2),(int) (camera.x / 2) + (bitPause.getWidth() / 2),(int) (camera.y / 2) + (bitPause.getHeight() / 2));
 		Continue = new Rect(0,0,270,45);

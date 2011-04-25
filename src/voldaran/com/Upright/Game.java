@@ -168,7 +168,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	public void startThread() {
-		thread.createTitleScreen();
 		thread.setRunning(true);
 		thread.active = true;
 		thread.start();
@@ -237,7 +236,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 	class GameThread extends Thread {
 		private SurfaceHolder _surfaceHolder;
 		public boolean mRun = false;
-		private MenuTitleScreen titleMenu;
 		
 		Vec2d mapSize;
 		//public MapClass.TileClass[][] aTile;
@@ -625,10 +623,6 @@ public void drawPress(Canvas c, Input input) {
 			c.drawRect(ad, paint);
 		}
 		
-		public void createTitleScreen() {
-			
-			titleMenu = new MenuTitleScreen(mGame); //Has to be created after the surfaceView has been created
-		}
 		
 
 		Long previousTime;
@@ -646,10 +640,10 @@ public void drawPress(Canvas c, Input input) {
 				while (mRun) {
 					System.gc();
 					switch(gameState){
-					case TITLE:gameState = titleScreen();
-					case PLAYING:gameState = gameLoop();
-					case PAUSED:gameState = pause();
-					case LEVEL_COMPLETE:gameState = levelComplete();
+					case TITLE:gameState = titleScreen();break;
+					case PLAYING:gameState = gameLoop();break;
+					case PAUSED:gameState = pause();break;
+					case LEVEL_COMPLETE:gameState = levelComplete();break;
 					}
 				}
 			}
@@ -712,10 +706,11 @@ public void drawPress(Canvas c, Input input) {
 //				}else if (currentTime>lastSavedTime+25000){			//Every ten Seconds save checkpoint
 //					if(GameObject.saveCheckpointAll())
 //						lastSavedTime = currentTime;
-					
 				}
 
-				if (GameObject.returnWin()) gameState = GameState.LEVEL_COMPLETE;
+				if (GameObject.returnWin()) {
+						gameState = GameState.LEVEL_COMPLETE;
+				}
 			}
 			return gameState;
 		}
@@ -760,37 +755,44 @@ public void drawPress(Canvas c, Input input) {
 			Picture picScreen = new Picture();
 			Log.d("GSTA", "currentlevel " + Game.currentLevel);
 			
+//			LevelInfo oldLevel = LevelInfo.returnLevelInfo(currentLevel).set();
+//			LevelInfo cLevel = LevelInfo.returnLevelInfo(currentLevel);
+//			int currentScore = GameHero.hero.getToggleCount();
+//			cLevel.UpdateWin(currentScore);
+//			Log.d("GSTA", "You won!! " + currentScore);
 			
-//			LevelInfo = 
 //			GameHero.hero.getToggleCount()
 			
+			WinScreen.CreateWin();
+			mClicked.setVoid();
+	
 			while((gameState == GameState.LEVEL_COMPLETE) && (mRun)){
-				Vec2d mClicked = _input.getCurrentPress();
-				
 				frameTime = getFrameTime();
-				
+
+				mClicked = _input.getCurrentPress();
+				if (!mClicked.isVoid()) WinScreen.processInput(mClicked);
+				WinScreen.updateMenu();
+
 				Canvas c = picScreen.beginRecording((int) Game.cameraSize.x, (int) Game.cameraSize.y);
-				
-				titleMenu.update();
-				
 					synchronized (_surfaceHolder) {
 						clearScreen(c, Game.cameraSize);
-						drawBackground(c, Game.cameraSize);
-						GameObject.drawAll(c, interpolation);
+						WinScreen.Draw(c);
 						drawFPS(c, frameTime);
-						paint.setColor(Color.RED);
-						paint.setTextSize(86);
-						paint.setTypeface(Typeface.DEFAULT_BOLD);
-						    
-						c.drawText("YOU WON!", 75, 125, paint);
+//						paint.setColor(Color.RED);
+//						paint.setTextSize(56);
+//						paint.setTypeface(Typeface.DEFAULT_BOLD);
+//						c.drawText("YOU WON!", 75, 125, paint);
+//						c.drawText("Old HighScore = " + oldLevel.highscore, 75, 175, paint);
+//						c.drawText("New HighScore = " + cLevel.highscore, 75, 225, paint);
+//						c.drawText("Current Score = " + currentScore, 75, 275, paint);
 						picScreen.endRecording();
 						drawToScreen(picScreen);
 					}
 					
-					if (!mClicked.isVoid()) {
-						MenuSystem.returnToMain();
-						gameState = GameState.TITLE;
-					}
+//					if (!mClicked.isVoid()) {
+//						MenuSystem.returnToMain();
+//						gameState = GameState.TITLE;
+//					}
 					
 			}
 			return gameState;
@@ -824,7 +826,6 @@ public void drawPress(Canvas c, Input input) {
 					}
 					
 			}
-			
 			return gameState;
 		}
 		
@@ -853,7 +854,7 @@ public void drawPress(Canvas c, Input input) {
 				
 				if (gameState!=GameState.PAUSED) _input.Clear();
 			}
-			
+			Log.d("GSTA", "pause is over, " + gameState);
 			return gameState;
 		}
 		

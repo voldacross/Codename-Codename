@@ -36,6 +36,7 @@ public class LevelInfo {
 		return Integer.parseInt(sb.toString());
 	}
 	
+	
 	public static String levelToString(int l) {
 		//1004
 		//1104
@@ -45,7 +46,7 @@ public class LevelInfo {
 		String world = sL.substring(0, sL.length() - 3);
 		String level = String.valueOf(Integer.parseInt(sL.substring(sL.length() - 3)));
 		
-		Log.d("GSTA", "world " + world + " level " + level);
+//		Log.d("GSTA", "world " + world + " level " + level);
 //		"world1/level104.txt"
 		String r = "world" + world  +  "/level" + level + ".txt";
 		
@@ -59,6 +60,18 @@ public class LevelInfo {
 		LevelInfo.levels.add(this);
 	}
 	
+	public LevelInfo(LevelInfo l) {
+		level = l.level;
+		world = l.world;
+		id = l.id;
+		first = l.first;
+		second = l.second;
+		highscore = l.highscore;
+		optimal = l.optimal;
+		state = l.state;
+	}
+	
+	
 	@Override
 	public String toString() {
 		String r = "id = " + id + 
@@ -70,6 +83,20 @@ public class LevelInfo {
 		",highscore = " + highscore + 
 		",state = " + state;
 		return r;
+	}
+	
+	public LevelInfo set() {
+		return new LevelInfo(this);
+	}
+	
+	public boolean UpdateWin(int score) {
+		
+		if (score>highscore) highscore = score;
+		
+		//Unlock other levels?
+		
+		return (score>highscore);
+		
 	}
 
 }

@@ -40,6 +40,12 @@ public class Button {
 		
 	}
 	
+	@Override
+	public String toString() {
+		
+		return "left = " + left + " right = " + right + " top = " + top + " bottom = " + bottom; 
+	}
+	
 	public void draw(Canvas c) {
 		    if (bitmap!=null){
 		    	c.drawBitmap(bitmap, null, buttonSize, null);
