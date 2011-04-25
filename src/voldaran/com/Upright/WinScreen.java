@@ -42,7 +42,8 @@ public class WinScreen {
 
 		WinScreen.nextButton = new PreviewButton(new Rect(524,307,792,468), bitWin){
 			public void onClick() {
-				Game.thread.loadLevel(Game.currentLevel + 1, true);
+				Game.currentLevel = Game.currentLevel + 1;
+				Game.thread.loadLevel(Game.currentLevel, true);
 				Game.gameState = GameState.PLAYING;
 			}
 		};
